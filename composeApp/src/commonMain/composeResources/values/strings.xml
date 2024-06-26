@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Mahjong Scoring MCR</string>
+    <string name="old_games">Old Games</string>
+    <string name="game">Game</string>
+    <string name="combinations">Combinations</string>
+    <string name="diffs_calculator">Diffs calculator</string>
+    <string name="back_button">Back</string>
+    <string name="menu">Menu</string>
+    <string name="west">West</string>
+    <string name="date">Date</string>
+    <string name="rounds">Rounds</string>
+    <string name="best_hand">Best hand</string>
+    <string name="table">Table</string>
+    <string name="list">List</string>
+    <string name="dice">Dice</string>
+</resources>
