@@ -1,4 +1,4 @@
-package screens.old_games
+package screens.combinations
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,11 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun OldGamesScreen(
+fun CombinationsScreen(
     modifier: Modifier = Modifier,
-    navigateToGame: () -> Unit,
 ) {
-    val oldGames by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..10) add(i) }.toList()) }
+    val combinations by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..88) add(i) }.toList()) }
 
     LazyColumn(
         modifier = modifier
@@ -28,15 +27,10 @@ fun OldGamesScreen(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(oldGames) { item ->
-            OldGameItem(
-                oldGameItemState = item to listOf(
-                    "Eto" to 100,
-                    "Cris" to 100,
-                    "Maricarmen" to -100,
-                    "Covadonga" to -100
-                ),
-                onClick = navigateToGame,
+        items(combinations) { item ->
+            CombinationItem(
+                combinationItemState = item,
+                onClick = {},
             )
         }
     }

@@ -8,9 +8,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,9 +23,11 @@ import mahjongscoring3.composeapp.generated.resources.back_button
 import mahjongscoring3.composeapp.generated.resources.combinations
 import mahjongscoring3.composeapp.generated.resources.diffs_calculator
 import mahjongscoring3.composeapp.generated.resources.game
+import mahjongscoring3.composeapp.generated.resources.menu
 import mahjongscoring3.composeapp.generated.resources.old_games
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import screens.combinations.CombinationsScreen
 import screens.game.GameScreen
 import screens.old_games.OldGamesScreen
 
@@ -58,7 +62,8 @@ fun MahjongScoringApp(
             MahjongScoringAppBar(
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null,
-                navigateUp = { navController.navigateUp() }
+                navigateUp = { navController.navigateUp() },
+                navigateToCombinations = { navController.navigate(route = AppScreen.Combinations.name) },
             )
         }
     ) { innerPadding ->
@@ -77,13 +82,10 @@ fun MahjongScoringApp(
                 )
             }
             composable(route = AppScreen.Game.name) {
-                GameScreen(
-
-                )
+                GameScreen()
             }
             composable(route = AppScreen.Combinations.name) {
-//                CombinationsScreen(
-//                )
+                CombinationsScreen()
             }
             composable(route = AppScreen.DiffsCalculator.name) {
 //                DiffsCalculatorScreen(
@@ -107,6 +109,7 @@ fun MahjongScoringAppBar(
     currentScreen: AppScreen,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
+    navigateToCombinations: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -124,6 +127,15 @@ fun MahjongScoringAppBar(
                     )
                 }
             }
+        },
+        actions = {
+            IconButton(onClick = navigateToCombinations) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    tint = Color.White,
+                    contentDescription = stringResource(Res.string.menu),
+                )
+            }
         }
     )
 }
@@ -134,45 +146,3 @@ fun MahjongScoringAppBar(
 private fun navigateToStart(navController: NavHostController) {
     navController.popBackStack(AppScreen.OldGames.name, inclusive = false)
 }
-
-
-
-
-
-
-
-//import androidx.compose.animation.AnimatedVisibility
-//import androidx.compose.foundation.Image
-//import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.fillMaxWidth
-//import androidx.compose.material.Button
-//import androidx.compose.material.MaterialTheme
-//import androidx.compose.material.Text
-//import androidx.compose.runtime.*
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import org.jetbrains.compose.resources.painterResource
-//import org.jetbrains.compose.ui.tooling.preview.Preview
-//
-//import mahjongscoring3.composeapp.generated.resources.Res
-//import mahjongscoring3.composeapp.generated.resources.compose_multiplatform
-//
-//@Composable
-//@Preview
-//fun App() {
-//    MaterialTheme {
-//        var showContent by remember { mutableStateOf(false) }
-//        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-//            Button(onClick = { showContent = !showContent }) {
-//                Text("Click me!")
-//            }
-//            AnimatedVisibility(showContent) {
-//                val greeting = remember { Greeting().greet() }
-//                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-//                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-//                    Text("Compose: $greeting")
-//                }
-//            }
-//        }
-//    }
-//}
