@@ -39,6 +39,7 @@ fun CombinationItem(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 text = combinationItemState.toString(),
                 fontWeight = FontWeight.Bold,
             )

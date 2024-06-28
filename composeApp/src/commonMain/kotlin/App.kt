@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,11 +24,11 @@ import mahjongscoring3.composeapp.generated.resources.back_button
 import mahjongscoring3.composeapp.generated.resources.combinations
 import mahjongscoring3.composeapp.generated.resources.diffs_calculator
 import mahjongscoring3.composeapp.generated.resources.game
-import mahjongscoring3.composeapp.generated.resources.menu
 import mahjongscoring3.composeapp.generated.resources.old_games
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import screens.combinations.CombinationsScreen
+import screens.diffs_calculator.DiffsCalculatorScreen
 import screens.game.GameScreen
 import screens.old_games.OldGamesScreen
 
@@ -64,6 +65,7 @@ fun MahjongScoringApp(
                 canNavigateBack = navController.previousBackStackEntry != null,
                 navigateUp = { navController.navigateUp() },
                 navigateToCombinations = { navController.navigate(route = AppScreen.Combinations.name) },
+                navigateToDiffsCalculator = { navController.navigate(route = AppScreen.DiffsCalculator.name) },
             )
         }
     ) { innerPadding ->
@@ -88,14 +90,7 @@ fun MahjongScoringApp(
                 CombinationsScreen()
             }
             composable(route = AppScreen.DiffsCalculator.name) {
-//                DiffsCalculatorScreen(
-//                    orderUiState = uiState,
-//                    onCancelButtonClicked = { navigateToStart(navController) },
-//                    onSendButtonClicked = { subject: String, summary: String ->
-//                        shareOrder(subject = subject, summary = summary)
-//                    },
-//                    modifier = Modifier.fillMaxHeight()
-//                )
+                DiffsCalculatorScreen()
             }
         }
     }
@@ -110,6 +105,7 @@ fun MahjongScoringAppBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     navigateToCombinations: () -> Unit,
+    navigateToDiffsCalculator: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -129,11 +125,18 @@ fun MahjongScoringAppBar(
             }
         },
         actions = {
+            IconButton(onClick = navigateToDiffsCalculator) {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    tint = Color.White,
+                    contentDescription = stringResource(Res.string.diffs_calculator),
+                )
+            }
             IconButton(onClick = navigateToCombinations) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     tint = Color.White,
-                    contentDescription = stringResource(Res.string.menu),
+                    contentDescription = stringResource(Res.string.combinations),
                 )
             }
         }
