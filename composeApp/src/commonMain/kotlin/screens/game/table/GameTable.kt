@@ -20,16 +20,11 @@ import androidx.compose.ui.unit.dp
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.dice
 import org.jetbrains.compose.resources.stringResource
-import screens.common.Seats
+import screens.common.SmallSeats
 
 @Composable
 fun GamePageTable(
-    gamePageTableState: List<Pair<String, Int>> = listOf(
-        "Eto" to 100,
-        "Cris" to 100,
-        "Maricarmen" to -100,
-        "Covadonga" to -100
-    ),
+    gamePageTableState: List<Pair<String, Int>>,
     onFabClick: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -50,7 +45,7 @@ fun GamePageTable(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f),
             ) {
-                Seats(seatsState = gamePageTableState)
+                SmallSeats(seatsState = gamePageTableState)
             }
         }
 

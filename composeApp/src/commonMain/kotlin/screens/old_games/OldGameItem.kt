@@ -26,13 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.best_hand
 import mahjongscoring3.composeapp.generated.resources.date
 import mahjongscoring3.composeapp.generated.resources.menu
 import mahjongscoring3.composeapp.generated.resources.rounds
 import org.jetbrains.compose.resources.stringResource
-import screens.common.Seats
+import screens.common.SmallSeats
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -94,15 +95,15 @@ private fun OldGameItemBody(seatsState: List<Pair<String, Int>>) {
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Seats(
+        SmallSeats(
             modifier = Modifier
-                .weight(.6f)
+                .weight(.7f)
                 .align(Alignment.CenterVertically),
             seatsState = seatsState,
         )
         OldGameItemBodyGameData(
             modifier = Modifier
-                .weight(.4f)
+                .weight(.3f)
                 .align(Alignment.CenterVertically),
             item = 8,
         )
@@ -123,10 +124,12 @@ private fun OldGameItemBodyGameData(
             Text(
                 text = stringResource(Res.string.date),
                 fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
             )
             Text(
                 text = "21/06/2024\n14:14",
                 textAlign = TextAlign.Center,
+                fontSize = 12.sp,
             )
         }
 
@@ -134,16 +137,24 @@ private fun OldGameItemBodyGameData(
             Text(
                 text = stringResource(Res.string.rounds),
                 fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
             )
-            Text(text = item.toString())
+            Text(
+                text = item.toString(),
+                fontSize = 12.sp,
+            )
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(Res.string.best_hand),
                 fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
             )
-            Text(text = "$item - Fulanito")
+            Text(
+                text = "$item - Fulanito",
+                fontSize = 12.sp,
+            )
         }
     }
 }

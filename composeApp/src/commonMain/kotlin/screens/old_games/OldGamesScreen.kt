@@ -31,10 +31,10 @@ fun OldGamesScreen(
         items(oldGames) { item ->
             OldGameItem(
                 oldGameItemState = item to listOf(
-                    "Eto" to 100,
-                    "Cris" to 100,
-                    "Maricarmen" to -100,
-                    "Covadonga" to -100
+                    "Ernesto Vega de la Iglesia" to 100,
+                    "Cristina Gayol Miranda" to 100,
+                    "Maricarmen Gutiérrez" to -100,
+                    "Covadonga Jiménez" to -100,
                 ),
                 onClick = navigateToGame,
             )

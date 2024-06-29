@@ -53,7 +53,15 @@ fun GameScreen() {
             state = pagerState
         ) { page ->
             when (page) {
-                0 -> GamePageTable {}
+                0 -> GamePageTable(
+                    listOf(
+                        "Ernesto Vega de la Iglesia" to 100,
+                        "Cristina Gayol Miranda" to 100,
+                        "Maricarmen Gutiérrez" to -100,
+                        "Covadonga Jiménez" to -100,
+                    )
+                ) {}
+
                 1 -> GamePageList(listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16))
             }
         }
