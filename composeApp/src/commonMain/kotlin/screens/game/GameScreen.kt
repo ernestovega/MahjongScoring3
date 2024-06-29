@@ -32,8 +32,8 @@ fun GameScreen() {
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(
-            selectedTabIndex = pagerState.currentPage,
             modifier = Modifier.fillMaxWidth(),
+            selectedTabIndex = pagerState.currentPage,
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
@@ -49,8 +49,8 @@ fun GameScreen() {
         }
 
         HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            state = pagerState
         ) { page ->
             when (page) {
                 0 -> GamePageTable {}

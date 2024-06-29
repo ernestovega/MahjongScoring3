@@ -1,4 +1,4 @@
-package screens.diffs_calculator
+package screens.help.penalties
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,18 +17,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DiffsCalculatorScreen(
+fun PenaltiesScreen(
     modifier: Modifier = Modifier,
 ) {
-    val combinations by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..200) add(i) }.toList()) }
+    val fan by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..20) add(i) }.toList()) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
         ) {
-        DiffsCalculatorItem(
-            diffsCalculatorItemState = 0,
+        PenaltiesItem(
+            penaltiesItemState = 0,
             backgroundColor = MaterialTheme.colors.primary,
             textColor = Color.White,
             height = 40.dp,
@@ -40,8 +39,8 @@ fun DiffsCalculatorScreen(
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(combinations) { item ->
-                DiffsCalculatorItem(diffsCalculatorItemState = item)
+            items(fan) { item ->
+                PenaltiesItem(penaltiesItemState = item)
             }
         }
     }

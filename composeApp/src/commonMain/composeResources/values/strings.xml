@@ -2,7 +2,7 @@
     <string name="app_name">Mahjong Scoring MCR</string>
     <string name="old_games">Old Games</string>
     <string name="game">Game</string>
-    <string name="combinations">Combinations</string>
+    <string name="fan">Fan</string>
     <string name="diffs_calculator">Diffs calculator</string>
     <string name="back_button">Back</string>
     <string name="menu">Menu</string>
@@ -13,4 +13,7 @@
     <string name="table">Table</string>
     <string name="list">List</string>
     <string name="dice">Dice</string>
+    <string name="penalties">Penalties</string>
+    <string name="help">Help</string>
+    <string name="rules">Rules</string>
 </resources>

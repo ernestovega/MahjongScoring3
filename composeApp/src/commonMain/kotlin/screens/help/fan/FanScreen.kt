@@ -1,4 +1,4 @@
-package screens.combinations
+package screens.help.fan
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CombinationsScreen(
+fun FanScreen(
     modifier: Modifier = Modifier,
 ) {
-    val combinations by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..88) add(i) }.toList()) }
+    val fan by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..88) add(i) }.toList()) }
 
     LazyColumn(
         modifier = modifier
@@ -27,7 +27,7 @@ fun CombinationsScreen(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(combinations) { item ->
+        items(fan) { item ->
             CombinationItem(
                 combinationItemState = item,
                 onClick = {},

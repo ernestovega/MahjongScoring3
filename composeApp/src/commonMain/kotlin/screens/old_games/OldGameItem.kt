@@ -41,12 +41,12 @@ fun OldGameItem(
     onClick: () -> Unit,
 ) {
     Card(
-        elevation = 4.dp,
-        backgroundColor = Color.White,
-        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        elevation = 4.dp,
+        backgroundColor = Color.White,
+        shape = RoundedCornerShape(8.dp),
         onClick = onClick,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -64,19 +64,19 @@ private fun OldGameItemHeader(item: Int) {
             .background(MaterialTheme.colors.primarySurface),
     ) {
         Text(
-            text = "Game #$item",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp),
+            text = "Game #$item",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(
-            onClick = {},
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically),
+            onClick = {}
         ) {
             Icon(
                 imageVector = Icons.Filled.Menu,
@@ -95,16 +95,16 @@ private fun OldGameItemBody(seatsState: List<Pair<String, Int>>) {
             .padding(16.dp),
     ) {
         Seats(
-            seatsState = seatsState,
             modifier = Modifier
                 .weight(.6f)
                 .align(Alignment.CenterVertically),
+            seatsState = seatsState,
         )
         OldGameItemBodyGameData(
-            item = 8,
             modifier = Modifier
                 .weight(.4f)
                 .align(Alignment.CenterVertically),
+            item = 8,
         )
     }
 }
@@ -115,9 +115,9 @@ private fun OldGameItemBodyGameData(
     modifier: Modifier = Modifier
 ) {
     Column(
+        modifier = modifier.fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier.fillMaxHeight(),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(

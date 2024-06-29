@@ -1,4 +1,4 @@
-package screens.combinations
+package screens.help.fan
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,12 +29,12 @@ fun CombinationItem(
     onClick: () -> Unit,
 ) {
     Card(
-        elevation = 4.dp,
-        backgroundColor = Color.White,
-        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
+        elevation = 4.dp,
+        backgroundColor = Color.White,
+        shape = RoundedCornerShape(8.dp),
         onClick = onClick,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {

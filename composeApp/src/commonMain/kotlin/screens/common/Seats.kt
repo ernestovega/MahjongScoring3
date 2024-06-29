@@ -22,15 +22,15 @@ fun Seats(
     val spaceBetweenSeats = 40.dp
     Box(modifier = modifier) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(spaceBetweenSeats),
             modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.spacedBy(spaceBetweenSeats),
         ) {
             Seat(seatState = seatsState[0])
             Seat(seatState = seatsState[1])
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(spaceBetweenSeats),
             modifier = Modifier.align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(spaceBetweenSeats),
         ) {
             Seat(seatState = seatsState[2])
             Seat(seatState = seatsState[3])

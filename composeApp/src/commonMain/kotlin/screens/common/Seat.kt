@@ -19,17 +19,17 @@ fun Seat(
 ) {
     Column(modifier = modifier) {
         Icon(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             imageVector = Icons.Filled.Home,
             contentDescription = stringResource(Res.string.west),
-            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
         Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             text = seatState.first,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
         Text(
-            text = seatState.second.toString(),
             modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = seatState.second.toString(),
         )
     }
 }

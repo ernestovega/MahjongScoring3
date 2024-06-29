@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -56,10 +55,10 @@ fun GamePageTable(
         }
 
         FloatingActionButton(
-            onClick = onFabClick,
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
+            onClick = onFabClick,
         ) {
             Icon(
                 imageVector = Icons.Filled.Home,
