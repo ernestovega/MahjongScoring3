@@ -10,11 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import mahjongscoring3.composeapp.generated.resources.Res
-import mahjongscoring3.composeapp.generated.resources.game
-import mahjongscoring3.composeapp.generated.resources.help
-import mahjongscoring3.composeapp.generated.resources.old_games
-import org.jetbrains.compose.resources.StringResource
+import org.koin.compose.KoinContext
 import screens.game.GameScreen
 import screens.help.HelpScreen
 import screens.old_games.OldGamesScreen
@@ -22,24 +18,18 @@ import screens.old_games.OldGamesScreen
 @Composable
 fun App() {
     MaterialTheme {
-        MahjongScoringApp()
+        KoinContext {
+            MahjongScoringApp()
+        }
     }
-}
-
-enum class AppScreen(val title: StringResource) {
-    //    Splash(title = Res.string.app_name),
-    OldGames(title = Res.string.old_games),
-    Game(title = Res.string.game),
-    Help(title = Res.string.help),
 }
 
 @Composable
 fun MahjongScoringApp(
-//    viewModel: OrderViewModel = viewModel { OrderViewModel() },
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = AppScreen.valueOf(backStackEntry?.destination?.route ?: AppScreen.OldGames.name)
+    val currentScreen = AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGames.name)
 
     Scaffold(
         topBar = {
@@ -60,18 +50,18 @@ fun MahjongScoringApp(
 
         NavHost(
             navController = navController,
-            startDestination = AppScreen.OldGames.name,
+            startDestination = AppScreens.OldGames.name,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            composable(route = AppScreen.OldGames.name) {
+            composable(route = AppScreens.OldGames.name) {
                 OldGamesScreen(navigateToGame = { navController.navigateToGame() })
             }
-            composable(route = AppScreen.Game.name) {
+            composable(route = AppScreens.Game.name) {
                 GameScreen()
             }
-            composable(route = AppScreen.Help.name) {
+            composable(route = AppScreens.Help.name) {
                 HelpScreen()
             }
         }
@@ -79,25 +69,25 @@ fun MahjongScoringApp(
 }
 
 private fun NavHostController.navigateToOldGames() {
-    if (currentBackStackEntry?.destination?.route != AppScreen.OldGames.name) {
-        if (!popBackStack(AppScreen.OldGames.name, inclusive = false)) {
-            navigate(route = AppScreen.OldGames.name)
+    if (currentBackStackEntry?.destination?.route != AppScreens.OldGames.name) {
+        if (!popBackStack(AppScreens.OldGames.name, inclusive = false)) {
+            navigate(route = AppScreens.OldGames.name)
         }
     }
 }
 
 private fun NavHostController.navigateToGame() {
-    if (currentBackStackEntry?.destination?.route != AppScreen.Game.name) {
-        if (!popBackStack(AppScreen.Game.name, inclusive = false)) {
-            navigate(route = AppScreen.Game.name)
+    if (currentBackStackEntry?.destination?.route != AppScreens.Game.name) {
+        if (!popBackStack(AppScreens.Game.name, inclusive = false)) {
+            navigate(route = AppScreens.Game.name)
         }
     }
 }
 
 private fun NavHostController.navigateToHelp() {
-    if (currentBackStackEntry?.destination?.route != AppScreen.Help.name) {
-        if (!popBackStack(AppScreen.Help.name, inclusive = false)) {
-            navigate(route = AppScreen.Help.name)
+    if (currentBackStackEntry?.destination?.route != AppScreens.Help.name) {
+        if (!popBackStack(AppScreens.Help.name, inclusive = false)) {
+            navigate(route = AppScreens.Help.name)
         }
     }
 }

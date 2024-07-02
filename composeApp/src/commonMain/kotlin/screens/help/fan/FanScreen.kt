@@ -7,18 +7,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import screens.help.fan.model.Fan
 
+data class FanScreenState(
+    val fan: List<Fan> = emptyList(),
+)
+
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun FanScreen(
+    viewModel: FanScreenViewModel = koinViewModel<FanScreenViewModel>(),
     modifier: Modifier = Modifier,
 ) {
-    val fan by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..88) add(i) }.toList()) }
+    val screenState by viewModel.screenState.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -27,9 +35,9 @@ fun FanScreen(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(fan) { item ->
-            CombinationItem(
-                combinationItemState = item,
+        items(screenState.fan) { itemState ->
+            FanScreenItem(
+                state = itemState,
                 onClick = {},
             )
         }

@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
-import mahjongscoring3.composeapp.generated.resources.diffs_calculator
+import mahjongscoring3.composeapp.generated.resources.diffs
 import mahjongscoring3.composeapp.generated.resources.fan
 import mahjongscoring3.composeapp.generated.resources.penalties
 import mahjongscoring3.composeapp.generated.resources.rules
 import org.jetbrains.compose.resources.stringResource
-import screens.help.diffs_calculator.DiffsCalculatorScreen
+import screens.help.diffs.DiffsScreen
 import screens.help.fan.FanScreen
 import screens.help.penalties.PenaltiesScreen
 import screens.help.rules.RulesScreen
@@ -30,7 +30,7 @@ import screens.help.rules.RulesScreen
 fun HelpScreen() {
     val tabTitles = listOf(
         stringResource(Res.string.fan),
-        stringResource(Res.string.diffs_calculator),
+        stringResource(Res.string.diffs),
         stringResource(Res.string.penalties),
         stringResource(Res.string.rules),
     )
@@ -63,7 +63,7 @@ fun HelpScreen() {
         ) { page ->
             when (page) {
                 0 -> FanScreen()
-                1 -> DiffsCalculatorScreen()
+                1 -> DiffsScreen()
                 2 -> PenaltiesScreen()
                 3 -> RulesScreen()
             }

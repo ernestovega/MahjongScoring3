@@ -6,7 +6,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppTopBar(
-    currentScreen: AppScreen,
+    currentScreen: AppScreens,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -26,11 +26,11 @@ fun AppTopBar(
 //            }
 //        },
 //        actions = {
-//            IconButton(onClick = navigateToDiffsCalculator) {
+//            IconButton(onClick = navigateToDiffs) {
 //                Icon(
 //                    imageVector = Icons.Filled.DateRange,
 //                    tint = Color.White,
-//                    contentDescription = stringResource(Res.string.diffs_calculator),
+//                    contentDescription = stringResource(Res.string.diffs),
 //                )
 //            }
 //            IconButton(onClick = navigateToFan) {

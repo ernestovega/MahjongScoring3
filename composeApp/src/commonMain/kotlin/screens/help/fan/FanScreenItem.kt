@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.dp
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.west
 import org.jetbrains.compose.resources.stringResource
+import screens.help.fan.model.Fan
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CombinationItem(
-    combinationItemState: Int,
+fun FanScreenItem(
+    state: Fan,
     onClick: () -> Unit,
 ) {
     Card(
@@ -40,7 +41,7 @@ fun CombinationItem(
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                text = combinationItemState.toString(),
+                text = "${state.fanPoints}. ${stringResource(state.fanName)}",
                 fontWeight = FontWeight.Bold,
             )
             Row(

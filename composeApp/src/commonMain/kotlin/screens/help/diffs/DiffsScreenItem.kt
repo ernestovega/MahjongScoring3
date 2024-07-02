@@ -1,4 +1,4 @@
-package screens.help.diffs_calculator
+package screens.help.diffs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -15,10 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import screens.help.diffs.model.Diff
 
 @Composable
-fun DiffsCalculatorItem(
-    diffsCalculatorItemState: Int,
+fun DiffsScreenItem(
+    state: Diff,
     backgroundColor: Color = MaterialTheme.colors.background,
     textColor: Color = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.background),
     height: Dp = 24.dp,
@@ -30,10 +31,15 @@ fun DiffsCalculatorItem(
             .background(backgroundColor),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        repeat(4) {
+        listOf(
+            state.pointsNeeded,
+            state.selfPick,
+            state.directHu,
+            state.indirectHu,
+        ).forEach { value ->
             Text(
                 modifier = Modifier.weight(1f),
-                text = diffsCalculatorItemState.toString(),
+                text = value.toString(),
                 fontWeight = FontWeight.Bold,
                 color = textColor,
                 textAlign = TextAlign.Center,

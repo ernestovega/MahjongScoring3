@@ -26,7 +26,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AppBottomBar(
-    currentScreen: AppScreen,
+    currentScreen: AppScreens,
     navigateToOldGames: () -> Unit,
     navigateToGame: () -> Unit,
     navigateToHelp: () -> Unit,
@@ -35,21 +35,21 @@ fun AppBottomBar(
         modifier = Modifier.fillMaxWidth(),
     ) {
         AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreen.OldGames.name,
+            isSelected = currentScreen.name == AppScreens.OldGames.name,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             title = Res.string.old_games,
             onClick = navigateToOldGames
         )
         AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreen.Game.name,
+            isSelected = currentScreen.name == AppScreens.Game.name,
             selectedIcon = Icons.Filled.PlayArrow,
             unselectedIcon = Icons.Outlined.PlayArrow,
             title = Res.string.game,
             onClick = navigateToGame
         )
         AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreen.Help.name,
+            isSelected = currentScreen.name == AppScreens.Help.name,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
             title = Res.string.help,
