@@ -1,7 +1,7 @@
 package screens.help.diffs.repository
 
 import kotlinx.coroutines.flow.Flow
-import screens.help.diffs.model.Diff
+import screens.help.diffs.Diff
 
 interface DiffsRepository{
 

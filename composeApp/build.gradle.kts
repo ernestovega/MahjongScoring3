@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -61,6 +62,7 @@ kotlin {
             implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
+            api(libs.koin.core)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -68,12 +70,12 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.navigation)
-
-            api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.serialization.json)
             implementation(libs.lifecycle.viewmodel)
-
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

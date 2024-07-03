@@ -7,35 +7,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
+data class OldGamesScreenState(
+    val gamesStates: List<OldGameItemState> = emptyList(),
+)
+
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun OldGamesScreen(
-    modifier: Modifier = Modifier,
+    viewModel: OldGamesScreenViewModel = koinViewModel<OldGamesScreenViewModel>(),
     navigateToGame: () -> Unit,
 ) {
-    val oldGames by remember { mutableStateOf(mutableListOf<Int>().apply { for (i in 1..10) add(i) }.toList()) }
+    val state by viewModel.screenStateFlow.collectAsState()
 
     LazyColumn(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.LightGray),
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(oldGames) { item ->
+        items(state.gamesStates) { gameState ->
             OldGameItem(
-                oldGameItemState = item to listOf(
-                    "Ernesto Vega de la Iglesia" to 100,
-                    "Cristina Gayol Miranda" to 100,
-                    "Maricarmen Gutiérrez" to -100,
-                    "Covadonga Jiménez" to -100,
-                ),
+                state = gameState,
                 onClick = navigateToGame,
             )
         }

@@ -27,18 +27,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.datetime.Instant
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.best_hand
 import mahjongscoring3.composeapp.generated.resources.date
 import mahjongscoring3.composeapp.generated.resources.menu
 import mahjongscoring3.composeapp.generated.resources.rounds
 import org.jetbrains.compose.resources.stringResource
-import screens.common.SmallSeats
+import screens.common.model.TableWinds
+import screens.common.model.UiGame
+import screens.common.ui.SmallSeatState
+import screens.common.ui.SmallSeats
+import screens.common.ui.SmallSeatsState
+import screens.common.use_cases.utils.prettifyTwoLines
+
+data class OldGameItemState(
+    val oldGameItemHeaderState: OldGameItemHeaderState,
+    val oldGameItemBodyState: OldGameItemBodyState,
+)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OldGameItem(
-    oldGameItemState: Pair<Int, List<Pair<String, Int>>>,
+    state: OldGameItemState,
     onClick: () -> Unit,
 ) {
     Card(
@@ -51,14 +62,18 @@ fun OldGameItem(
         onClick = onClick,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            OldGameItemHeader(oldGameItemState.first)
-            OldGameItemBody(oldGameItemState.second)
+            OldGameItemHeader(state.oldGameItemHeaderState)
+            OldGameItemBody(state.oldGameItemBodyState)
         }
     }
 }
 
+data class OldGameItemHeaderState(
+    val gameName: String,
+)
+
 @Composable
-private fun OldGameItemHeader(item: Int) {
+private fun OldGameItemHeader(state: OldGameItemHeaderState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +83,7 @@ private fun OldGameItemHeader(item: Int) {
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp),
-            text = "Game #$item",
+            text = state.gameName,
             color = Color.White,
             fontWeight = FontWeight.Bold,
         )
@@ -88,8 +103,13 @@ private fun OldGameItemHeader(item: Int) {
     }
 }
 
+data class OldGameItemBodyState(
+    val smallSeatsState: SmallSeatsState,
+    val oldGameItemBodyGameDataState: OldGameItemBodyGameDataState,
+)
+
 @Composable
-private fun OldGameItemBody(seatsState: List<Pair<String, Int>>) {
+private fun OldGameItemBody(state: OldGameItemBodyState) {
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -99,20 +119,27 @@ private fun OldGameItemBody(seatsState: List<Pair<String, Int>>) {
             modifier = Modifier
                 .weight(.7f)
                 .align(Alignment.CenterVertically),
-            seatsState = seatsState,
+            state = state.smallSeatsState,
         )
         OldGameItemBodyGameData(
             modifier = Modifier
                 .weight(.3f)
                 .align(Alignment.CenterVertically),
-            item = 8,
+            state = state.oldGameItemBodyGameDataState,
         )
     }
 }
 
+data class OldGameItemBodyGameDataState(
+    val date: Instant,
+    val numRounds: Int,
+    val bestHandPlayerName: String,
+    val bestHandPoints: Int,
+)
+
 @Composable
 private fun OldGameItemBodyGameData(
-    item: Int,
+    state: OldGameItemBodyGameDataState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -127,7 +154,7 @@ private fun OldGameItemBodyGameData(
                 fontSize = 12.sp,
             )
             Text(
-                text = "21/06/2024\n14:14",
+                text = state.date.prettifyTwoLines(),
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
             )
@@ -140,7 +167,7 @@ private fun OldGameItemBodyGameData(
                 fontSize = 12.sp,
             )
             Text(
-                text = item.toString(),
+                text = state.toString(),
                 fontSize = 12.sp,
             )
         }
@@ -152,8 +179,9 @@ private fun OldGameItemBodyGameData(
                 fontSize = 12.sp,
             )
             Text(
-                text = "$item - Fulanito",
+                text = "${state.bestHandPoints}\n${state.bestHandPlayerName}",
                 fontSize = 12.sp,
+                textAlign = TextAlign.Center,
             )
         }
     }

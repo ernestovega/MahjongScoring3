@@ -2,7 +2,7 @@ package screens.help.diffs.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import screens.help.diffs.model.Diff
+import screens.help.diffs.Diff
 
 
 class DefaultDiffsRepository: DiffsRepository {

@@ -5,14 +5,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import screens.common.BaseViewModel
+import screens.common.ui.BaseViewModel
 import screens.help.diffs.repository.DiffsRepository
 
 class DiffsScreenViewModel(
     private val diffsRepository: DiffsRepository,
 ) : BaseViewModel() {
 
-    val screenState: StateFlow<DiffsScreenState> = diffsRepository.getDiffsFlow
+    val screenStateFlow: StateFlow<DiffsScreenState> = diffsRepository.getDiffsFlow
         .map { DiffsScreenState(it) }
         .stateIn(viewModelScope, SharingStarted.Lazily, DiffsScreenState())
 

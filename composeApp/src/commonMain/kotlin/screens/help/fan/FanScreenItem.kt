@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.west
 import org.jetbrains.compose.resources.stringResource
-import screens.help.fan.model.Fan
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

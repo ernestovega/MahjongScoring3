@@ -33,7 +33,6 @@ import mahjongscoring3.composeapp.generated.resources.self_pick
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import screens.help.diffs.model.Diff
 
 data class DiffsScreenState(
     val diffs: List<Diff> = emptyList(),
@@ -45,7 +44,7 @@ fun DiffsScreen(
     viewModel: DiffsScreenViewModel = koinViewModel<DiffsScreenViewModel>(),
     modifier: Modifier = Modifier,
 ) {
-    val screenState by viewModel.screenState.collectAsState()
+    val state by viewModel.screenStateFlow.collectAsState()
     val listState = rememberLazyListState()
 
     LaunchedEffect(listState) {
@@ -69,7 +68,7 @@ fun DiffsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             state = listState,
         ) {
-            items(screenState.diffs) { item ->
+            items(state.diffs) { item ->
                 DiffsScreenItem(state = item)
             }
         }

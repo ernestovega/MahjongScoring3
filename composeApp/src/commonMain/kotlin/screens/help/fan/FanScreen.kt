@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import screens.help.fan.model.Fan
 
 data class FanScreenState(
     val fan: List<Fan> = emptyList(),
@@ -26,7 +25,7 @@ fun FanScreen(
     viewModel: FanScreenViewModel = koinViewModel<FanScreenViewModel>(),
     modifier: Modifier = Modifier,
 ) {
-    val screenState by viewModel.screenState.collectAsState()
+    val state by viewModel.screenStateFlow.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -35,7 +34,7 @@ fun FanScreen(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(screenState.fan) { itemState ->
+        items(state.fan) { itemState ->
             FanScreenItem(
                 state = itemState,
                 onClick = {},

@@ -31,8 +31,8 @@ fun HelpScreen() {
     val tabTitles = listOf(
         stringResource(Res.string.fan),
         stringResource(Res.string.diffs),
-        stringResource(Res.string.penalties),
-        stringResource(Res.string.rules),
+//        stringResource(Res.string.penalties),
+//        stringResource(Res.string.rules),
     )
     val pagerState = rememberPagerState { tabTitles.size }
     val coroutineScope = rememberCoroutineScope()
@@ -64,8 +64,8 @@ fun HelpScreen() {
             when (page) {
                 0 -> FanScreen()
                 1 -> DiffsScreen()
-                2 -> PenaltiesScreen()
-                3 -> RulesScreen()
+//                2 -> PenaltiesScreen()
+//                3 -> RulesScreen()
             }
         }
     }
