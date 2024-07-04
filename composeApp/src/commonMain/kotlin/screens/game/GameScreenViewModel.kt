@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.stateIn
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.penalties
 import mahjongscoring3.composeapp.generated.resources.totals
+import screens.common.model.TableWinds
 import screens.common.ui.BaseViewModel
 import screens.common.ui.SmallSeatState
 import screens.common.ui.SmallSeatsState
@@ -19,7 +20,7 @@ class GameScreenViewModel(
     getOneGameFlowUseCase: GetOneGameFlowUseCase,
 ) : BaseViewModel() {
 
-    val screenStateFlow: StateFlow<GameScreenState> = getOneGameFlowUseCase.invoke(2)
+    val screenStateFlow: StateFlow<GameScreenState> = getOneGameFlowUseCase.invoke(6)
         .map { game ->
             val gameWinds = game.getSeatsCurrentWind()
             val gameNames = game.getPlayersNamesByCurrentSeat()
@@ -64,6 +65,14 @@ class GameScreenViewModel(
                             roundNum = round.roundNumber,
                             handPoints = round.handPoints,
                             isBestHand = round.isBestHand,
+                            isEastWinner = round.winnerInitialSeat == TableWinds.EAST,
+                            isSouthWinner = round.winnerInitialSeat == TableWinds.SOUTH,
+                            isWestWinner = round.winnerInitialSeat == TableWinds.WEST,
+                            isNorthWinner = round.winnerInitialSeat == TableWinds.NORTH,
+                            isEastLooser = round.discarderInitialSeat == TableWinds.EAST,
+                            isSouthLooser = round.discarderInitialSeat == TableWinds.SOUTH,
+                            isWestLooser = round.discarderInitialSeat == TableWinds.WEST,
+                            isNorthLooser = round.discarderInitialSeat == TableWinds.NORTH,
                             roundPointsEastSeat = round.pointsP1,
                             roundPointsSouthSeat = round.pointsP2,
                             roundPointsWestSeat = round.pointsP3,

@@ -2,7 +2,6 @@ package screens.game
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,12 +32,14 @@ data class GamePageListFooterState(
 )
 
 @Composable
-fun GamePageListTotalsFooter(state: GamePageListFooterState) {
+fun GamePageListTotalsFooter(
+    state: GamePageListFooterState,
+    modifier: Modifier = Modifier,
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .background(MaterialTheme.colors.primarySurface),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GamePageListFooterCell(

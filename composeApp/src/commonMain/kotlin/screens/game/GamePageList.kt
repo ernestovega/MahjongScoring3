@@ -3,8 +3,11 @@ package screens.game
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +25,11 @@ fun GamePageList(state: GamePageListState) {
 
         GamePageListHeader(state = state.gamePageListHeaderState)
 
-        LazyColumn(modifier = Modifier.weight(1f)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
             itemsIndexed(state.roundsStates) { index, roundState ->
                 GamePageListItem(
                     state = roundState,
@@ -32,10 +39,16 @@ fun GamePageList(state: GamePageListState) {
         }
 
         if (state.gamePageListPenaltiesFooterState != null) {
-            GamePageListTotalsFooter(state = state.gamePageListPenaltiesFooterState)
+            GamePageListTotalsFooter(
+                state = state.gamePageListPenaltiesFooterState,
+                modifier = Modifier.background(MaterialTheme.colors.onSurface),
+            )
         }
 
 
-        GamePageListTotalsFooter(state = state.gamePageListTotalsFooterState)
+        GamePageListTotalsFooter(
+            state = state.gamePageListTotalsFooterState,
+            modifier = Modifier.background(MaterialTheme.colors.primarySurface),
+        )
     }
 }

@@ -17,9 +17,13 @@ class FakeRoundsRepository : RoundsRepository {
         DbRound(
             gameId = 6,
             roundId = 31,
-            winnerInitialSeat = TableWinds.EAST,
-            discarderInitialSeat = TableWinds.SOUTH,
-            handPoints = 12,
+            winnerInitialSeat = null,
+            discarderInitialSeat = null,
+            handPoints = 0,
+            penaltyP1 = 20,
+            penaltyP2 = 20,
+            penaltyP3 = 20,
+            penaltyP4 = -60,
         ),
         DbRound(
             gameId = 6,
@@ -125,6 +129,10 @@ class FakeRoundsRepository : RoundsRepository {
             winnerInitialSeat = TableWinds.EAST,
             discarderInitialSeat = TableWinds.SOUTH,
             handPoints = 12,
+            penaltyP1 = 10,
+            penaltyP2 = 10,
+            penaltyP3 = 10,
+            penaltyP4 = -30,
         ),
         DbRound(
             gameId = 5,
@@ -227,18 +235,19 @@ class FakeRoundsRepository : RoundsRepository {
         DbRound(
             gameId = 1,
             roundId = 1,
-            winnerInitialSeat = null,
-            discarderInitialSeat = null,
         ),
-    )
+    ).sortedBy { it.roundId }
 
     override fun getAllFlow(): Flow<List<DbRound>> = flowOf(fakeRounds)
 
-    override fun getGameRoundsFlow(gameId: GameId): Flow<List<DbRound>> = flowOf(fakeRounds.filter { it.gameId == gameId })
+    override fun getGameRoundsFlow(gameId: GameId): Flow<List<DbRound>> =
+        flowOf(fakeRounds.filter { it.gameId == gameId })
 
-    override suspend fun getGameRounds(gameId: GameId): Result<List<DbRound>> = runCatching { fakeRounds.filter { it.gameId == gameId } }
+    override suspend fun getGameRounds(gameId: GameId): Result<List<DbRound>> =
+        runCatching { fakeRounds.filter { it.gameId == gameId } }
 
-    override suspend fun getOne(roundId: RoundId): Result<DbRound> = runCatching { fakeRounds.find { it.roundId == roundId } ?: throw RoundNotFoundException(roundId) }
+    override suspend fun getOne(roundId: RoundId): Result<DbRound> =
+        runCatching { fakeRounds.find { it.roundId == roundId } ?: throw RoundNotFoundException(roundId) }
 
     override suspend fun insertOne(dbRound: DbRound): Result<Boolean> = runCatching { true }
 

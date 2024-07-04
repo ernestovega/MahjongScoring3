@@ -218,10 +218,10 @@ data class UiGame(
             ongoingOrLastRound.totalPointsP4,
         )
         return intArrayOf(
-            totalPointsByInitialSeat[getPlayerInitialSeatByCurrentSeat(EAST).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByCurrentSeat(SOUTH).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByCurrentSeat(WEST).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByCurrentSeat(NORTH).code],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).code],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).code],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).code],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).code],
         )
     }
 
@@ -233,10 +233,10 @@ data class UiGame(
             ongoingOrLastRound.penaltyP4,
         )
         return intArrayOf(
-            penaltiesByInitialSeat[getPlayerInitialSeatByCurrentSeat(EAST).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByCurrentSeat(SOUTH).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByCurrentSeat(WEST).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByCurrentSeat(NORTH).code],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).code],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).code],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).code],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).code],
         )
     }
 
@@ -286,7 +286,7 @@ data class UiGame(
             else -> NORTH
         }
 
-    fun getPlayerInitialSeatByCurrentSeat(currentSeatPosition: TableWinds): TableWinds =
+    fun getPlayerInitialSeatByOngoingOrLastRoundSeat(currentSeatPosition: TableWinds): TableWinds =
         when (ongoingOrLastRound.roundNumber) {
             1, 2, 3, 4 -> getPlayerInitialPositionBySeatInRoundEast(currentSeatPosition)
             5, 6, 7, 8 -> getPlayerInitialPositionBySeatInRoundSouth(currentSeatPosition)

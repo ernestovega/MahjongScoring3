@@ -45,7 +45,7 @@ data class DbRound(
         roundId: RoundId = NOT_SET_ROUND_ID,
         winnerInitialSeat: TableWinds?,
         discarderInitialSeat: TableWinds?,
-        handPoints: Int = 0,
+        handPoints: Int,
         penaltyP1: Int = 0,
         penaltyP2: Int = 0,
         penaltyP3: Int = 0,
