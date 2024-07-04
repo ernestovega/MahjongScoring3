@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -28,15 +29,15 @@ data class GamePageListItemState(
     val roundPointsWestSeat: Int = 0,
     val roundPointsNorthSeat: Int = 0,
 
-    val penaltiesEastSeat: Int = 0,
-    val penaltiesSouthSeat: Int = 0,
-    val penaltiesWestSeat: Int = 0,
-    val penaltiesNorthSeat: Int = 0,
+    val penaltiesEastSeat: Int? = null,
+    val penaltiesSouthSeat: Int? = null,
+    val penaltiesWestSeat: Int? = null,
+    val penaltiesNorthSeat: Int? = null,
 
-    val totalPointsEastSeat: Int = 0,
-    val totalPointsSouthSeat: Int = 0,
-    val totalPointsWestSeat: Int = 0,
-    val totalPointsNorthSeat: Int = 0,
+    val roundTotalPointsEastSeat: Int = 0,
+    val roundTotalPointsSouthSeat: Int = 0,
+    val roundTotalPointsWestSeat: Int = 0,
+    val roundTotalPointsNorthSeat: Int = 0,
 )
 
 @Composable
@@ -49,54 +50,75 @@ fun GamePageListItem(
             .fillMaxWidth()
             .padding(vertical = 4.dp),
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.roundNum.toSignedString())
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.handPoints.toSignedString())
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.roundPointsEastSeat.toSignedString())
-            GamePageListItemCell(text = state.penaltiesEastSeat.toSignedString())
-            GamePageListItemCell(text = state.totalPointsEastSeat.toSignedString())
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.roundPointsSouthSeat.toSignedString())
-            GamePageListItemCell(text = state.penaltiesSouthSeat.toSignedString())
-            GamePageListItemCell(text = state.totalPointsSouthSeat.toSignedString())
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.roundPointsWestSeat.toSignedString())
-            GamePageListItemCell(text = state.penaltiesWestSeat.toSignedString())
-            GamePageListItemCell(text = state.totalPointsWestSeat.toSignedString())
-        }
-        Column(modifier = Modifier.weight(1f)) {
-            GamePageListItemCell(text = state.roundPointsNorthSeat.toSignedString())
-            GamePageListItemCell(text = state.penaltiesNorthSeat.toSignedString())
-            GamePageListItemCell(text = state.totalPointsNorthSeat.toSignedString())
-        }
+        GamePageListItemCell(text = state.roundNum)
+        GamePageListItemCell(text = state.handPoints)
+        GamePageListItemCell(
+            roundPoints = state.roundPointsEastSeat,
+            roundPenalty = state.penaltiesEastSeat,
+            roundTotalPoints = state.roundTotalPointsEastSeat,
+        )
+        GamePageListItemCell(
+            roundPoints = state.roundPointsSouthSeat,
+            roundPenalty = state.penaltiesSouthSeat,
+            roundTotalPoints = state.roundTotalPointsSouthSeat,
+        )
+        GamePageListItemCell(
+            roundPoints = state.roundPointsWestSeat,
+            roundPenalty = state.penaltiesWestSeat,
+            roundTotalPoints = state.roundTotalPointsWestSeat,
+        )
+        GamePageListItemCell(
+            roundPoints = state.roundPointsNorthSeat,
+            roundPenalty = state.penaltiesNorthSeat,
+            roundTotalPoints = state.roundTotalPointsNorthSeat,
+        )
     }
 }
 
 @Composable
-fun ColumnScope.GamePageListItemCell(
-    text: String = "",
-    weight: Float = 1f,
-    fontWeight: FontWeight = FontWeight.Normal,
-    backgroundColor: Color = MaterialTheme.colors.background,
-    textColor: Color = MaterialTheme.colors.contentColorFor(backgroundColor),
+private fun RowScope.GamePageListItemCell(text: Int) {
+    Column(modifier = Modifier.weight(1f)) {
+        GamePageListItemCellText(text = text)
+    }
+}
+
+@Composable
+private fun RowScope.GamePageListItemCell(
+    roundPoints: Int,
+    roundPenalty: Int?,
+    roundTotalPoints: Int,
 ) {
+    Column(modifier = Modifier.weight(1f)) {
+        GamePageListItemCellText(text = roundPoints)
+        roundPenalty?.let { GamePageListItemCellText(text = it) }
+        GamePageListItemCellText(text = roundTotalPoints)
+    }
+}
+
+
+@Composable
+private fun ColumnScope.GamePageListItemCellText(
+    text: Int,
+    shouldBeColored: Boolean = true,
+) {
+    val defaultColor = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.background)
+    val positiveColor = Color.Green
+    val negativeColor = Color.Red
+
     Box(
         modifier = Modifier
-            .weight(weight)
+            .weight(1f)
             .padding(4.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = text,
-            color = textColor,
-            fontWeight = fontWeight,
-            textAlign = TextAlign.Center,
+            text = text.toSignedString(),
+            color = when {
+                !shouldBeColored -> defaultColor
+                text < 0 -> negativeColor
+                else -> positiveColor
+            },
+//            textAlign = TextAlign.Center,
         )
     }
 }

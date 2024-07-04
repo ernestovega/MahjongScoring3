@@ -1,8 +1,8 @@
 package screens.common.use_cases
 
 import kotlinx.datetime.Clock
-import screens.common.data.DbGame
-import screens.common.data.DbRound
+import screens.common.data.games.DbGame
+import screens.common.data.rounds.DbRound
 import screens.common.data.games.GamesRepository
 import screens.common.data.rounds.RoundsRepository
 import screens.common.model.GameId

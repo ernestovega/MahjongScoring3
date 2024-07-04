@@ -2,7 +2,6 @@ package screens.common.data.rounds
 
 import screens.common.model.GameId
 import screens.common.model.RoundId
-import screens.common.data.DbRound
 import kotlinx.coroutines.flow.Flow
 
 interface RoundsRepository {

@@ -40,8 +40,7 @@ data class UiRound(
         penaltyP4 = 0,
     )
 
-    fun areTherePenalties(): Boolean =
-        penaltyP1 != 0 || penaltyP2 != 0 || penaltyP3 != 0 || penaltyP4 != 0
+    val areTherePenalties: Boolean get() = penaltyP1 != 0 || penaltyP2 != 0 || penaltyP3 != 0 || penaltyP4 != 0
 
     fun isOngoing(): Boolean = winnerInitialSeat == null
 }

@@ -2,7 +2,7 @@ package screens.common.model
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import screens.common.data.DbGame
+import screens.common.data.games.DbGame
 
 @Serializable
 data class PortableGame(

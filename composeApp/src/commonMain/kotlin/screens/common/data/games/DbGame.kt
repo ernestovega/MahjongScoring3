@@ -1,4 +1,4 @@
-package screens.common.data
+package screens.common.data.games
 
 //import androidx.room.ColumnInfo
 //import androidx.room.Entity

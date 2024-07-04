@@ -33,9 +33,7 @@ fun MahjongScoringApp(
 
     Scaffold(
         topBar = {
-            AppTopBar(
-                currentScreen = currentScreen,
-            )
+            AppTopBar(currentScreen = currentScreen,)
         },
         bottomBar = {
             AppBottomBar(

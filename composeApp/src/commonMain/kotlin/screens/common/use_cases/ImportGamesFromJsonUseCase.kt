@@ -9,7 +9,7 @@ import screens.common.model.toDbGame
 import screens.common.model.toDbRounds
 import screens.common.model.GameId
 //import screens.common.model.JsonGamesNotValidException
-import screens.common.data.DbGame
+import screens.common.data.games.DbGame
 import screens.common.data.games.GamesRepository
 import screens.common.data.rounds.RoundsRepository
 import kotlinx.serialization.builtins.ListSerializer

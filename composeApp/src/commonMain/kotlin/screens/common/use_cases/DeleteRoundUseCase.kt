@@ -1,8 +1,7 @@
 package screens.common.use_cases
 
 import screens.common.model.RoundId
-import screens.common.model.UiRound
-import screens.common.data.DbRound
+import screens.common.data.rounds.DbRound
 import screens.common.data.rounds.RoundsRepository
 import screens.common.ui.NOT_SET_ROUND_ID
 

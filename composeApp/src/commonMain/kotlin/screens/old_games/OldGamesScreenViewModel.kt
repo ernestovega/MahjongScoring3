@@ -4,56 +4,65 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.Clock
-import screens.common.model.TableWinds
+import screens.common.model.UiGame
 import screens.common.ui.BaseViewModel
 import screens.common.ui.SmallSeatState
 import screens.common.ui.SmallSeatsState
 import screens.common.use_cases.GetAllGamesFlowUseCase
+import screens.common.use_cases.utils.fourth
+import screens.common.use_cases.utils.second
+import screens.common.use_cases.utils.third
 
 class OldGamesScreenViewModel(
-    getAllGamesFlowUseCase: GetAllGamesFlowUseCase
+    getAllGamesFlowUseCase: GetAllGamesFlowUseCase,
 ) : BaseViewModel() {
 
     val screenStateFlow: StateFlow<OldGamesScreenState> = getAllGamesFlowUseCase.invoke()
-        .map { games ->
-            OldGamesScreenState(
-                gamesStates = games.map { game ->
-                    OldGameItemState(
-                        oldGameItemHeaderState = OldGameItemHeaderState(gameName = ""),
-                        oldGameItemBodyState = OldGameItemBodyState(
-                            smallSeatsState = SmallSeatsState(
-                                eastSeat = SmallSeatState(
-                                    wind = TableWinds.SOUTH,
-                                    name = "",
-                                    points = 0
-                                ), 
-                                southSeat = SmallSeatState(
-                                    wind = TableWinds.SOUTH,
-                                    name = "",
-                                    points = 0
-                                ), 
-                                westSeat = SmallSeatState(
-                                    wind = TableWinds.SOUTH,
-                                    name = "",
-                                    points = 0
-                                ), 
-                                northSeat = SmallSeatState(
-                                    wind = TableWinds.SOUTH,
-                                    name = "",
-                                    points = 0
-                                )
-                            ), 
-                            oldGameItemBodyGameDataState = OldGameItemBodyGameDataState(
-                                date = Clock.System.now(),
-                                numRounds = 0,
-                                bestHandPlayerName = "",
-                                bestHandPoints = 0
-                            )
+        .map(::toOldGamesScreenState)
+        .stateIn(viewModelScope, SharingStarted.Lazily, OldGamesScreenState())
+
+    private fun toOldGamesScreenState(games: List<UiGame>) = OldGamesScreenState(
+        gamesStates = games.map { game ->
+            val winds = game.getSeatsCurrentWind()
+            val names = game.getPlayersNamesByCurrentSeat()
+            val points = game.getPlayersTotalPointsByCurrentSeat()
+            OldGameItemState(
+                oldGameItemHeaderState = OldGameItemHeaderState(
+                    gameName = game.gameName.ifEmpty { "#${game.gameId}" }
+                ),
+                oldGameItemBodyState = OldGameItemBodyState(
+                    smallSeatsState = SmallSeatsState(
+                        eastSeat = SmallSeatState(
+                            wind = winds.first(),
+                            name = names.first(),
+                            points = points.first(),
+                        ),
+                        southSeat = SmallSeatState(
+                            wind = winds.second(),
+                            name = names.second(),
+                            points = points.second(),
+                        ),
+                        westSeat = SmallSeatState(
+                            wind = winds.third(),
+                            name = names.third(),
+                            points = points.third(),
+                        ),
+                        northSeat = SmallSeatState(
+                            wind = winds.fourth(),
+                            name = names.fourth(),
+                            points = points.fourth(),
                         )
-                    )
-                }
+                    ),
+                    oldGameItemBodyInfoState = game.getBestHand().let { bestHand ->
+                        OldGameItemBodyInfoState(
+                            date = game.startDate,
+                            numRounds = game.uiRounds.size,
+                            bestHandPoints = bestHand.handValue,
+                            bestHandPlayerName = bestHand.playerName,
+                        )
+                    }
+                )
             )
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, OldGamesScreenState())
+    )
 }

@@ -23,44 +23,43 @@ fun SmallSeats(
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val centralBoxSize = 32.dp * 2
+        val centralBoxSize = 32.dp
+        val horizontalSeparation = centralBoxSize * 2
+        val verticalSeparation = centralBoxSize * 1.75f
 
+        //CENTRAL BOX
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(centralBoxSize / 2),
+                .size(centralBoxSize),
         )
-
         // BOTTOM - EAST
         SmallSeat(
             state = state.eastSeat,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = centralBoxSize),
+                .offset(y = verticalSeparation),
         )
-
         // RIGHT - SOUTH
         SmallSeat(
             state = state.southSeat,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(x = centralBoxSize),
+                .offset(x = horizontalSeparation),
         )
-
         // TOP - WEST
         SmallSeat(
             state = state.westSeat,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = -centralBoxSize),
+                .offset(y = -verticalSeparation),
         )
-
         // LEFT - NORTH
         SmallSeat(
             state = state.northSeat,
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(x = -centralBoxSize),
+                .offset(x = -horizontalSeparation),
         )
     }
 }

@@ -8,7 +8,7 @@ import screens.common.model.TableWinds.EAST
 import screens.common.model.TableWinds.NORTH
 import screens.common.model.TableWinds.SOUTH
 import screens.common.model.TableWinds.WEST
-import screens.common.data.DbRound
+import screens.common.data.rounds.DbRound
 import screens.common.data.rounds.RoundsRepository
 
 class SetPenaltyUseCase(

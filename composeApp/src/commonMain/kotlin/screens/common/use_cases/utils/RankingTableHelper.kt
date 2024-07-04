@@ -38,10 +38,10 @@ object RankingTableHelper {
     }
 
     private fun setPlayersNamesAndScores(uiGame: UiGame): List<PlayerRanking> = listOf(
-        PlayerRanking(uiGame.nameP1, uiGame.ongoingRound.totalPointsP1),
-        PlayerRanking(uiGame.nameP2, uiGame.ongoingRound.totalPointsP2),
-        PlayerRanking(uiGame.nameP3, uiGame.ongoingRound.totalPointsP3),
-        PlayerRanking(uiGame.nameP4, uiGame.ongoingRound.totalPointsP4)
+        PlayerRanking(uiGame.nameP1, uiGame.ongoingOrLastRound.totalPointsP1),
+        PlayerRanking(uiGame.nameP2, uiGame.ongoingOrLastRound.totalPointsP2),
+        PlayerRanking(uiGame.nameP3, uiGame.ongoingOrLastRound.totalPointsP3),
+        PlayerRanking(uiGame.nameP4, uiGame.ongoingOrLastRound.totalPointsP4)
     )
 
     private fun setPlayersTablePoints(sortedPlayers: List<PlayerRanking>): List<PlayerRanking> {

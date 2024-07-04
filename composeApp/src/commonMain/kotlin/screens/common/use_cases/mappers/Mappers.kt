@@ -3,8 +3,8 @@ package screens.common.use_cases.mappers
 
 import screens.common.model.UiGame
 import screens.common.model.UiRound
-import screens.common.data.DbGame
-import screens.common.data.DbRound
+import screens.common.data.games.DbGame
+import screens.common.data.rounds.DbRound
 
 fun DbGame.toUiGame(dbRounds: List<DbRound>): UiGame =
     UiGame(

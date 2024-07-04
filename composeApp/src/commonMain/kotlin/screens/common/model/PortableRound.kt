@@ -1,7 +1,7 @@
 package screens.common.model
 
 import kotlinx.serialization.Serializable
-import screens.common.data.DbRound
+import screens.common.data.rounds.DbRound
 
 @Serializable
 data class PortableRound(

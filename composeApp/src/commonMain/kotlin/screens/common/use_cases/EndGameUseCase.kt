@@ -2,7 +2,7 @@ package screens.common.use_cases
 
 import kotlinx.datetime.Clock
 import screens.common.model.UiGame
-import screens.common.data.DbGame
+import screens.common.data.games.DbGame
 import screens.common.data.games.GamesRepository
 
 class EndGameUseCase(

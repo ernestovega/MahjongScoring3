@@ -1,4 +1,4 @@
-package screens.common.data
+package screens.common.data.rounds
 
 //import androidx.room.Entity
 //import androidx.room.ForeignKey

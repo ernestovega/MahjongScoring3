@@ -86,6 +86,42 @@ fun <T> List<T>.fourth(): T {
     return this[3]
 }
 
+fun <T> Array<T>.second(): T {
+    if (size < 2)
+        throw NoSuchElementException("Not enough elements")
+    return this[1]
+}
+
+fun <T> Array<T>.third(): T {
+    if (size < 3)
+        throw NoSuchElementException("Not enough elements")
+    return this[2]
+}
+
+fun <T> Array<T>.fourth(): T {
+    if (size < 4)
+        throw NoSuchElementException("Not enough elements")
+    return this[3]
+}
+
+fun IntArray.second(): Int {
+    if (size < 2)
+        throw NoSuchElementException("Not enough elements")
+    return this[1]
+}
+
+fun IntArray.third(): Int {
+    if (size < 3)
+        throw NoSuchElementException("Not enough elements")
+    return this[2]
+}
+
+fun IntArray.fourth(): Int {
+    if (size < 4)
+        throw NoSuchElementException("Not enough elements")
+    return this[3]
+}
+
 fun Int?.toStringOrHyphen(): String = this?.toString() ?: "-"
 
 fun PlayerRanking.toSignedString() = "$name    $points    (${score.toSignedString()})"

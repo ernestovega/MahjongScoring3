@@ -1,7 +1,6 @@
 package screens.common.data.games
 
 import screens.common.model.GameId
-import screens.common.data.DbGame
 import kotlinx.coroutines.flow.Flow
 
 interface GamesRepository {

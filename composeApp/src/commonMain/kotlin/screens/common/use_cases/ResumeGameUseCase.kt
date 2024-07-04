@@ -2,8 +2,8 @@ package screens.common.use_cases
 
 import screens.common.model.UiGame
 import screens.common.model.GameRoundsNumberExceededException
-import screens.common.data.DbGame
-import screens.common.data.DbRound
+import screens.common.data.games.DbGame
+import screens.common.data.rounds.DbRound
 import screens.common.data.games.GamesRepository
 import screens.common.data.rounds.RoundsRepository
 import screens.common.ui.MAX_MCR_ROUNDS

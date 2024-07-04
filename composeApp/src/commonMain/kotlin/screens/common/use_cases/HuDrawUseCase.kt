@@ -2,7 +2,7 @@ package screens.common.use_cases
 
 import screens.common.model.UiGame
 import screens.common.model.TableWinds.NONE
-import screens.common.data.DbRound
+import screens.common.data.rounds.DbRound
 import screens.common.data.rounds.RoundsRepository
 
 class HuDrawUseCase(
@@ -10,7 +10,7 @@ class HuDrawUseCase(
     private val endRoundUseCase: EndRoundUseCase,
 ) {
     suspend operator fun invoke(uiGame: UiGame): Result<Boolean> =
-        with(uiGame.ongoingRound) {
+        with(uiGame.ongoingOrLastRound) {
             roundsRepository.updateOne(
                 DbRound(
                     gameId = this.gameId,

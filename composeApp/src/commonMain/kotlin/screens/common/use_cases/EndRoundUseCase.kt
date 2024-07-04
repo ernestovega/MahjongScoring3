@@ -1,7 +1,7 @@
 package screens.common.use_cases
 
 import kotlinx.coroutines.flow.first
-import screens.common.data.DbRound
+import screens.common.data.rounds.DbRound
 import screens.common.data.rounds.RoundsRepository
 import screens.common.model.GameId
 import screens.common.ui.MAX_MCR_ROUNDS
