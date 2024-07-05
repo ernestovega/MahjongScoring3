@@ -4,41 +4,41 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import mahjongscoring3.composeapp.generated.resources.Res
+import mahjongscoring3.composeapp.generated.resources.diff
+import mahjongscoring3.composeapp.generated.resources.direct
+import mahjongscoring3.composeapp.generated.resources.indirect
+import mahjongscoring3.composeapp.generated.resources.self_pick
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun DiffsScreenItem(
-    state: Diff,
-    modifier: Modifier = Modifier,
-) {
+fun DiffsScreenHeader() {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .height(40.dp)
+            .background(MaterialTheme.colors.primary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         listOf(
-            state.pointsNeeded,
-            state.selfPick,
-            state.directHu,
-            state.indirectHu,
-        ).forEach { value ->
+            Res.string.diff,
+            Res.string.self_pick,
+            Res.string.direct,
+            Res.string.indirect,
+        ).forEach { title ->
             Text(
                 modifier = Modifier.weight(1f),
-                text = value.toString(),
+                text = stringResource(title),
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onBackground,
+                color = MaterialTheme.colors.onPrimary,
                 textAlign = TextAlign.Center,
             )
         }

@@ -11,11 +11,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import mahjongscoring3.composeapp.generated.resources.Res
@@ -31,15 +29,15 @@ fun OldGameItemHeader(state: OldGameItemHeaderState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.primarySurface),
+            .background(MaterialTheme.colors.primary),
     ) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp),
             text = state.gameName,
-            color = Color.White,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colors.onPrimary,
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -50,8 +48,8 @@ fun OldGameItemHeader(state: OldGameItemHeaderState) {
         ) {
             Icon(
                 imageVector = Icons.Filled.Menu,
-                tint = Color.White,
                 contentDescription = stringResource(Res.string.menu),
+                tint = MaterialTheme.colors.onPrimary,
             )
         }
     }

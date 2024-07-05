@@ -39,13 +39,11 @@ fun GamePageListTotalsFooter(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(48.dp)
+            .background(MaterialTheme.colors.primary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        GamePageListFooterCell(
-            text = stringResource(state.title),
-            modifier = Modifier.weight(2f),
-        )
+        GamePageListFooterCell(text = stringResource(state.title), modifier = Modifier.weight(2f),)
         GamePageListFooterCell(text = state.pointsPlayerEastSeat.toSignedString())
         GamePageListFooterCell(text = state.pointsPlayerSouthSeat.toSignedString())
         GamePageListFooterCell(text = state.pointsPlayerWestSeat.toSignedString())
@@ -58,13 +56,10 @@ private fun RowScope.GamePageListFooterCell(
     text: String,
     modifier: Modifier = Modifier.weight(1f),
 ) {
-    Box(
-        modifier = modifier.padding(4.dp),
-        contentAlignment = Alignment.Center,
-    ) {
+    Box(modifier = modifier.padding(4.dp), contentAlignment = Alignment.Center) {
         Text(
             text = text,
-            color = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface),
+            color = MaterialTheme.colors.onPrimary,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

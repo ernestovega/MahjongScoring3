@@ -33,7 +33,6 @@ fun FanScreenItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         elevation = 4.dp,
-        backgroundColor = Color.White,
         shape = RoundedCornerShape(8.dp),
         onClick = onClick,
     ) {

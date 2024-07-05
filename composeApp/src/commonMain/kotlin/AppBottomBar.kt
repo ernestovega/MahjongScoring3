@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -33,6 +34,7 @@ fun AppBottomBar(
 ) {
     BottomNavigation(
         modifier = Modifier.fillMaxWidth(),
+        backgroundColor = MaterialTheme.colors.primary,
     ) {
         AppBottomBarItem(
             isSelected = currentScreen.name == AppScreens.OldGames.name,
@@ -66,19 +68,22 @@ private fun RowScope.AppBottomBarItem(
     title: StringResource,
     onClick: () -> Unit
 ) {
+    val color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+
     BottomNavigationItem(
         selected = isSelected,
         icon = {
             Icon(
                 imageVector = if (isSelected) selectedIcon else unselectedIcon,
                 contentDescription = stringResource(title),
-                tint = if (isSelected) Color.White else Color.LightGray,
+                tint = color,
             )
         },
         label = {
             Text(
-                text = stringResource(title),
+                text = with (stringResource(title)) { if (isSelected) uppercase() else this },
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                color = color,
             )
         },
         alwaysShowLabel = true,

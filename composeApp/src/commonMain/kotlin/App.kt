@@ -4,6 +4,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,26 +17,37 @@ import org.koin.compose.KoinContext
 import screens.game.GameScreen
 import screens.help.HelpScreen
 import screens.old_games.OldGamesScreen
+import theme.DarkColorPalette
+import theme.LightColorPalette
 
 @Composable
 fun App() {
-    MaterialTheme {
+    var isDarkTheme by remember { mutableStateOf(true) }
+    MaterialTheme(
+        colors = if (isDarkTheme) DarkColorPalette else LightColorPalette,
+    ) {
         KoinContext {
-            MahjongScoringApp()
+            MahjongScoringApp(
+                changeColorMode = { isDarkTheme = !isDarkTheme }
+            )
         }
     }
 }
 
 @Composable
 fun MahjongScoringApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    changeColorMode: () -> Unit,
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGames.name)
 
     Scaffold(
         topBar = {
-            AppTopBar(currentScreen = currentScreen,)
+            AppTopBar(
+                currentScreen = currentScreen,
+                onColorModeClick = changeColorMode,
+            )
         },
         bottomBar = {
             AppBottomBar(

@@ -28,9 +28,7 @@ fun OldGamesScreen(
     val state by viewModel.screenStateFlow.collectAsState()
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray),
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {

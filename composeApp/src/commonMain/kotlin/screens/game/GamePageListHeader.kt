@@ -38,7 +38,7 @@ fun GamePageListHeader(state: GamePageListHeaderState) {
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .background(MaterialTheme.colors.primarySurface),
+            .background(MaterialTheme.colors.primary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         GamePageListHeaderCell(text = "#")
@@ -61,7 +61,7 @@ private fun RowScope.GamePageListHeaderCell(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.primarySurface),
+            color = MaterialTheme.colors.onPrimary,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

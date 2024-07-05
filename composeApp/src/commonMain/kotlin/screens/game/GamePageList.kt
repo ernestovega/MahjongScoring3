@@ -33,7 +33,9 @@ fun GamePageList(state: GamePageListState) {
             itemsIndexed(state.roundsStates) { index, roundState ->
                 GamePageListItem(
                     state = roundState,
-                    modifier = Modifier.background(if (index % 2 == 0) Color.White else Color.LightGray),
+                    modifier = Modifier.background(
+                        if (index % 2 == 0) MaterialTheme.colors.background else MaterialTheme.colors.surface
+                    ),
                 )
             }
         }
@@ -46,9 +48,6 @@ fun GamePageList(state: GamePageListState) {
         }
 
 
-        GamePageListTotalsFooter(
-            state = state.gamePageListTotalsFooterState,
-            modifier = Modifier.background(MaterialTheme.colors.primarySurface),
-        )
+        GamePageListTotalsFooter(state = state.gamePageListTotalsFooterState)
     }
 }

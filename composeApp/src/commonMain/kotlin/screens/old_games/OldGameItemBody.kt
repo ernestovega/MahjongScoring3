@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,7 +63,7 @@ fun OldGameItemBodyInfo(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -91,13 +91,12 @@ private fun OldGameItemBodyInfoBlock(
         Text(
             text = stringResource(title),
             fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.body2,
         )
         Text(
             text = body,
             textAlign = TextAlign.Center,
-            fontSize = 12.sp,
-            lineHeight = 16.sp,
+            style = MaterialTheme.typography.body2,
         )
     }
 }

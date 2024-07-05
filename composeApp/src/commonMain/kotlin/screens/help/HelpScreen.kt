@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
@@ -20,6 +21,7 @@ import mahjongscoring3.composeapp.generated.resources.fan
 import mahjongscoring3.composeapp.generated.resources.penalties
 import mahjongscoring3.composeapp.generated.resources.rules
 import org.jetbrains.compose.resources.stringResource
+import screens.common.use_cases.utils.capitalize
 import screens.help.diffs.DiffsScreen
 import screens.help.fan.FanScreen
 import screens.help.penalties.PenaltiesScreen
@@ -41,14 +43,17 @@ fun HelpScreen() {
         TabRow(
             modifier = Modifier.fillMaxWidth(),
             selectedTabIndex = pagerState.currentPage,
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary,
         ) {
             tabTitles.forEachIndexed { index, title ->
                 val isSelected = pagerState.currentPage == index
                 Tab(
                     text = {
                         Text(
-                            text = title,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            text = title.uppercase(),
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            style = MaterialTheme.typography.body1,
                         )
                     },
                     selected = isSelected,

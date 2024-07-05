@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import screens.common.ui.NEGATIVE_COLOR
-import screens.common.ui.POSITIVE_COLOR
 import screens.common.use_cases.utils.toSignedString
+import theme.AppColors.greenMM
+import theme.AppColors.red
 
 data class GamePageListItemState(
     val roundNum: Int = 0,
@@ -104,15 +103,13 @@ private fun GamePageListItemCellText(
     isWinner: Boolean = false,
     isLooser: Boolean = false,
 ) {
-    val defaultColor = MaterialTheme.colors.contentColorFor(MaterialTheme.colors.background)
-
     Box(modifier = Modifier.padding(4.dp)) {
         Text(
             text = if (shouldBeSigned) text.toSignedString() else text.toString(),
             color = when {
-                isWinner -> POSITIVE_COLOR
-                isLooser -> NEGATIVE_COLOR
-                else -> defaultColor
+                isWinner -> greenMM
+                isLooser -> red
+                else -> MaterialTheme.colors.onSurface
             },
         )
     }
@@ -123,8 +120,8 @@ private fun GamePageListItemCellTextSmall(text: Int) {
     Box(modifier = Modifier.padding(start = 24.dp, bottom = 2.dp)) {
         Text(
             text =text.toSignedString(),
-            color = if (text < 0) NEGATIVE_COLOR else POSITIVE_COLOR,
-            fontSize = MaterialTheme.typography.caption.fontSize,
+            color = if (text < 0) red else greenMM,
+            style = MaterialTheme.typography.caption,
         )
     }
 }
