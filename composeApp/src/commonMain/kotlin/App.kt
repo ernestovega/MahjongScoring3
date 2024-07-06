@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,21 +15,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.KoinContext
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 import screens.game.GameScreen
 import screens.help.HelpScreen
 import screens.old_games.OldGamesScreen
-import theme.DarkColorPalette
-import theme.LightColorPalette
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
-fun App() {
-    var isDarkTheme by remember { mutableStateOf(true) }
+fun App(
+    viewModel: AppViewModel = koinViewModel<AppViewModel>(),
+) {
+    val isDarkMode by viewModel.isDarkModeFlow.collectAsState()
+
     MaterialTheme(
-        colors = if (isDarkTheme) DarkColorPalette else LightColorPalette,
+        colors = if (isDarkMode) AppColors.DarkColorPalette else AppColors.LightColorPalette,
     ) {
         KoinContext {
             MahjongScoringApp(
-                changeColorMode = { isDarkTheme = !isDarkTheme }
+                changeColorMode = { viewModel.changeColorMode() }
             )
         }
     }

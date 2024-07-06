@@ -1,5 +1,6 @@
 package di
 
+import AppViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -41,6 +42,7 @@ expect val platformModule: Module
 
 val sharedModule = module {
     //ViewModels
+    viewModelOf(::AppViewModel)
     viewModelOf(::FanScreenViewModel)
     viewModelOf(::DiffsScreenViewModel)
     viewModelOf(::OldGamesScreenViewModel)

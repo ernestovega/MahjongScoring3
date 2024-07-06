@@ -41,12 +41,12 @@ fun GamePageListHeader(state: GamePageListHeaderState) {
             .background(MaterialTheme.colors.primary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        GamePageListHeaderCell(text = "#")
-        GamePageListHeaderCell(text = stringResource(Res.string.pts))
-        GamePageListHeaderCell(text = state.playerNameEastSeat)
-        GamePageListHeaderCell(text = state.playerNameSouthSeat)
-        GamePageListHeaderCell(text = state.playerNameWestSeat)
-        GamePageListHeaderCell(text = state.playerNameNorthSeat)
+        GamePageListHeaderCell("#", Modifier.weight(.5f))
+        GamePageListHeaderCell(stringResource(Res.string.pts), Modifier.weight(.5f))
+        GamePageListHeaderCell(state.playerNameEastSeat)
+        GamePageListHeaderCell(state.playerNameSouthSeat)
+        GamePageListHeaderCell(state.playerNameWestSeat)
+        GamePageListHeaderCell(state.playerNameNorthSeat)
     }
 }
 
