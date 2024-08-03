@@ -1,8 +1,9 @@
 package screens.common.model
 
+import database.tables.DbGame
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import screens.common.data.games.DbGame
+import screens.common.ui.GameId
 
 @Serializable
 data class PortableGame(

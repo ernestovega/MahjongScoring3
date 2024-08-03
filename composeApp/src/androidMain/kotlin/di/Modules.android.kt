@@ -1,9 +1,13 @@
 package di
 
-import org.koin.compose.viewmodel.dsl.viewModelOf
+import com.etologic.mahjongscoring.database.getRoomDatabase
+import database.AppDatabase
+import database.daos.GamesDao
+import database.daos.RoundsDao
+import org.koin.dsl.bind
 import org.koin.dsl.module
-import screens.help.fan.FanScreenViewModel
 
 actual val platformModule = module {
-    viewModelOf(::FanScreenViewModel)
+    //Database
+    single<AppDatabase> { getRoomDatabase(get()) }
 }

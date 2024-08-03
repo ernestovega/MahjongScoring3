@@ -23,6 +23,7 @@
     <string name="pts">Pts</string>
     <string name="totals">Totals</string>
     <string name="color_mode">Color mode</string>
+    <string name="create_game">Create game</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>

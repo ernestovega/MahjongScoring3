@@ -1,6 +1,6 @@
 package screens.common.model
 
-import screens.common.model.TableWinds
+import screens.common.model.enums.TableWinds
 
 data class PenaltyData(
     val points: Int,

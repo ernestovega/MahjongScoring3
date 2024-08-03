@@ -1,4 +1,4 @@
-package screens.common.model
+package screens.common.model.enums
 
 enum class SeatsOrientation(val code: Int) {
     DOWN(0),

@@ -1,11 +1,12 @@
 package screens.common.data.rounds
 
+import database.tables.DbRound
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import screens.common.model.GameId
-import screens.common.model.RoundId
-import screens.common.model.RoundNotFoundException
-import screens.common.model.TableWinds
+import screens.common.model.enums.TableWinds
+import screens.common.model.exceptions.RoundNotFoundException
+import screens.common.ui.GameId
+import screens.common.ui.RoundId
 
 class FakeRoundsRepository : RoundsRepository {
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.stateIn
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.penalties
 import mahjongscoring3.composeapp.generated.resources.totals
-import screens.common.model.TableWinds
+import screens.common.model.enums.TableWinds
 import screens.common.ui.BaseViewModel
 import screens.common.ui.SmallSeatState
 import screens.common.ui.SmallSeatsState
@@ -20,7 +20,7 @@ class GameScreenViewModel(
     getOneGameFlowUseCase: GetOneGameFlowUseCase,
 ) : BaseViewModel() {
 
-    val screenStateFlow: StateFlow<GameScreenState> = getOneGameFlowUseCase.invoke(6)
+    val screenStateFlow: StateFlow<GameScreenState> = getOneGameFlowUseCase.invoke(1)
         .map { game ->
             val gameWinds = game.getSeatsCurrentWind()
             val gameNames = game.getPlayersNamesByCurrentSeat()

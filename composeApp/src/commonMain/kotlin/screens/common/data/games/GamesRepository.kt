@@ -1,7 +1,8 @@
 package screens.common.data.games
 
-import screens.common.model.GameId
+import database.tables.DbGame
 import kotlinx.coroutines.flow.Flow
+import screens.common.ui.GameId
 
 interface GamesRepository {
     fun getAllFlow(): Flow<List<DbGame>>

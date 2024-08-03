@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -51,8 +53,6 @@ kotlin {
     }
     
     sourceSets {
-        val desktopMain by getting
-        
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -60,26 +60,35 @@ kotlin {
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+            implementation(libs.room.runtime.android)
         }
-        commonMain.dependencies {
-            api(libs.koin.core)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.navigation)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.kotlinx.serialization.core)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.lifecycle.viewmodel)
+        val commonMain by getting {
+            kotlin.srcDir("build/generated/ksp/metadata")
+            dependencies {
+                api(libs.koin.core)
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.navigation)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.lifecycle.viewmodel)
+                implementation(libs.room.runtime)
+                implementation(libs.sqlite)
+                implementation(libs.sqlite.bundled)
+            }
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+            }
         }
     }
 }
@@ -132,3 +141,35 @@ compose.desktop {
         }
     }
 }
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+// region Workaround to fix a bug with KSP2:
+// https://slack-chats.kotlinlang.org/t/18822191/anyone-by-chance-get-kmp-version-of-jetpack-room-working-in-
+// https://github.com/cvivek07/KMM-PicSplash/blob/main/composeApp/build.gradle.kts
+//
+//dependencies {
+//    ksp(libs.room.compiler)
+//}
+dependencies {
+    add("kspCommonMainMetadata", libs.room.compiler)
+}
+//tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+//    if (name != "kspCommonMainKotlinMetadata" ) {
+//        dependsOn("kspCommonMainKotlinMetadata")
+//    }
+//}
+// Found this other one with non deprecated class here:
+// https://medium.com/@actiwerks/setting-up-kotlin-multiplatform-with-ksp-7f598b1681bf
+//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+
+// And this other one
+//https://medium.com/@brilianadeputra/how-to-use-koin-and-room-database-in-kotlin-multiplatform-ce73577e4cc9
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+//endregion

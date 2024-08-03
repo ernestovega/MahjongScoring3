@@ -9,11 +9,13 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 
+@Immutable
 data class OldGameItemState(
     val oldGameItemHeaderState: OldGameItemHeaderState,
     val oldGameItemBodyState: OldGameItemBodyState,

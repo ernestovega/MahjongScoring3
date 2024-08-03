@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +26,7 @@ import mahjongscoring3.composeapp.generated.resources.totals
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+@Immutable
 data class GamePageListHeaderState(
     val playerNameEastSeat: String = "",
     val playerNameSouthSeat: String = "",

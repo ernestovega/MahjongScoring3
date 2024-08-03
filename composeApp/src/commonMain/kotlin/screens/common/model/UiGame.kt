@@ -2,17 +2,17 @@ package screens.common.model
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import screens.common.model.TableWinds.EAST
-import screens.common.model.TableWinds.NONE
-import screens.common.model.TableWinds.NORTH
-import screens.common.model.TableWinds.SOUTH
-import screens.common.model.TableWinds.WEST
+import screens.common.model.enums.TableWinds
+import screens.common.model.enums.TableWinds.EAST
+import screens.common.model.enums.TableWinds.NONE
+import screens.common.model.enums.TableWinds.NORTH
+import screens.common.model.enums.TableWinds.SOUTH
+import screens.common.model.enums.TableWinds.WEST
+import screens.common.ui.GameId
 import screens.common.ui.MIN_MCR_POINTS
 import screens.common.ui.NOT_SET_GAME_ID
 import screens.common.ui.NUM_NO_WINNER_PLAYERS
 import screens.common.ui.POINTS_DISCARD_NEUTRAL_PLAYERS
-
-typealias GameId = Long
 
 data class UiGame(
     val gameId: GameId,

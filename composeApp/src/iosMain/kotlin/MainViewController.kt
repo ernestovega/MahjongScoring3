@@ -6,10 +6,14 @@ import platform.UIKit.UIStatusBarStyleLightContent
 import platform.UIKit.navigationController
 import platform.UIKit.setStatusBarStyle
 
-fun MainViewController() = ComposeUIViewController(configure = {
-    initKoin()
-    setSystemUIColor()
-}) { App() }
+fun MainViewController() = ComposeUIViewController(
+    configure = {
+        initKoin()
+        setSystemUIColor()
+    }
+) {
+    App()
+}
 
 private fun setSystemUIColor(isDarkMode: Boolean = false) {
     val color = if (isDarkMode) greenLightUIColor else greenDarkUIColor

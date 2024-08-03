@@ -1,10 +1,11 @@
 package screens.common.data.games
 
+import database.tables.DbGame
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.Clock
-import screens.common.model.GameId
-import screens.common.model.GameNotFoundException
+import screens.common.model.exceptions.GameNotFoundException
+import screens.common.ui.GameId
 import kotlin.random.Random
 
 class FakeGamesRepository : GamesRepository {

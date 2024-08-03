@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import screens.common.use_cases.utils.toSignedString
 
+@Immutable
 data class GamePageListFooterState(
     val title: StringResource = Res.string.totals,
     val pointsPlayerEastSeat: Int = 0,

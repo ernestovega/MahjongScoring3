@@ -1,7 +1,7 @@
 package screens.common.use_cases
 
+import database.tables.DbRound
 import screens.common.model.UiRound
-import screens.common.data.rounds.DbRound
 import screens.common.data.rounds.RoundsRepository
 
 class CancelAllPenaltiesUseCase(
