@@ -5,7 +5,7 @@ import screens.common.model.PortableGame
 import screens.common.model.toPortableGame
 //import screens.common.model.GameId
 import screens.common.model.UiGame
-//import screens.common.model.GameNotFoundException
+//import screens.common.model.exceptions.GameNotFoundException
 //import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json

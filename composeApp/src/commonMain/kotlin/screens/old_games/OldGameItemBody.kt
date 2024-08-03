@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +27,7 @@ import screens.common.ui.SmallSeats
 import screens.common.ui.SmallSeatsState
 import screens.common.use_cases.utils.prettifyTwoLines
 
+@Immutable
 data class OldGameItemBodyState(
     val smallSeatsState: SmallSeatsState,
     val oldGameItemBodyInfoState: OldGameItemBodyInfoState,
@@ -50,6 +52,7 @@ fun OldGameItemBody(state: OldGameItemBodyState) {
     }
 }
 
+@Immutable
 data class OldGameItemBodyInfoState(
     val date: Instant,
     val numRounds: Int,

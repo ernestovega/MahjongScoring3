@@ -1,5 +1,6 @@
 package screens.common.model
 
+import screens.common.model.enums.TableWinds
 import screens.common.ui.MIN_MCR_POINTS
 import screens.common.use_cases.utils.fourth
 import screens.common.use_cases.utils.second

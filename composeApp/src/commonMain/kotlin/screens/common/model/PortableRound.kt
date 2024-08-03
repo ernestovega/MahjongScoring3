@@ -1,7 +1,9 @@
 package screens.common.model
 
+import database.tables.DbRound
 import kotlinx.serialization.Serializable
-import screens.common.data.rounds.DbRound
+import screens.common.model.enums.TableWinds
+import screens.common.ui.GameId
 
 @Serializable
 data class PortableRound(

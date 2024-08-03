@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +25,7 @@ import org.jetbrains.compose.resources.stringResource
 import screens.common.ui.SmallSeats
 import screens.common.ui.SmallSeatsState
 
+@Immutable
 data class GamePageTableState(
     val gameName: String = "",
     val smallSeatsState: SmallSeatsState = SmallSeatsState(),

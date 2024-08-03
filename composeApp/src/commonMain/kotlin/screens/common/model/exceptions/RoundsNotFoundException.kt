@@ -1,4 +1,6 @@
-package screens.common.model
+package screens.common.model.exceptions
+
+import screens.common.ui.GameId
 
 class RoundsNotFoundException(val gameId: GameId) : Exception() {
 

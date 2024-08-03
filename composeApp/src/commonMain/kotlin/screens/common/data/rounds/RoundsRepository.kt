@@ -1,8 +1,9 @@
 package screens.common.data.rounds
 
-import screens.common.model.GameId
-import screens.common.model.RoundId
+import database.tables.DbRound
 import kotlinx.coroutines.flow.Flow
+import screens.common.ui.GameId
+import screens.common.ui.RoundId
 
 interface RoundsRepository {
     fun getAllFlow(): Flow<List<DbRound>>

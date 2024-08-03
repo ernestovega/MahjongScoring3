@@ -1,10 +1,11 @@
 
 package screens.common.model
 
+import screens.common.model.enums.TableWinds
+import screens.common.ui.GameId
 import screens.common.ui.NOT_SET_GAME_ID
 import screens.common.ui.NOT_SET_ROUND_ID
-
-typealias RoundId = Long
+import screens.common.ui.RoundId
 
 data class UiRound(
     val gameId: GameId,

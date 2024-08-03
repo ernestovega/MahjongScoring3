@@ -1,9 +1,9 @@
 package screens.common.use_cases
 
+import database.tables.DbRound
 import screens.common.model.HuData
 import screens.common.model.UiGame
-import screens.common.model.TableWinds.NONE
-import screens.common.data.rounds.DbRound
+import screens.common.model.enums.TableWinds.NONE
 import screens.common.data.rounds.RoundsRepository
 
 class HuSelfPickUseCase(

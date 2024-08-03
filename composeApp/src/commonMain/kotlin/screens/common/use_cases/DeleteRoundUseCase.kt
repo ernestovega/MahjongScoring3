@@ -1,9 +1,9 @@
 package screens.common.use_cases
 
-import screens.common.model.RoundId
-import screens.common.data.rounds.DbRound
+import database.tables.DbRound
 import screens.common.data.rounds.RoundsRepository
 import screens.common.ui.NOT_SET_ROUND_ID
+import screens.common.ui.RoundId
 
 class DeleteRoundUseCase(
     private val roundsRepository: RoundsRepository,

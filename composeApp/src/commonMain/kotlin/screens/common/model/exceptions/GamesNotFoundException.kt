@@ -1,3 +1,3 @@
-package screens.common.model
+package screens.common.model.exceptions
 
 class GamesNotFoundException : Exception()

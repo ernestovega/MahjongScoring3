@@ -1,7 +1,7 @@
 package screens.common.model
 
-import screens.common.model.TableWinds
-import screens.common.model.TableWinds.NONE
+import screens.common.model.enums.TableWinds
+import screens.common.model.enums.TableWinds.NONE
 
 data class BestHand(
     val roundNumber: Int = 0,

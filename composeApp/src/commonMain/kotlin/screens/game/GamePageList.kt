@@ -11,8 +11,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 
+@Immutable
 data class GamePageListState(
     val gamePageListHeaderState: GamePageListHeaderState = GamePageListHeaderState(),
     val roundsStates: List<GamePageListItemState> = emptyList(),

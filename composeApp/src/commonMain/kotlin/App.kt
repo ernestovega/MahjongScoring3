@@ -5,9 +5,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,6 +16,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import screens.game.GameScreen
 import screens.help.HelpScreen
+import dialogs.CreateGameDialog
 import screens.old_games.OldGamesScreen
 
 @OptIn(KoinExperimentalAPI::class)
@@ -72,14 +70,26 @@ fun MahjongScoringApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            // Screens
             composable(route = AppScreens.OldGames.name) {
-                OldGamesScreen(navigateToGame = { navController.navigateToGame() })
+                OldGamesScreen(
+                    navigateToGame = { navController.navigateToGame() },
+                    openCreateGameDialog = { navController.showCreateGameDialog() },
+                )
             }
             composable(route = AppScreens.Game.name) {
                 GameScreen()
             }
             composable(route = AppScreens.Help.name) {
                 HelpScreen()
+            }
+
+            // Dialogs
+            composable(route = AppDialogs.CreateGameDialog.name) {
+                CreateGameDialog(
+                    onDismissRequest = { navController.popBackStack() },
+                    navigateToGame = { navController.navigateToGame() },
+                )
             }
         }
     }
@@ -105,6 +115,14 @@ private fun NavHostController.navigateToHelp() {
     if (currentBackStackEntry?.destination?.route != AppScreens.Help.name) {
         if (!popBackStack(AppScreens.Help.name, inclusive = false)) {
             navigate(route = AppScreens.Help.name)
+        }
+    }
+}
+
+private fun NavHostController.showCreateGameDialog() {
+    if (currentBackStackEntry?.destination?.route != AppDialogs.CreateGameDialog.name) {
+        if (!popBackStack(AppDialogs.CreateGameDialog.name, inclusive = false)) {
+            navigate(route = AppDialogs.CreateGameDialog.name)
         }
     }
 }

@@ -4,7 +4,7 @@ import androidx.annotation.VisibleForTesting
 import screens.common.model.PortableGame
 import screens.common.model.toPortableGame
 import screens.common.model.UiGame
-//import screens.common.model.GamesNotFoundException
+//import screens.common.model.exceptions.GamesNotFoundException
 //import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
