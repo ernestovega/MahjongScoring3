@@ -24,6 +24,13 @@
     <string name="totals">Totals</string>
     <string name="color_mode">Color mode</string>
     <string name="create_game">Create game</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="game_name">Game name</string>
+    <string name="east_player">East player</string>
+    <string name="south_player">South player</string>
+    <string name="west_player">West player</string>
+    <string name="north_player">North player</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>
