@@ -4,19 +4,22 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dialogs.create_game.CreateGameDialog
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import screens.common.ui.NOT_SET_GAME_ID
 import screens.game.GameScreen
 import screens.help.HelpScreen
-import dialogs.CreateGameDialog
 import screens.old_games.OldGamesScreen
 
 @OptIn(KoinExperimentalAPI::class)
@@ -30,39 +33,45 @@ fun App(
         colors = if (isDarkMode) AppColors.DarkColorPalette else AppColors.LightColorPalette,
     ) {
         KoinContext {
-            MahjongScoringApp(
-                changeColorMode = { viewModel.changeColorMode() }
-            )
+            MahjongScoringApp()
         }
     }
 }
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun MahjongScoringApp(
     navController: NavHostController = rememberNavController(),
-    changeColorMode: () -> Unit,
+    viewModel: AppViewModel = koinViewModel<AppViewModel>(),
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGames.name)
+    val ongoingGameId by viewModel.ongoingGameId.collectAsState()
+    val appBottomBarState by remember {
+        derivedStateOf {
+            AppBottomBarState(
+                isBottomBarGameItemVisible = ongoingGameId != NOT_SET_GAME_ID,
+                currentScreen = currentScreen,
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
             AppTopBar(
                 currentScreen = currentScreen,
-                onColorModeClick = changeColorMode,
+                onColorModeClick = { viewModel.changeColorMode() },
             )
         },
         bottomBar = {
             AppBottomBar(
-                currentScreen = currentScreen,
+                state = appBottomBarState,
                 navigateToOldGames = { navController.navigateToOldGames() },
                 navigateToGame = { navController.navigateToGame() },
                 navigateToHelp = { navController.navigateToHelp() },
             )
         }
     ) { innerPadding ->
-//        val uiState by viewModel.uiState.collectAsState()
-
         NavHost(
             navController = navController,
             startDestination = AppScreens.OldGames.name,
@@ -73,12 +82,15 @@ fun MahjongScoringApp(
             // Screens
             composable(route = AppScreens.OldGames.name) {
                 OldGamesScreen(
-                    navigateToGame = { navController.navigateToGame() },
+                    navigateToGame = { gameId ->
+                        viewModel.setOngoingGameId(gameId)
+                        navController.navigateToGame()
+                    },
                     openCreateGameDialog = { navController.showCreateGameDialog() },
                 )
             }
             composable(route = AppScreens.Game.name) {
-                GameScreen()
+                GameScreen(ongoingGameId)
             }
             composable(route = AppScreens.Help.name) {
                 HelpScreen()
@@ -88,7 +100,10 @@ fun MahjongScoringApp(
             composable(route = AppDialogs.CreateGameDialog.name) {
                 CreateGameDialog(
                     onDismissRequest = { navController.popBackStack() },
-                    navigateToGame = { navController.navigateToGame() },
+                    navigateToGame = { gameId ->
+                        viewModel.setOngoingGameId(gameId)
+                        navController.navigateToGame()
+                    },
                 )
             }
         }

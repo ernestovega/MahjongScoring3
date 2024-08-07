@@ -23,6 +23,7 @@ import mahjongscoring3.composeapp.generated.resources.table
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import screens.common.ui.GameId
 
 @Immutable
 data class GameScreenState(
@@ -30,18 +31,20 @@ data class GameScreenState(
     val gamePageListState: GamePageListState = GamePageListState(),
 )
 
-@OptIn(ExperimentalFoundationApi::class, KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, ExperimentalFoundationApi::class)
 @Composable
 fun GameScreen(
+    gameId: GameId,
     viewModel: GameScreenViewModel = koinViewModel<GameScreenViewModel>(),
 ) {
-    val state by viewModel.screenStateFlow.collectAsState()
+    viewModel.setGameId(gameId)
     val pagerState = rememberPagerState { 2 }
     val coroutineScope = rememberCoroutineScope()
     val tabTitles = listOf(
         stringResource(Res.string.table),
         stringResource(Res.string.list),
     )
+    val state by viewModel.screenStateFlow.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(

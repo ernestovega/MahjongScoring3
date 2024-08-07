@@ -1,3 +1,4 @@
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
@@ -14,7 +15,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import mahjongscoring3.composeapp.generated.resources.Res
@@ -24,10 +24,14 @@ import mahjongscoring3.composeapp.generated.resources.old_games
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+data class AppBottomBarState(
+    val currentScreen: AppScreens,
+    val isBottomBarGameItemVisible: Boolean,
+)
 
 @Composable
 fun AppBottomBar(
-    currentScreen: AppScreens,
+    state: AppBottomBarState,
     navigateToOldGames: () -> Unit,
     navigateToGame: () -> Unit,
     navigateToHelp: () -> Unit,
@@ -37,21 +41,23 @@ fun AppBottomBar(
         backgroundColor = MaterialTheme.colors.primary,
     ) {
         AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreens.OldGames.name,
+            isSelected = state.currentScreen.name == AppScreens.OldGames.name,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             title = Res.string.old_games,
             onClick = navigateToOldGames
         )
+        AnimatedVisibility(visible = state.isBottomBarGameItemVisible) {
+            AppBottomBarItem(
+                isSelected = state.currentScreen.name == AppScreens.Game.name,
+                selectedIcon = Icons.Filled.PlayArrow,
+                unselectedIcon = Icons.Outlined.PlayArrow,
+                title = Res.string.game,
+                onClick = navigateToGame
+            )
+        }
         AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreens.Game.name,
-            selectedIcon = Icons.Filled.PlayArrow,
-            unselectedIcon = Icons.Outlined.PlayArrow,
-            title = Res.string.game,
-            onClick = navigateToGame
-        )
-        AppBottomBarItem(
-            isSelected = currentScreen.name == AppScreens.Help.name,
+            isSelected = state.currentScreen.name == AppScreens.Help.name,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
             title = Res.string.help,

@@ -31,6 +31,9 @@
     <string name="south_player">South player</string>
     <string name="west_player">West player</string>
     <string name="north_player">North player</string>
+    <string name="close">Close</string>
+    <string name="error">Error</string>
+    <string name="error_default_message">Sorry, something went wrong.</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>

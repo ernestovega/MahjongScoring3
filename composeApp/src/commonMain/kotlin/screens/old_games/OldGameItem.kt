@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
+import screens.common.ui.GameId
 
 @Immutable
 data class OldGameItemState(
+    val gameId: GameId,
     val oldGameItemHeaderState: OldGameItemHeaderState,
     val oldGameItemBodyState: OldGameItemBodyState,
 )
@@ -25,7 +27,7 @@ data class OldGameItemState(
 @Composable
 fun OldGameItem(
     state: OldGameItemState,
-    onClick: () -> Unit,
+    onClick: (gameId: GameId) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -33,7 +35,7 @@ fun OldGameItem(
             .padding(horizontal = 16.dp),
         elevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
-        onClick = onClick,
+        onClick = { onClick(state.gameId) },
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             OldGameItemHeader(state.oldGameItemHeaderState)

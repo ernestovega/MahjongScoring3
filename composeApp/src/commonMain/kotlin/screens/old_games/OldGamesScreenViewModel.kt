@@ -27,6 +27,7 @@ class OldGamesScreenViewModel(
             val names = game.getPlayersNamesByCurrentSeat()
             val points = game.getPlayersTotalPointsByCurrentSeat()
             OldGameItemState(
+                gameId = game.gameId,
                 oldGameItemHeaderState = OldGameItemHeaderState(
                     gameName = game.gameName.ifEmpty { "#${game.gameId}" }
                 ),

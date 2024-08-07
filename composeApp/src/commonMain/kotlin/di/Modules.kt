@@ -4,7 +4,7 @@ import AppViewModel
 import database.AppDatabase
 import database.daos.GamesDao
 import database.daos.RoundsDao
-import dialogs.CreateGameDialogViewModel
+import dialogs.create_game.CreateGameDialogViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
