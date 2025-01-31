@@ -9,6 +9,10 @@ sealed interface ScreenState<T> {
         override val data: T,
     ): ScreenState<T>
 
+    data class Loading<T>(
+        override val data: T,
+    ): ScreenState<T>
+
     data class Success<T>(
         override val data: T,
     ): ScreenState<T>

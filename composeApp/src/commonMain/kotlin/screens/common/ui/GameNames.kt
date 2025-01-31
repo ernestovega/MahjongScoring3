@@ -28,14 +28,6 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-data class GameNames(
-    val gameName: String = "",
-    val nameP1: String = "",
-    val nameP2: String = "",
-    val nameP3: String = "",
-    val nameP4: String = "",
-)
-
 @Immutable
 data class NameTextFieldState(
     val text: String,

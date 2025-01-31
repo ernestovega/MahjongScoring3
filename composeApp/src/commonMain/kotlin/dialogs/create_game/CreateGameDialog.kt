@@ -41,14 +41,16 @@ import org.koin.core.annotation.KoinExperimentalAPI
 import screens.common.model.states.ScreenState
 import screens.common.model.states.error
 import screens.common.ui.GameId
-import screens.common.ui.GameNames
 import screens.common.ui.NameTextField
 import screens.common.ui.NameTextFieldState
 
 @Immutable
 data class CreateGameDialogState(
-    val gameNames: GameNames = GameNames(),
-    val error: Throwable? = null,
+    val gameName: String = "",
+    val nameP1: String = "",
+    val nameP2: String = "",
+    val nameP3: String = "",
+    val nameP4: String = "",
 )
 
 @OptIn(KoinExperimentalAPI::class)
@@ -69,36 +71,38 @@ fun CreateGameDialog(
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
     } else {
-        val gameNames = state.data.gameNames
         Dialog(onDismissRequest = onDismissRequest) {
             Surface(shape = MaterialTheme.shapes.medium) {
                 Column(modifier = Modifier.padding(16.dp)) {
 
                     // Title
-                    Text(text = stringResource(Res.string.create_game), style = MaterialTheme.typography.h6)
+                    Text(
+                        text = stringResource(Res.string.create_game),
+                        style = MaterialTheme.typography.h6
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // TextFields
                     NameTextField(
-                        state = NameTextFieldState(gameNames.gameName, Res.string.game_name),
+                        state = NameTextFieldState(state.data.gameName, Res.string.game_name),
                         focusRequester = focusRequester,
                         onNameChanged = { viewModel.updateNames(gameName = it.trim()) },
                     )
                     NameTextField(
-                        state = NameTextFieldState(gameNames.nameP1, Res.string.east_player),
+                        state = NameTextFieldState(state.data.nameP1, Res.string.east_player),
                         onNameChanged = { viewModel.updateNames(nameP1 = it.trim()) },
                     )
                     NameTextField(
-                        state = NameTextFieldState(gameNames.nameP2, Res.string.south_player),
+                        state = NameTextFieldState(state.data.nameP2, Res.string.south_player),
                         onNameChanged = { viewModel.updateNames(nameP2 = it.trim()) },
                     )
                     NameTextField(
-                        state = NameTextFieldState(gameNames.nameP3, Res.string.west_player),
+                        state = NameTextFieldState(state.data.nameP3, Res.string.west_player),
                         onNameChanged = { viewModel.updateNames(nameP3 = it.trim()) },
                     )
                     NameTextField(
-                        state = NameTextFieldState(gameNames.nameP4, Res.string.north_player),
+                        state = NameTextFieldState(state.data.nameP4, Res.string.north_player),
                         onNameChanged = { viewModel.updateNames(nameP4 = it.trim()) },
                     )
 
@@ -117,10 +121,10 @@ fun CreateGameDialog(
 
                         TextButton(onClick = {
                             coroutineScope.launch {
-                                viewModel.createGame(gameNames)?.let {
+                                viewModel.createGame()?.let {
                                     navigateToGame(it)
                                 }
-                        }
+                            }
                         }) {
                             Text(stringResource(Res.string.confirm))
                         }

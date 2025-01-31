@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import screens.common.model.UiGame
 import screens.common.ui.BaseViewModel
-import screens.common.ui.SmallSeatState
+import screens.common.ui.SeatState
 import screens.common.ui.SmallSeatsState
 import screens.common.use_cases.GetAllGamesFlowUseCase
 import screens.common.use_cases.utils.fourth
@@ -33,22 +33,22 @@ class OldGamesScreenViewModel(
                 ),
                 oldGameItemBodyState = OldGameItemBodyState(
                     smallSeatsState = SmallSeatsState(
-                        eastSeat = SmallSeatState(
+                        eastSeat = SeatState(
                             wind = winds.first(),
                             name = names.first(),
                             points = points.first(),
                         ),
-                        southSeat = SmallSeatState(
+                        southSeat = SeatState(
                             wind = winds.second(),
                             name = names.second(),
                             points = points.second(),
                         ),
-                        westSeat = SmallSeatState(
+                        westSeat = SeatState(
                             wind = winds.third(),
                             name = names.third(),
                             points = points.third(),
                         ),
-                        northSeat = SmallSeatState(
+                        northSeat = SeatState(
                             wind = winds.fourth(),
                             name = names.fourth(),
                             points = points.fourth(),

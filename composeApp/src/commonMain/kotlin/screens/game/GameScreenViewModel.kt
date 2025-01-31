@@ -15,7 +15,7 @@ import screens.common.model.enums.TableWinds
 import screens.common.ui.BaseViewModel
 import screens.common.ui.GameId
 import screens.common.ui.NOT_SET_GAME_ID
-import screens.common.ui.SmallSeatState
+import screens.common.ui.SeatState
 import screens.common.ui.SmallSeatsState
 import screens.common.use_cases.GetOneGameFlowUseCase
 import screens.common.use_cases.utils.fourth
@@ -45,22 +45,22 @@ class GameScreenViewModel(
                     gamePageTableState = GamePageTableState(
                         gameName = game.gameName,
                         smallSeatsState = SmallSeatsState(
-                            eastSeat = SmallSeatState(
+                            eastSeat = SeatState(
                                 wind = gameWinds.first(),
                                 name = gameNames.first(),
                                 points = gameTotalPoints.first(),
                             ),
-                            southSeat = SmallSeatState(
+                            southSeat = SeatState(
                                 wind = gameWinds.second(),
                                 name = gameNames.second(),
                                 points = gameTotalPoints.second(),
                             ),
-                            westSeat = SmallSeatState(
+                            westSeat = SeatState(
                                 wind = gameWinds.third(),
                                 name = gameNames.third(),
                                 points = gameTotalPoints.third(),
                             ),
-                            northSeat = SmallSeatState(
+                            northSeat = SeatState(
                                 wind = gameWinds.fourth(),
                                 name = gameNames.fourth(),
                                 points = gameTotalPoints.fourth(),

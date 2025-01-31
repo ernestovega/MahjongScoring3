@@ -13,15 +13,16 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 data class SmallSeatsState(
-    val eastSeat: SmallSeatState = SmallSeatState(),
-    val southSeat: SmallSeatState = SmallSeatState(),
-    val westSeat: SmallSeatState = SmallSeatState(),
-    val northSeat: SmallSeatState = SmallSeatState(),
+    val eastSeat: SeatState = SeatState(),
+    val southSeat: SeatState = SeatState(),
+    val westSeat: SeatState = SeatState(),
+    val northSeat: SeatState = SeatState(),
 )
 
 @Composable
 fun SmallSeats(
     state: SmallSeatsState,
+    onSeatClick: ((SeatState) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -41,6 +42,7 @@ fun SmallSeats(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(y = verticalSeparation),
+            onClick = onSeatClick,
         )
         // RIGHT - SOUTH
         SmallSeat(
@@ -48,6 +50,7 @@ fun SmallSeats(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = horizontalSeparation),
+            onClick = onSeatClick,
         )
         // TOP - WEST
         SmallSeat(
@@ -55,6 +58,7 @@ fun SmallSeats(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(y = -verticalSeparation),
+            onClick = onSeatClick,
         )
         // LEFT - NORTH
         SmallSeat(
@@ -62,6 +66,7 @@ fun SmallSeats(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = -horizontalSeparation),
+            onClick = onSeatClick,
         )
     }
 }

@@ -1,5 +1,6 @@
 package screens.common.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
@@ -20,7 +21,7 @@ import org.jetbrains.compose.resources.stringResource
 import screens.common.model.enums.TableWinds
 
 @Immutable
-data class SmallSeatState(
+data class SeatState(
     val wind: TableWinds = TableWinds.NONE,
     val name: String = "",
     val points: Int = 0,
@@ -28,11 +29,14 @@ data class SmallSeatState(
 
 @Composable
 fun SmallSeat(
-    state: SmallSeatState,
+    state: SeatState,
+    onClick: ((SeatState) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.width(96.dp),
+        modifier = modifier
+            .width(96.dp)
+            .applyIfNotNull(onClick) { clickable { it(state) } },
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(

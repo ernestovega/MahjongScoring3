@@ -34,6 +34,11 @@
     <string name="close">Close</string>
     <string name="error">Error</string>
     <string name="error_default_message">Sorry, something went wrong.</string>
+    <string name="hu">Hu</string>
+    <string name="draw">Draw</string>
+    <string name="penalty">Penalty</string>
+    <string name="cancel_penalties">Cancel penalties</string>
+    <string name="hand_actions">Hand actions</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>

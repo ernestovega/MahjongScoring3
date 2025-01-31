@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.dice
 import org.jetbrains.compose.resources.stringResource
+import screens.common.ui.SeatState
 import screens.common.ui.SmallSeats
 import screens.common.ui.SmallSeatsState
 
@@ -34,7 +35,8 @@ data class GamePageTableState(
 @Composable
 fun GamePageTable(
     state: GamePageTableState,
-    onFabClick: () -> Unit,
+    openHandActionsDialog: (selectedSeatState: SeatState) -> Unit,
+    openDiceDialog: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -58,7 +60,10 @@ fun GamePageTable(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.weight(1f),
             ) {
-                SmallSeats(state = state.smallSeatsState)
+                SmallSeats(
+                    state = state.smallSeatsState,
+                    onSeatClick = openHandActionsDialog,
+                )
             }
         }
 
@@ -66,7 +71,7 @@ fun GamePageTable(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
-            onClick = onFabClick,
+            onClick = openDiceDialog,
         ) {
             Icon(
                 imageVector = Icons.Filled.Home,

@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dialogs.create_game.CreateGameDialog
+import dialogs.hand_actions.HandActionsDialog
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -45,8 +46,10 @@ fun MahjongScoringApp(
     viewModel: AppViewModel = koinViewModel<AppViewModel>(),
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGames.name)
+    val currentScreen =
+        AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGames.name)
     val ongoingGameId by viewModel.ongoingGameId.collectAsState()
+    val selectedSeatState by viewModel.selectedSeatState.collectAsState()
     val appBottomBarState by remember {
         derivedStateOf {
             AppBottomBarState(
@@ -90,14 +93,20 @@ fun MahjongScoringApp(
                 )
             }
             composable(route = AppScreens.Game.name) {
-                GameScreen(ongoingGameId)
+                GameScreen(
+                    gameId = ongoingGameId,
+                    openHandActionsDialog = { selectedSeatState ->
+                        viewModel.setSelectedSeat(selectedSeatState)
+                        navController.showHandActionsDialog()
+                    },
+                )
             }
             composable(route = AppScreens.Help.name) {
                 HelpScreen()
             }
 
             // Dialogs
-            composable(route = AppDialogs.CreateGameDialog.name) {
+            composable(route = AppScreens.CreateGameDialog.name) {
                 CreateGameDialog(
                     onDismissRequest = { navController.popBackStack() },
                     navigateToGame = { gameId ->
@@ -105,6 +114,17 @@ fun MahjongScoringApp(
                         navController.navigateToGame()
                     },
                 )
+            }
+            composable(route = AppScreens.HandActionsDialog.name) {
+                selectedSeatState?.let { it1 ->
+                    HandActionsDialog(
+                        selectedSeatState = it1,
+                        onDismissRequest = { navController.popBackStack() },
+                        navigateToHuDialog = { selectedPlayerData -> },
+                        navigateToPenaltyDialog = { selectedPlayerData -> },
+                        navigateToCancelPenaltyDialog = { selectedPlayerData -> },
+                    )
+                }
             }
         }
     }
@@ -135,11 +155,11 @@ private fun NavHostController.navigateToHelp() {
 }
 
 private fun NavHostController.showCreateGameDialog() {
-    if (currentBackStackEntry?.destination?.route != AppDialogs.CreateGameDialog.name) {
-        if (!popBackStack(AppDialogs.CreateGameDialog.name, inclusive = false)) {
-            navigate(route = AppDialogs.CreateGameDialog.name)
-        }
-    }
+    navigate(route = AppScreens.CreateGameDialog.name)
+}
+
+private fun NavHostController.showHandActionsDialog() {
+    navigate(route = AppScreens.HandActionsDialog.name)
 }
 
 ///**

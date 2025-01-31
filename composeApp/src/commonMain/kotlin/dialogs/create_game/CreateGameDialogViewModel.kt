@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.update
 import screens.common.model.states.ScreenState
 import screens.common.ui.BaseViewModel
 import screens.common.ui.GameId
-import screens.common.ui.GameNames
 import screens.common.use_cases.CreateGameUseCase
 
 class CreateGameDialogViewModel(
@@ -15,7 +14,7 @@ class CreateGameDialogViewModel(
 ) : BaseViewModel() {
 
     private val _screenStateFlow = MutableStateFlow<ScreenState<CreateGameDialogState>>(
-        ScreenState.Success(CreateGameDialogState(GameNames()))
+        ScreenState.Success(CreateGameDialogState())
     )
     val screenStateFlow: StateFlow<ScreenState<CreateGameDialogState>> = _screenStateFlow.asStateFlow()
 
@@ -28,27 +27,24 @@ class CreateGameDialogViewModel(
     ) {
         _screenStateFlow.update { value ->
             ScreenState.Success(
-                CreateGameDialogState(
-                    gameNames = GameNames(
-                        gameName = gameName ?: value.data.gameNames.gameName,
-                        nameP1 = nameP1 ?: value.data.gameNames.nameP1,
-                        nameP2 = nameP2 ?: value.data.gameNames.nameP2,
-                        nameP3 = nameP3 ?: value.data.gameNames.nameP3,
-                        nameP4 = nameP4 ?: value.data.gameNames.nameP4,
-                    ),
-                    error = null,
+                data = CreateGameDialogState(
+                    gameName = gameName ?: value.data.gameName,
+                    nameP1 = nameP1 ?: value.data.nameP1,
+                    nameP2 = nameP2 ?: value.data.nameP2,
+                    nameP3 = nameP3 ?: value.data.nameP3,
+                    nameP4 = nameP4 ?: value.data.nameP4,
                 ),
             )
         }
     }
 
-    internal suspend fun createGame(namesState: GameNames): GameId? =
+    internal suspend fun createGame(): GameId? =
         createGameUseCase.invoke(
-            gameName = namesState.gameName,
-            nameP1 = namesState.nameP1,
-            nameP2 = namesState.nameP2,
-            nameP3 = namesState.nameP3,
-            nameP4 = namesState.nameP4,
+            gameName = screenStateFlow.value.data.gameName,
+            nameP1 = screenStateFlow.value.data.nameP1,
+            nameP2 = screenStateFlow.value.data.nameP2,
+            nameP3 = screenStateFlow.value.data.nameP3,
+            nameP4 = screenStateFlow.value.data.nameP4,
         )
             .onFailure { throwable ->
                 _screenStateFlow.update { value ->
