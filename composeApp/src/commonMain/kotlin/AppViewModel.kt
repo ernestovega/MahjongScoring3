@@ -14,12 +14,8 @@ class AppViewModel : BaseViewModel() {
     private val _ongoingGameId = MutableStateFlow(NOT_SET_GAME_ID)
     val ongoingGameId: StateFlow<Long> = _ongoingGameId.asStateFlow()
 
-    private val _selectedSeatState = MutableStateFlow<SeatState?>(null)
-    val selectedSeatState: StateFlow<SeatState?> = _selectedSeatState.asStateFlow()
-
     fun changeColorMode() = _isDarkModeFlow.update { value -> value.not() }
 
     fun setOngoingGameId(gameId: Long) = _ongoingGameId.update { gameId }
 
-    fun setSelectedSeat(seatState: SeatState) = _selectedSeatState.update { seatState }
 }

@@ -8,6 +8,8 @@ import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import screens.common.model.PlayerRanking
 
 //import java.io.File
@@ -130,3 +132,7 @@ fun Int.toSignedString() = if (this > 0) "+$this" else "$this"
 
 fun String.capitalize(): String =
     replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+inline fun <reified T> T?.toJson(): String = Json.encodeToString(this)
+
+inline fun <reified T> String.fromJson(): T = Json.decodeFromString(this)

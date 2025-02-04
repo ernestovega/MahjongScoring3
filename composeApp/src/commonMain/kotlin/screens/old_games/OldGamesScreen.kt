@@ -1,5 +1,6 @@
 package screens.old_games
 
+import LocalNavController
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,8 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.create_game
+import navigateTo
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -33,9 +36,9 @@ data class OldGamesScreenState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun OldGamesScreen(
+    onResumeGame: (gameId: GameId) -> Unit,
     viewModel: OldGamesScreenViewModel = koinViewModel<OldGamesScreenViewModel>(),
-    navigateToGame: (gameId: GameId) -> Unit,
-    openCreateGameDialog: () -> Unit,
+    navController: NavHostController = LocalNavController.current,
 ) {
     val state by viewModel.screenStateFlow.collectAsState()
 
@@ -48,7 +51,13 @@ fun OldGamesScreen(
             items(state.gamesStates) { gameState ->
                 OldGameItem(
                     state = gameState,
-                    onClick = navigateToGame,
+                    onClick = {
+                        onResumeGame(gameState.gameId)
+                        navController.navigateTo(
+                            screen = AppScreens.GameScreen,
+                            args = gameState.gameId,
+                        )
+                    },
                 )
             }
         }
@@ -57,7 +66,7 @@ fun OldGamesScreen(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
-            onClick = openCreateGameDialog,
+            onClick = { navController.navigateTo(AppScreens.CreateGameDialog) },
         ) {
             Icon(
                 imageVector = Icons.Filled.PlayArrow,

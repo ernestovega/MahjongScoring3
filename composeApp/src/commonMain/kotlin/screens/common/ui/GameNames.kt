@@ -12,15 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,11 +32,9 @@ data class NameTextFieldState(
 @Composable
 fun NameTextField(
     state: NameTextFieldState,
-    focusRequester: FocusRequester? = null,
     onNameChanged: (String) -> Unit,
+    focusRequester: FocusRequester? = null,
 ) {
-    var shouldSelectAll by remember { mutableStateOf(false) }
-
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Outlined.Home,
@@ -52,17 +45,11 @@ fun NameTextField(
 
         MMTextField(
             value = state.text,
-            shouldSelectAll = shouldSelectAll,
             onValueChange = { onNameChanged(it) },
             placeholder = { Text(stringResource(state.hint)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .applyIfNotNull(focusRequester) { focusRequester(it) }
-                .onFocusChanged { focusState ->
-                    if (focusState.isFocused) {
-                        shouldSelectAll = true
-                    }
-                },
+                .applyIfNotNull(focusRequester) { focusRequester(it) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next,
                 keyboardType = KeyboardType.Text,

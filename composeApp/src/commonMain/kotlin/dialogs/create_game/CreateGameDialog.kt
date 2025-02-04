@@ -1,5 +1,6 @@
 package dialogs.create_game
 
+import LocalNavController
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,16 +14,20 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import dialogs.error.ErrorDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -56,22 +61,18 @@ data class CreateGameDialogState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun CreateGameDialog(
-    onDismissRequest: () -> Unit,
-    navigateToGame: (gameId: GameId) -> Unit,
+    onCreateGame: (gameId: GameId) -> Unit,
     viewModel: CreateGameDialogViewModel = koinViewModel<CreateGameDialogViewModel>(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    navController: NavHostController = LocalNavController.current,
 ) {
     val state by viewModel.screenStateFlow.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
     } else {
-        Dialog(onDismissRequest = onDismissRequest) {
+        Dialog(onDismissRequest = { navController.popBackStack() }) {
             Surface(shape = MaterialTheme.shapes.medium) {
                 Column(modifier = Modifier.padding(16.dp)) {
 
@@ -113,7 +114,7 @@ fun CreateGameDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = onDismissRequest) {
+                        TextButton(onClick = { navController.popBackStack() }) {
                             Text(stringResource(Res.string.cancel))
                         }
 
@@ -121,15 +122,17 @@ fun CreateGameDialog(
 
                         TextButton(onClick = {
                             coroutineScope.launch {
-                                viewModel.createGame()?.let {
-                                    navigateToGame(it)
-                                }
+                                viewModel.createGame()?.let(onCreateGame)
                             }
                         }) {
                             Text(stringResource(Res.string.confirm))
                         }
                     }
                 }
+            }
+
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
             }
         }
     }

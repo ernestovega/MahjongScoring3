@@ -1,5 +1,7 @@
 package screens.game
 
+import AppScreens
+import LocalNavController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,10 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.dice
+import navigateTo
 import org.jetbrains.compose.resources.stringResource
-import screens.common.ui.SeatState
 import screens.common.ui.SmallSeats
 import screens.common.ui.SmallSeatsState
 
@@ -35,8 +38,7 @@ data class GamePageTableState(
 @Composable
 fun GamePageTable(
     state: GamePageTableState,
-    openHandActionsDialog: (selectedSeatState: SeatState) -> Unit,
-    openDiceDialog: () -> Unit,
+    navController: NavHostController = LocalNavController.current,
 ) {
     Box(
         modifier = Modifier
@@ -62,7 +64,12 @@ fun GamePageTable(
             ) {
                 SmallSeats(
                     state = state.smallSeatsState,
-                    onSeatClick = openHandActionsDialog,
+                    onSeatClick = { seatState ->
+                        navController.navigateTo(
+                            screen = AppScreens.HandActionsDialog,
+                            args = seatState,
+                        )
+                    },
                 )
             }
         }
@@ -71,7 +78,7 @@ fun GamePageTable(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
-            onClick = openDiceDialog,
+            onClick = { /*navController.navigateTo(AppScreens.DiceDialog)*/ },
         ) {
             Icon(
                 imageVector = Icons.Filled.Home,

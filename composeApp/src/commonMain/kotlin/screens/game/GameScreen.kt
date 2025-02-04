@@ -1,5 +1,6 @@
 package screens.game
 
+import LocalNavController
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import dialogs.SelectedPlayerData
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.list
@@ -24,8 +25,7 @@ import mahjongscoring3.composeapp.generated.resources.table
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import screens.common.ui.GameId
-import screens.common.ui.SeatState
+import screens.common.use_cases.utils.fromJson
 
 @Immutable
 data class GameScreenState(
@@ -36,11 +36,16 @@ data class GameScreenState(
 @OptIn(KoinExperimentalAPI::class, ExperimentalFoundationApi::class)
 @Composable
 fun GameScreen(
-    gameId: GameId,
-    openHandActionsDialog: (selectedSeatState: SeatState) -> Unit,
     viewModel: GameScreenViewModel = koinViewModel<GameScreenViewModel>(),
+    navController: NavHostController = LocalNavController.current,
 ) {
-    viewModel.setGameId(gameId)
+    navController.currentBackStackEntry
+        ?.arguments
+        ?.getString("gameId")
+        ?.fromJson<Long>()
+        ?.let(viewModel::setGameId)
+        ?: return
+
     val pagerState = rememberPagerState { 2 }
     val coroutineScope = rememberCoroutineScope()
     val tabTitles = listOf(
@@ -74,10 +79,7 @@ fun GameScreen(
             state = pagerState
         ) { page ->
             when (page) {
-                0 -> GamePageTable(
-                    state = state.gamePageTableState,
-                    openHandActionsDialog = openHandActionsDialog,
-                ) {}
+                0 -> GamePageTable(state.gamePageTableState)
                 1 -> GamePageList(state.gamePageListState)
             }
         }

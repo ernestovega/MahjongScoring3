@@ -15,12 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.Serializable
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.west
 import org.jetbrains.compose.resources.stringResource
 import screens.common.model.enums.TableWinds
 
 @Immutable
+@Serializable
 data class SeatState(
     val wind: TableWinds = TableWinds.NONE,
     val name: String = "",

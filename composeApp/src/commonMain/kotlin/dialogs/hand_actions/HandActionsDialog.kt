@@ -1,5 +1,6 @@
 package dialogs.hand_actions
 
+import LocalNavController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,9 +30,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import dialogs.DiffsState
 import dialogs.error.ErrorDialog
-import kotlinx.coroutines.CoroutineScope
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.cancel_penalties
 import mahjongscoring3.composeapp.generated.resources.draw
@@ -46,6 +46,7 @@ import screens.common.model.states.ScreenState
 import screens.common.model.states.error
 import screens.common.ui.PlayerDiffsBig
 import screens.common.ui.SeatState
+import screens.common.use_cases.utils.fromJson
 
 @Immutable
 data class HandActionsDialogState(
@@ -58,27 +59,27 @@ data class HandActionsDialogState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun HandActionsDialog(
-    selectedSeat: SeatState,
-    onDismissRequest: () -> Unit,
-    navigateToHuDialog: (selectedSeat: SeatState) -> Unit,
-    navigateToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
-    navigateToCancelPenaltyDialog: (selectedSeat: SeatState) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    navController: NavHostController = LocalNavController.current,
 ) {
-    viewModel.setSelectedSeatState(selectedSeat)
+    navController.currentBackStackEntry
+        ?.arguments
+        ?.getString("selectedSeat")
+        ?.fromJson<SeatState>()
+        ?.let(viewModel::setSelectedSeatState)
+        ?: return
+
     val state by viewModel.screenStateFlow.collectAsState()
 
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
     } else {
-        Dialog(onDismissRequest = onDismissRequest) {
+        Dialog(onDismissRequest = { navController.popBackStack() }) {
             Surface(shape = MaterialTheme.shapes.medium) {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
                     // Player
                     Image(
                         modifier = Modifier
@@ -108,7 +109,12 @@ fun HandActionsDialog(
                     // Hu
                     HandActionButton(
                         text = stringResource(Res.string.hu),
-                        onClick = { navigateToHuDialog(state.data.selectedSeatState) },
+                        onClick = {
+//                            navController.navigateTo(
+//                                screen = AppScreens.HuDialog,
+//                                args = state.data.selectedSeatState,
+//                            )
+                        },
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -117,7 +123,7 @@ fun HandActionsDialog(
                         text = stringResource(Res.string.draw),
                         onClick = {
                             viewModel.saveDrawRound()
-                            onDismissRequest()
+                            navController.popBackStack()
                         },
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -128,7 +134,10 @@ fun HandActionsDialog(
                         text = stringResource(Res.string.penalty),
                         onClick = {
                             isCancelPenaltyVisible = !isCancelPenaltyVisible
-//                            navigateToPenaltyDialog(state.data.selectedSeatState)
+//                            navController.navigateTo(
+//                                screen = AppScreens.PenaltyDialog,
+//                                args = state.data.selectedSeatState,
+//                            )
 //                            onDismissRequest()
                         },
                     )
@@ -140,8 +149,11 @@ fun HandActionsDialog(
                         HandActionButton(
                             text = stringResource(Res.string.cancel_penalties),
                             onClick = {
-                                navigateToCancelPenaltyDialog(state.data.selectedSeatState)
-                                onDismissRequest()
+//                                navController.navigateTo(
+//                                    screen = AppScreens.CancelPenaltiesDialog,
+//                                    args = state.data.selectedSeatState,
+//                                )
+                                navController.popBackStack()
                             },
                         )
                     }
