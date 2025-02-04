@@ -41,7 +41,7 @@ fun AppBottomBar(
         backgroundColor = MaterialTheme.colors.primary,
     ) {
         AppBottomBarItem(
-            isSelected = state.currentScreen.name == AppScreens.OldGames.name,
+            isSelected = state.currentScreen.name == AppScreens.OldGamesScreen.name,
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
             title = Res.string.old_games,
@@ -49,7 +49,7 @@ fun AppBottomBar(
         )
         AnimatedVisibility(visible = state.isBottomBarGameItemVisible) {
             AppBottomBarItem(
-                isSelected = state.currentScreen.name == AppScreens.Game.name,
+                isSelected = state.currentScreen.name == AppScreens.GameScreen.name,
                 selectedIcon = Icons.Filled.PlayArrow,
                 unselectedIcon = Icons.Outlined.PlayArrow,
                 title = Res.string.game,
@@ -57,7 +57,7 @@ fun AppBottomBar(
             )
         }
         AppBottomBarItem(
-            isSelected = state.currentScreen.name == AppScreens.Help.name,
+            isSelected = state.currentScreen.name == AppScreens.HelpScreen.name,
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
             title = Res.string.help,

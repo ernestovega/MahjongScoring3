@@ -1,7 +1,6 @@
 package dialogs.hand_actions
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,8 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,7 +33,6 @@ import androidx.compose.ui.window.Dialog
 import dialogs.DiffsState
 import dialogs.error.ErrorDialog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.cancel_penalties
 import mahjongscoring3.composeapp.generated.resources.draw
@@ -63,21 +58,16 @@ data class HandActionsDialogState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun HandActionsDialog(
-    selectedSeatState: SeatState,
+    selectedSeat: SeatState,
     onDismissRequest: () -> Unit,
-    navigateToHuDialog: (selectedSeatState: SeatState) -> Unit,
-    navigateToPenaltyDialog: (selectedSeatState: SeatState) -> Unit,
-    navigateToCancelPenaltyDialog: (selectedSeatState: SeatState) -> Unit,
+    navigateToHuDialog: (selectedSeat: SeatState) -> Unit,
+    navigateToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
+    navigateToCancelPenaltyDialog: (selectedSeat: SeatState) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
-    viewModel.setSelectedSeatState(selectedSeatState)
+    viewModel.setSelectedSeatState(selectedSeat)
     val state by viewModel.screenStateFlow.collectAsState()
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
@@ -116,54 +106,60 @@ fun HandActionsDialog(
                     Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
 
                     // Hu
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
+                    HandActionButton(
+                        text = stringResource(Res.string.hu),
                         onClick = { navigateToHuDialog(state.data.selectedSeatState) },
-                    ) {
-                        Text(text = stringResource(Res.string.hu))
-                    }
-
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Draw
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
+                    HandActionButton(
+                        text = stringResource(Res.string.draw),
                         onClick = {
-                            coroutineScope.launch {
-                                viewModel.saveDrawRound()
-                                onDismissRequest()
-                            }
+                            viewModel.saveDrawRound()
+                            onDismissRequest()
                         },
-                    ) {
-                        Text(stringResource(Res.string.draw))
-                    }
-
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Penalty
                     var isCancelPenaltyVisible by remember { mutableStateOf(true) }
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { isCancelPenaltyVisible = !isCancelPenaltyVisible },//navigateToPenaltyDialog(state.data.selectedSeatState) },
-                    ) {
-                        Text(stringResource(Res.string.penalty))
-                    }
+                    HandActionButton(
+                        text = stringResource(Res.string.penalty),
+                        onClick = {
+                            isCancelPenaltyVisible = !isCancelPenaltyVisible
+//                            navigateToPenaltyDialog(state.data.selectedSeatState)
+//                            onDismissRequest()
+                        },
+                    )
 
                     // Cancel penalties
                     if (isCancelPenaltyVisible) {//state.data.isCancelPenaltiesVisible) {
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { navigateToCancelPenaltyDialog(state.data.selectedSeatState) },
-                        ) {
-                            Text(stringResource(Res.string.cancel_penalties))
-                        }
+                        HandActionButton(
+                            text = stringResource(Res.string.cancel_penalties),
+                            onClick = {
+                                navigateToCancelPenaltyDialog(state.data.selectedSeatState)
+                                onDismissRequest()
+                            },
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HandActionButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Text(text)
     }
 }

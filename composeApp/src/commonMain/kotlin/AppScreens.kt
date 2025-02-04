@@ -8,11 +8,10 @@ import org.jetbrains.compose.resources.StringResource
 
 enum class AppScreens(val title: StringResource) {
     //    Splash(title = Res.string.app_name),
-    OldGames(title = Res.string.old_games),
-    Game(title = Res.string.game),
-    Help(title = Res.string.help),
+    OldGamesScreen(title = Res.string.old_games),
+    GameScreen(title = Res.string.game),
+    HelpScreen(title = Res.string.help),
 
-    //Dialogs
     CreateGameDialog(title = Res.string.create_game),
     HandActionsDialog(title = Res.string.hand_actions),
 }
