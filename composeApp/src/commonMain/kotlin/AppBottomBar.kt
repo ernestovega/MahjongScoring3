@@ -40,6 +40,7 @@ fun AppBottomBar(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colors.primary,
     ) {
+
         AppBottomBarItem(
             isSelected = state.currentScreen.name == AppScreens.OldGamesScreen.name,
             selectedIcon = Icons.Filled.Home,
@@ -74,22 +75,25 @@ private fun RowScope.AppBottomBarItem(
     title: StringResource,
     onClick: () -> Unit
 ) {
-    val color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+    val text = with (stringResource(title)) { if (isSelected) uppercase() else this }
+    val imageVector = if (isSelected) selectedIcon else unselectedIcon
+    val tint = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSecondary
+    val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
 
     BottomNavigationItem(
         selected = isSelected,
         icon = {
             Icon(
-                imageVector = if (isSelected) selectedIcon else unselectedIcon,
+                imageVector = imageVector,
                 contentDescription = stringResource(title),
-                tint = color,
+                tint = tint,
             )
         },
         label = {
             Text(
-                text = with (stringResource(title)) { if (isSelected) uppercase() else this },
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                color = color,
+                text = text,
+                fontWeight = fontWeight,
+                color = tint,
             )
         },
         alwaysShowLabel = true,

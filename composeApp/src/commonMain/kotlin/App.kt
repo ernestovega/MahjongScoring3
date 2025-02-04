@@ -47,18 +47,23 @@ fun MahjongScoringApp(
     viewModel: AppViewModel = koinViewModel<AppViewModel>(),
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen =
-        AppScreens.valueOf(backStackEntry?.destination?.route ?: AppScreens.OldGamesScreen.name)
     val ongoingGameId by viewModel.ongoingGameId.collectAsState()
-    val selectedSeatState by viewModel.selectedSeatState.collectAsState()
-    val appBottomBarState by remember {
+    val currentScreen by remember {
         derivedStateOf {
-            AppBottomBarState(
-                isBottomBarGameItemVisible = ongoingGameId != NOT_SET_GAME_ID,
-                currentScreen = currentScreen,
+            AppScreens.valueOf(
+                backStackEntry?.destination?.route ?: AppScreens.OldGamesScreen.name
             )
         }
     }
+    val appBottomBarState by remember {
+        derivedStateOf {
+            AppBottomBarState(
+                currentScreen = currentScreen,
+                isBottomBarGameItemVisible = ongoingGameId != NOT_SET_GAME_ID,
+            )
+        }
+    }
+    val selectedSeatState by viewModel.selectedSeatState.collectAsState()
 
     Scaffold(
         topBar = {
