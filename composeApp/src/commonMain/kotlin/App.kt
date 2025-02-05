@@ -115,7 +115,6 @@ fun MahjongScoringApp(
                         onDismissRequest = { navController.popBackStack() },
                         onHuClick = { navController.showHuDialog(it) },
                         onPenaltyClick = { navController.showPenaltyDialog(it) },
-                        onCancelPenaltyClick = { navController.showCancelPenaltiesDialog(it) },
                     )
                 }
             }

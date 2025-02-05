@@ -50,4 +50,8 @@ class HandActionsDialogViewModel(
     fun saveDrawRound() {
 //        huDrawUseCase.invoke(uiGame)
     }
+
+    fun cancelPenalties(selectedSeatState: SeatState) {
+//        cancelPenaltiesUseCase.invoke(selectedSeatState)
+    }
 }

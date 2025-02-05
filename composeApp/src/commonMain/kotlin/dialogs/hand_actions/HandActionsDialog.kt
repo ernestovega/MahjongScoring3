@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -28,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dialogs.DiffsState
+import dialogs.confirmation.ConfirmationDialog
 import dialogs.error.ErrorDialog
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.cancel_penalties
+import mahjongscoring3.composeapp.generated.resources.cancel_playername_penalties
 import mahjongscoring3.composeapp.generated.resources.draw
 import mahjongscoring3.composeapp.generated.resources.hu
 import mahjongscoring3.composeapp.generated.resources.penalty
@@ -58,7 +63,6 @@ fun HandActionsDialog(
     onDismissRequest: () -> Unit,
     onHuClick: (selectedSeat: SeatState) -> Unit,
     onPenaltyClick: (selectedSeat: SeatState) -> Unit,
-    onCancelPenaltyClick: (selectedSeat: SeatState) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
 ) {
     LocalNavController
@@ -71,6 +75,7 @@ fun HandActionsDialog(
         ?: return
 
     val state by viewModel.screenStateFlow.collectAsState()
+    var isCancelPenaltiesConfirmationDialogVisible by remember { mutableStateOf(false) }
 
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
@@ -138,15 +143,25 @@ fun HandActionsDialog(
 
                     // Cancel penalties
                     if (state.data.isCancelPenaltiesVisible) {
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         HandActionButton(
                             text = stringResource(Res.string.cancel_penalties),
-                            onClick = {
-                                onCancelPenaltyClick(state.data.selectedSeatState)
-                                onDismissRequest()
-                            },
+                            onClick = { isCancelPenaltiesConfirmationDialogVisible = true },
                         )
+
+                        if (isCancelPenaltiesConfirmationDialogVisible) {
+                            ConfirmationDialog(
+                                title = stringResource(Res.string.cancel_playername_penalties)
+                                    .replace("{player_name}", state.data.selectedSeatState.name),
+                                onDismissRequest = { isCancelPenaltiesConfirmationDialogVisible = false },
+                                onConfirmClick = {
+                                    viewModel.cancelPenalties(state.data.selectedSeatState)
+                                    onDismissRequest()
+                                },
+                            )
+                        }
                     }
                 }
             }

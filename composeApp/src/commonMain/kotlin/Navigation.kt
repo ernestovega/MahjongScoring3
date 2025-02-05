@@ -34,10 +34,6 @@ fun NavHostController.showPenaltyDialog(selectedSeat: SeatState) {
 //    navigateTo(AppScreens.PenaltyDialog, args = selectedSeat)
 }
 
-fun NavHostController.showCancelPenaltiesDialog(selectedSeat: SeatState) {
-//    navigateTo(AppScreens.CancelPenaltiesDialog, args = selectedSeat)
-}
-
 private fun NavHostController.navigateTo(
     screen: AppScreens,
     inclusive: Boolean = false,

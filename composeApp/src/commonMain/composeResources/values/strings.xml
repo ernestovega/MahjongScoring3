@@ -39,6 +39,10 @@
     <string name="penalty">Penalty</string>
     <string name="cancel_penalties">Cancel penalties</string>
     <string name="hand_actions">Hand actions</string>
+    <string name="cancel_playername_penalties">Cancel {player_name} penalties</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>
