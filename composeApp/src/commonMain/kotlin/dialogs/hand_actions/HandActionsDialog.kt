@@ -19,9 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -30,7 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import dialogs.DiffsState
 import dialogs.error.ErrorDialog
 import mahjongscoring3.composeapp.generated.resources.Res
@@ -59,10 +55,15 @@ data class HandActionsDialogState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun HandActionsDialog(
+    onDismissRequest: () -> Unit,
+    onHuClick: (selectedSeat: SeatState) -> Unit,
+    onPenaltyClick: (selectedSeat: SeatState) -> Unit,
+    onCancelPenaltyClick: (selectedSeat: SeatState) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
-    navController: NavHostController = LocalNavController.current,
 ) {
-    navController.currentBackStackEntry
+    LocalNavController
+        .current
+        .currentBackStackEntry
         ?.arguments
         ?.getString("selectedSeat")
         ?.fromJson<SeatState>()
@@ -74,7 +75,7 @@ fun HandActionsDialog(
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
     } else {
-        Dialog(onDismissRequest = { navController.popBackStack() }) {
+        Dialog(onDismissRequest = onDismissRequest) {
             Surface(shape = MaterialTheme.shapes.medium) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -110,10 +111,8 @@ fun HandActionsDialog(
                     HandActionButton(
                         text = stringResource(Res.string.hu),
                         onClick = {
-//                            navController.navigateTo(
-//                                screen = AppScreens.HuDialog,
-//                                args = state.data.selectedSeatState,
-//                            )
+                            onHuClick(state.data.selectedSeatState)
+                            onDismissRequest()
                         },
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -123,37 +122,29 @@ fun HandActionsDialog(
                         text = stringResource(Res.string.draw),
                         onClick = {
                             viewModel.saveDrawRound()
-                            navController.popBackStack()
+                            onDismissRequest()
                         },
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Penalty
-                    var isCancelPenaltyVisible by remember { mutableStateOf(true) }
                     HandActionButton(
                         text = stringResource(Res.string.penalty),
                         onClick = {
-                            isCancelPenaltyVisible = !isCancelPenaltyVisible
-//                            navController.navigateTo(
-//                                screen = AppScreens.PenaltyDialog,
-//                                args = state.data.selectedSeatState,
-//                            )
-//                            onDismissRequest()
+                            onPenaltyClick(state.data.selectedSeatState)
+                            onDismissRequest()
                         },
                     )
 
                     // Cancel penalties
-                    if (isCancelPenaltyVisible) {//state.data.isCancelPenaltiesVisible) {
+                    if (state.data.isCancelPenaltiesVisible) {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         HandActionButton(
                             text = stringResource(Res.string.cancel_penalties),
                             onClick = {
-//                                navController.navigateTo(
-//                                    screen = AppScreens.CancelPenaltiesDialog,
-//                                    args = state.data.selectedSeatState,
-//                                )
-                                navController.popBackStack()
+                                onCancelPenaltyClick(state.data.selectedSeatState)
+                                onDismissRequest()
                             },
                         )
                     }

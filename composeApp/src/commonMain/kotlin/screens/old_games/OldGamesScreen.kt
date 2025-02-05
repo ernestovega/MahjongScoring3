@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.create_game
-import navigateTo
+import navigateToGame
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import screens.common.ui.GameId
+import showCreateGameDialog
 
 @Immutable
 data class OldGamesScreenState(
@@ -53,10 +54,7 @@ fun OldGamesScreen(
                     state = gameState,
                     onClick = {
                         onResumeGame(gameState.gameId)
-                        navController.navigateTo(
-                            screen = AppScreens.GameScreen,
-                            args = gameState.gameId,
-                        )
+                        navController.navigateToGame(gameState.gameId)
                     },
                 )
             }
@@ -66,7 +64,7 @@ fun OldGamesScreen(
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd),
-            onClick = { navController.navigateTo(AppScreens.CreateGameDialog) },
+            onClick = { navController.showCreateGameDialog() },
         ) {
             Icon(
                 imageVector = Icons.Filled.PlayArrow,

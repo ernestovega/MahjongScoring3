@@ -1,7 +1,6 @@
 package screens.game
 
 import LocalNavController
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.list
@@ -25,6 +23,7 @@ import mahjongscoring3.composeapp.generated.resources.table
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import screens.common.ui.SeatState
 import screens.common.use_cases.utils.fromJson
 
 @Immutable
@@ -33,13 +32,14 @@ data class GameScreenState(
     val gamePageListState: GamePageListState = GamePageListState(),
 )
 
-@OptIn(KoinExperimentalAPI::class, ExperimentalFoundationApi::class)
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun GameScreen(
     viewModel: GameScreenViewModel = koinViewModel<GameScreenViewModel>(),
-    navController: NavHostController = LocalNavController.current,
+    onSeatClick: (selectedSeat: SeatState) -> Unit,
+    onDiceClick: () -> Unit,
 ) {
-    navController.currentBackStackEntry
+    LocalNavController.current.currentBackStackEntry
         ?.arguments
         ?.getString("gameId")
         ?.fromJson<Long>()
@@ -79,7 +79,11 @@ fun GameScreen(
             state = pagerState
         ) { page ->
             when (page) {
-                0 -> GamePageTable(state.gamePageTableState)
+                0 -> GamePageTable(
+                    state = state.gamePageTableState,
+                    onSeatClick = onSeatClick,
+                    onDiceClick = onDiceClick,
+                )
                 1 -> GamePageList(state.gamePageListState)
             }
         }

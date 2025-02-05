@@ -80,13 +80,9 @@ fun MahjongScoringApp(
             bottomBar = {
                 AppBottomBar(
                     state = appBottomBarState,
-                    navigateToOldGames = { navController.navigateTo(AppScreens.OldGamesScreen) },
-                    navigateToGame = {
-                        navController.navigateTo(
-                            screen = AppScreens.GameScreen,
-                            args = ongoingGameId,
-                        ) },
-                    navigateToHelp = { navController.navigateTo(AppScreens.HelpScreen) },
+                    navigateToOldGames = { navController.navigateToOldGames() },
+                    navigateToGame = { navController.navigateToGame(ongoingGameId) },
+                    navigateToHelp = { navController.navigateToHelp() },
                 )
             }
         ) { innerPadding ->
@@ -100,44 +96,29 @@ fun MahjongScoringApp(
                 composable(route = AppScreens.OldGamesScreen.route) {
                     OldGamesScreen(onResumeGame = viewModel::setOngoingGameId)
                 }
-                composable(route = AppScreens.GameScreen.route) { GameScreen() }
+                composable(route = AppScreens.GameScreen.route) {
+                    GameScreen(
+                        onSeatClick = { selectedSeat -> navController.showHandActionsDialog(selectedSeat) },
+                        onDiceClick = { navController.showDiceDialog() },
+                    )
+                }
                 composable(route = AppScreens.HelpScreen.route) { HelpScreen() }
 
                 dialog(route = AppScreens.CreateGameDialog.route) {
-                    CreateGameDialog(onCreateGame = viewModel::setOngoingGameId)
+                    CreateGameDialog(
+                        onDismissRequest = { navController.popBackStack() },
+                        onCreateGame = viewModel::setOngoingGameId,
+                    )
                 }
-                dialog(route = AppScreens.HandActionsDialog.route) { HandActionsDialog() }
+                dialog(route = AppScreens.HandActionsDialog.route) {
+                    HandActionsDialog(
+                        onDismissRequest = { navController.popBackStack() },
+                        onHuClick = { navController.showHuDialog(it) },
+                        onPenaltyClick = { navController.showPenaltyDialog(it) },
+                        onCancelPenaltyClick = { navController.showCancelPenaltiesDialog(it) },
+                    )
+                }
             }
         }
     }
 }
-
-inline fun NavHostController.navigateTo(
-    screen: AppScreens,
-    inclusive: Boolean = false,
-) {
-    if (currentBackStackEntry?.destination?.route != screen.route) {
-        if (!popBackStack(screen.route, inclusive = inclusive)) {
-            navigate(screen.route)
-        }
-    }
-}
-
-inline fun <reified T> NavHostController.navigateTo(
-    screen: AppScreens,
-    inclusive: Boolean = false,
-    args: T? = null,
-) {
-    if (currentBackStackEntry?.destination?.route != screen.route) {
-        if (!popBackStack(screen.route, inclusive = inclusive)) {
-            navigate(screen.route(args))
-        }
-    }
-}
-
-///**
-// * Pops up to [AppScreen.OldGames]
-// */
-//private fun NavHostController.navigateToStart() {
-//    popBackStack(AppScreen.OldGames.name, inclusive = false)
-//}

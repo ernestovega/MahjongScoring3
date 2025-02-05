@@ -14,17 +14,14 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
@@ -40,6 +37,7 @@ import mahjongscoring3.composeapp.generated.resources.game_name
 import mahjongscoring3.composeapp.generated.resources.north_player
 import mahjongscoring3.composeapp.generated.resources.south_player
 import mahjongscoring3.composeapp.generated.resources.west_player
+import navigateToGame
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -61,6 +59,7 @@ data class CreateGameDialogState(
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun CreateGameDialog(
+    onDismissRequest: () -> Unit,
     onCreateGame: (gameId: GameId) -> Unit,
     viewModel: CreateGameDialogViewModel = koinViewModel<CreateGameDialogViewModel>(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
@@ -72,7 +71,7 @@ fun CreateGameDialog(
     if (state is ScreenState.Error) {
         ErrorDialog(state.error)
     } else {
-        Dialog(onDismissRequest = { navController.popBackStack() }) {
+        Dialog(onDismissRequest = onDismissRequest) {
             Surface(shape = MaterialTheme.shapes.medium) {
                 Column(modifier = Modifier.padding(16.dp)) {
 
@@ -122,7 +121,11 @@ fun CreateGameDialog(
 
                         TextButton(onClick = {
                             coroutineScope.launch {
-                                viewModel.createGame()?.let(onCreateGame)
+                                viewModel.createGame()?.let { gameId ->
+                                    onCreateGame(gameId)
+                                    onDismissRequest()
+                                    navController.navigateToGame(gameId)
+                                }
                             }
                         }) {
                             Text(stringResource(Res.string.confirm))
