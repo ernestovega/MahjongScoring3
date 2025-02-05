@@ -1,13 +1,11 @@
 package di
 
-import com.etologic.mahjongscoring.database.getRoomDatabase
+import com.etologic.mahjongscoring.database.getDatabaseBuilder
 import database.AppDatabase
-import database.daos.GamesDao
-import database.daos.RoundsDao
-import org.koin.dsl.bind
+import database.getRoomDatabase
 import org.koin.dsl.module
 
 actual val platformModule = module {
     //Database
-    single<AppDatabase> { getRoomDatabase(get()) }
+    single<AppDatabase> { getRoomDatabase(getDatabaseBuilder(get())) }
 }

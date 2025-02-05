@@ -21,7 +21,7 @@ kotlin {
     }
     
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -30,6 +30,8 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            // Required when using NativeSQLiteDriver
+            linkerOpts.add("-lsqlite3")
         }
     }
     
@@ -127,30 +129,14 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
-// region Workaround to fix a bug with KSP2:
-// https://slack-chats.kotlinlang.org/t/18822191/anyone-by-chance-get-kmp-version-of-jetpack-room-working-in-
-// https://github.com/cvivek07/KMM-PicSplash/blob/main/composeApp/build.gradle.kts
-//
-//dependencies {
-//    ksp(libs.room.compiler)
-//}
 dependencies {
-    add("kspCommonMainMetadata", libs.room.compiler)
-}
-//tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-//    if (name != "kspCommonMainKotlinMetadata" ) {
-//        dependsOn("kspCommonMainKotlinMetadata")
-//    }
-//}
-// Found this other one with non deprecated class here:
-// https://medium.com/@actiwerks/setting-up-kotlin-multiplatform-with-ksp-7f598b1681bf
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-
-// And this other one
-//https://medium.com/@brilianadeputra/how-to-use-koin-and-room-database-in-kotlin-multiplatform-ce73577e4cc9
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
+    listOf(
+        "kspAndroid",
+        "kspDesktop",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64",
+    ).forEach {
+        add(it, libs.room.compiler)
     }
 }
-//endregion
