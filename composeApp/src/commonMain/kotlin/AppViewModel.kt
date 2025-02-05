@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import screens.common.ui.BaseViewModel
 import screens.common.ui.NOT_SET_GAME_ID
-import screens.common.ui.SeatState
 
 class AppViewModel : BaseViewModel() {
 

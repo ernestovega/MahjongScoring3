@@ -1,8 +1,8 @@
 package screens.common.use_cases
 
 import database.tables.DbRound
-import screens.common.model.UiRound
 import screens.common.data.rounds.RoundsRepository
+import screens.common.model.UiRound
 
 class CancelAllPenaltiesUseCase(
     private val roundsRepository: RoundsRepository,

@@ -1,8 +1,8 @@
 package screens.common.use_cases
 
 import database.tables.DbGame
-import screens.common.model.UiGame
 import screens.common.data.games.GamesRepository
+import screens.common.model.UiGame
 import screens.common.use_cases.utils.normalizeName
 
 class EditGameNamesUseCase(

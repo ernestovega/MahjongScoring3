@@ -1,10 +1,10 @@
 package screens.common.use_cases
 
 import kotlinx.coroutines.flow.firstOrNull
+import screens.common.model.UiGame
+import screens.common.model.enums.TableWinds.NONE
 import screens.common.model.exceptions.GameNotFoundException
 import screens.common.model.exceptions.RankingDataGenerationException
-import screens.common.model.enums.TableWinds.NONE
-import screens.common.model.UiGame
 import screens.common.ui.GameId
 import screens.common.use_cases.utils.RankingTableHelper
 import screens.common.use_cases.utils.prettifyOneLine

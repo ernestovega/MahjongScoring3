@@ -1,6 +1,7 @@
 package screens.common.use_cases
 
 import database.tables.DbRound
+import screens.common.data.rounds.RoundsRepository
 import screens.common.model.PenaltyData
 import screens.common.model.UiGame
 import screens.common.model.UiRound
@@ -9,7 +10,6 @@ import screens.common.model.enums.TableWinds.EAST
 import screens.common.model.enums.TableWinds.NORTH
 import screens.common.model.enums.TableWinds.SOUTH
 import screens.common.model.enums.TableWinds.WEST
-import screens.common.data.rounds.RoundsRepository
 
 class SetPenaltyUseCase(
     private val roundsRepository: RoundsRepository,

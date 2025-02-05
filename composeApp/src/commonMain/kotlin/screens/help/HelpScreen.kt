@@ -18,14 +18,9 @@ import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.diffs
 import mahjongscoring3.composeapp.generated.resources.fan
-import mahjongscoring3.composeapp.generated.resources.penalties
-import mahjongscoring3.composeapp.generated.resources.rules
 import org.jetbrains.compose.resources.stringResource
-import screens.common.use_cases.utils.capitalize
 import screens.help.diffs.DiffsScreen
 import screens.help.fan.FanScreen
-import screens.help.penalties.PenaltiesScreen
-import screens.help.rules.RulesScreen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
