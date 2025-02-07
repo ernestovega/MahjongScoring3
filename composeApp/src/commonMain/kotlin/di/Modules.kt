@@ -6,6 +6,7 @@ import database.daos.GamesDao
 import database.daos.RoundsDao
 import dialogs.create_game.CreateGameDialogViewModel
 import dialogs.hand_actions.HandActionsDialogViewModel
+import dialogs.penalty.PenaltyDialogViewModel
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -57,6 +58,7 @@ val sharedModule = module {
     //Dialogs ViewModels
     viewModelOf(::CreateGameDialogViewModel)
     viewModelOf(::HandActionsDialogViewModel)
+    viewModelOf(::PenaltyDialogViewModel)
 
     //UseCases
     factoryOf(::CancelAllPenaltiesUseCase)

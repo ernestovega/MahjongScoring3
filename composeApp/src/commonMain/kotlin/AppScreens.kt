@@ -4,55 +4,25 @@ import mahjongscoring3.composeapp.generated.resources.game
 import mahjongscoring3.composeapp.generated.resources.hand_actions
 import mahjongscoring3.composeapp.generated.resources.help
 import mahjongscoring3.composeapp.generated.resources.old_games
+import mahjongscoring3.composeapp.generated.resources.penalty
 import org.jetbrains.compose.resources.StringResource
+import screens.common.ui.GameId
 import screens.common.ui.SeatState
 import screens.common.use_cases.utils.toJson
 
-sealed class AppScreens(
+enum class AppScreens(
     val title: StringResource,
-    val route: String,
-    vararg val params: String,
+    val route: String
 ) {
-    open fun <T> route(vararg args: T): String = route
+    //Screens
+    OldGamesScreen(title = Res.string.old_games, route = "OldGamesScreen"),
+    GameScreen(title = Res.string.game, route = "GameScreen/{gameId}"),
+    HelpScreen(title = Res.string.help, route = "HelpScreen"),
 
-    data object OldGamesScreen : AppScreens(
-        title = Res.string.old_games,
-        route = "OldGamesScreen",
-    )
-
-    data object GameScreen : AppScreens(
-        title = Res.string.game,
-        route = "GameScreen/{gameId}",
-        params = arrayOf("{gameId}")
-    ) {
-        override fun <T> route(vararg args: T): String =
-            route.replace(
-                oldValue = params.first(),
-                newValue = (args.first() as Long).toJson(),
-            )
-    }
-
-    data object HelpScreen : AppScreens(
-        title = Res.string.help,
-        route = "HelpScreen",
-    )
-
-    data object CreateGameDialog : AppScreens(
-        title = Res.string.create_game,
-        route = "CreateGameDialog",
-    )
-
-    data object HandActionsDialog : AppScreens(
-        title = Res.string.hand_actions,
-        route = "HandActionsDialog/{selectedSeat}",
-        params = arrayOf("{selectedSeat}"),
-    ) {
-        override fun <T> route(vararg args: T): String =
-            route.replace(
-                oldValue = params.first(),
-                newValue = (args.first() as SeatState).toJson(),
-            )
-    }
+    //Dialogs
+    CreateGameDialog(title = Res.string.create_game, route = "CreateGameDialog"),
+    HandActionsDialog(title = Res.string.hand_actions, route = "HandActionsDialog/{selectedSeat}"),
+    PenaltyDialog(title = Res.string.penalty, route = "PenaltyDialog/{selectedSeat}",);
 
     companion object {
         fun fromRoute(route: String) = when(route) {
@@ -60,8 +30,14 @@ sealed class AppScreens(
             HelpScreen.route -> HelpScreen
             CreateGameDialog.route -> CreateGameDialog
             HandActionsDialog.route -> HandActionsDialog
+            PenaltyDialog.route -> PenaltyDialog
             else -> OldGamesScreen
         }
-
     }
 }
+
+fun AppScreens.getRoute(gameId: GameId): String =
+    route.replace(oldValue = "{gameId}", newValue = gameId.toJson(),)
+
+fun AppScreens.getRoute(seatState: SeatState): String =
+    route.replace(oldValue = "{selectedSeat}", newValue = seatState.toJson(),)

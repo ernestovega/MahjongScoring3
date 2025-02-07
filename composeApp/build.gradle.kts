@@ -62,6 +62,7 @@ kotlin {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.lifecycle.viewmodel)
+                implementation(libs.kermit.logging)
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite)
                 implementation(libs.sqlite.bundled)

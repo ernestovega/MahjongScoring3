@@ -20,7 +20,7 @@ fun ErrorDialog(error: Throwable?) {
                },//${if (isDebugMode) "\n${error!!.message}" else ""}") },
         confirmButton = {
             TextButton(onClick = {}) {
-                Text(stringResource(Res.string.close))
+                Text(stringResource(Res.string.close).uppercase())
             }
         }
     )

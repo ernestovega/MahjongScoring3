@@ -9,11 +9,13 @@ import screens.common.model.enums.TableWinds
 import screens.common.model.states.ScreenState
 import screens.common.ui.BaseViewModel
 import screens.common.ui.SeatState
+import screens.common.use_cases.CancelAllPenaltiesUseCase
 import screens.common.use_cases.HuDrawUseCase
 import screens.help.diffs.Diff
 
 class HandActionsDialogViewModel(
     private val huDrawUseCase: HuDrawUseCase,
+    private val cancelAllPenaltiesUseCase: CancelAllPenaltiesUseCase,
 ) : BaseViewModel() {
 
     private val _screenStateFlow = MutableStateFlow<ScreenState<HandActionsDialogState>>(
@@ -52,6 +54,6 @@ class HandActionsDialogViewModel(
     }
 
     fun cancelPenalties(selectedSeatState: SeatState) {
-//        cancelPenaltiesUseCase.invoke(selectedSeatState)
+//        cancelAllPenaltiesUseCase.invoke(selectedSeatState)
     }
 }

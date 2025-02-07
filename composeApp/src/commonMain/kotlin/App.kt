@@ -18,6 +18,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import dialogs.create_game.CreateGameDialog
 import dialogs.hand_actions.HandActionsDialog
+import dialogs.penalty.PenaltyDialog
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -89,16 +90,18 @@ fun MahjongScoringApp(
             NavHost(
                 navController = navController,
                 startDestination = AppScreens.OldGamesScreen.route,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
             ) {
                 composable(route = AppScreens.OldGamesScreen.route) {
                     OldGamesScreen(onResumeGame = viewModel::setOngoingGameId)
                 }
                 composable(route = AppScreens.GameScreen.route) {
                     GameScreen(
-                        onSeatClick = { selectedSeat -> navController.showHandActionsDialog(selectedSeat) },
+                        onSeatClick = { selectedSeat ->
+                            navController.showHandActionsDialog(
+                                selectedSeat
+                            )
+                        },
                         onDiceClick = { navController.showDiceDialog() },
                     )
                 }
@@ -107,15 +110,21 @@ fun MahjongScoringApp(
                 dialog(route = AppScreens.CreateGameDialog.route) {
                     CreateGameDialog(
                         onDismissRequest = { navController.popBackStack() },
-                        onCreateGame = viewModel::setOngoingGameId,
+                        onGameCreated = { gameId ->
+                            viewModel.setOngoingGameId(gameId)
+                            navController.navigateToGame(gameId)
+                        },
                     )
                 }
                 dialog(route = AppScreens.HandActionsDialog.route) {
                     HandActionsDialog(
                         onDismissRequest = { navController.popBackStack() },
-                        onHuClick = { navController.showHuDialog(it) },
-                        onPenaltyClick = { navController.showPenaltyDialog(it) },
+                        goToHuDialog = { navController.showHuDialog(it) },
+                        goToPenaltyDialog = { navController.showPenaltyDialog(it) },
                     )
+                }
+                dialog(route = AppScreens.PenaltyDialog.route) {
+                    PenaltyDialog(onDismissRequest = { navController.popBackStack() })
                 }
             }
         }

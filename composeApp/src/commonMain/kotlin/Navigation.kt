@@ -3,19 +3,19 @@ import screens.common.ui.GameId
 import screens.common.ui.SeatState
 
 fun NavHostController.navigateToOldGames() {
-    navigateTo(AppScreens.OldGamesScreen)
+    navigateTo(AppScreens.OldGamesScreen.route)
 }
 
 fun NavHostController.navigateToGame(gameId: GameId) {
-    navigateTo(AppScreens.GameScreen, args = gameId)
+    navigateTo(AppScreens.GameScreen.getRoute(gameId))
 }
 
 fun NavHostController.navigateToHelp() {
-    navigateTo(AppScreens.HelpScreen)
+    navigateTo(AppScreens.HelpScreen.route)
 }
 
 fun NavHostController.showCreateGameDialog() {
-    navigateTo(AppScreens.CreateGameDialog)
+    navigateTo(AppScreens.CreateGameDialog.route)
 }
 
 fun NavHostController.showDiceDialog() {
@@ -23,7 +23,7 @@ fun NavHostController.showDiceDialog() {
 }
 
 fun NavHostController.showHandActionsDialog(selectedSeat: SeatState) {
-    navigateTo(AppScreens.HandActionsDialog, args = selectedSeat)
+    navigateTo(AppScreens.HandActionsDialog.getRoute(selectedSeat))
 }
 
 fun NavHostController.showHuDialog(selectedSeat: SeatState) {
@@ -31,28 +31,16 @@ fun NavHostController.showHuDialog(selectedSeat: SeatState) {
 }
 
 fun NavHostController.showPenaltyDialog(selectedSeat: SeatState) {
-//    navigateTo(AppScreens.PenaltyDialog, args = selectedSeat)
+    navigateTo(AppScreens.PenaltyDialog.getRoute(selectedSeat))
 }
 
 private fun NavHostController.navigateTo(
-    screen: AppScreens,
+    route: String,
     inclusive: Boolean = false,
 ) {
-    if (currentBackStackEntry?.destination?.route != screen.route) {
-        if (!popBackStack(screen.route, inclusive = inclusive)) {
-            navigate(screen.route)
-        }
-    }
-}
-
-private inline fun <reified T> NavHostController.navigateTo(
-    screen: AppScreens,
-    inclusive: Boolean = false,
-    args: T? = null,
-) {
-    if (currentBackStackEntry?.destination?.route != screen.route) {
-        if (!popBackStack(screen.route, inclusive = inclusive)) {
-            navigate(screen.route(args))
+    if (currentBackStackEntry?.destination?.route != route) {
+        if (!popBackStack(route, inclusive = inclusive)) {
+            navigate(route)
         }
     }
 }

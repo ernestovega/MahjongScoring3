@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +45,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import screens.common.model.states.ScreenState
-import screens.common.model.states.error
 import screens.common.ui.PlayerDiffsBig
 import screens.common.ui.SeatState
 import screens.common.use_cases.utils.fromJson
@@ -61,107 +61,127 @@ data class HandActionsDialogState(
 @Composable
 fun HandActionsDialog(
     onDismissRequest: () -> Unit,
-    onHuClick: (selectedSeat: SeatState) -> Unit,
-    onPenaltyClick: (selectedSeat: SeatState) -> Unit,
+    goToHuDialog: (selectedSeat: SeatState) -> Unit,
+    goToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
 ) {
-    LocalNavController
-        .current
-        .currentBackStackEntry
-        ?.arguments
-        ?.getString("selectedSeat")
-        ?.fromJson<SeatState>()
-        ?.let(viewModel::setSelectedSeatState)
-        ?: return
-
+    val navController = LocalNavController.current
     val state by viewModel.screenStateFlow.collectAsState()
+
+    LaunchedEffect(navController) {
+        navController
+            .currentBackStackEntry
+            ?.arguments
+            ?.getString("selectedSeat")
+            ?.fromJson<SeatState>()
+            ?.let(viewModel::setSelectedSeatState)
+    }
+
+    HandActionsDialogInternal(
+        state = state,
+        onDismissRequest = onDismissRequest,
+        goToHuDialog = goToHuDialog,
+        goToPenaltyDialog = goToPenaltyDialog,
+        onDrawClick = { viewModel.saveDrawRound() },
+        onCancelPenaltiesClick = { viewModel.cancelPenalties(state.data.selectedSeatState) },
+    )
+}
+
+@Composable
+fun HandActionsDialogInternal(
+    state: ScreenState<HandActionsDialogState>,
+    onDismissRequest: () -> Unit,
+    goToHuDialog: (selectedSeat: SeatState) -> Unit,
+    goToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
+    onDrawClick: () -> Unit,
+    onCancelPenaltiesClick: () -> Unit,
+) {
+
     var isCancelPenaltiesConfirmationDialogVisible by remember { mutableStateOf(false) }
 
-    if (state is ScreenState.Error) {
-        ErrorDialog(state.error)
-    } else {
-        Dialog(onDismissRequest = onDismissRequest) {
-            Surface(shape = MaterialTheme.shapes.medium) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    // Player
-                    Image(
-                        modifier = Modifier
-                            .width(72.dp)
-                            .padding(top = 8.dp),
-                        imageVector = Icons.Filled.Home,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = stringResource(Res.string.west),
-                    )
-                    Text(
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Ellipsis,
-                        text = state.data.selectedSeatState.name,
-                        fontSize = 24.sp,
-                        maxLines = 1,
-                    )
+    Dialog(onDismissRequest = onDismissRequest) {
+        Surface(shape = MaterialTheme.shapes.medium) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                // Player
+                Image(
+                    modifier = Modifier
+                        .width(72.dp)
+                        .padding(top = 8.dp),
+                    imageVector = Icons.Filled.Home,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = stringResource(Res.string.west),
+                )
+                Text(
+                    textAlign = TextAlign.Center,
+                    overflow = TextOverflow.Ellipsis,
+                    text = state.data.selectedSeatState.name,
+                    fontSize = 24.sp,
+                    maxLines = 1,
+                )
 
-                    Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
+                Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
 
-                    // Diffs
-                    if (state.data.areDiffsVisible) {
-                        PlayerDiffsBig(state.data.diffsState.playerDiffs)
-                    }
+                // Diffs
+                if (state.data.areDiffsVisible) {
+                    PlayerDiffsBig(state.data.diffsState.playerDiffs)
+                }
 
-                    Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
+                Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
 
-                    // Hu
-                    HandActionButton(
-                        text = stringResource(Res.string.hu),
-                        onClick = {
-                            onHuClick(state.data.selectedSeatState)
-                            onDismissRequest()
-                        },
-                    )
+                // Hu
+                HandActionButton(
+                    text = stringResource(Res.string.hu),
+                    onClick = {
+                        onDismissRequest()
+                        goToHuDialog(state.data.selectedSeatState)
+                    },
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Draw
+                HandActionButton(
+                    text = stringResource(Res.string.draw),
+                    onClick = {
+                        onDrawClick()
+                        onDismissRequest()
+                    },
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Penalty
+                HandActionButton(
+                    text = stringResource(Res.string.penalty),
+                    onClick = {
+                        onDismissRequest()
+                        goToPenaltyDialog(state.data.selectedSeatState)
+                    },
+                )
+
+                // Cancel penalties
+                if (state.data.isCancelPenaltiesVisible) {
+
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Draw
                     HandActionButton(
-                        text = stringResource(Res.string.draw),
-                        onClick = {
-                            viewModel.saveDrawRound()
-                            onDismissRequest()
-                        },
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Penalty
-                    HandActionButton(
-                        text = stringResource(Res.string.penalty),
-                        onClick = {
-                            onPenaltyClick(state.data.selectedSeatState)
-                            onDismissRequest()
-                        },
+                        text = stringResource(Res.string.cancel_penalties),
+                        onClick = { isCancelPenaltiesConfirmationDialogVisible = true },
                     )
 
-                    // Cancel penalties
-                    if (state.data.isCancelPenaltiesVisible) {
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        HandActionButton(
-                            text = stringResource(Res.string.cancel_penalties),
-                            onClick = { isCancelPenaltiesConfirmationDialogVisible = true },
+                    if (isCancelPenaltiesConfirmationDialogVisible) {
+                        ConfirmationDialog(
+                            title = stringResource(Res.string.cancel_playername_penalties)
+                                .replace("{player_name}", state.data.selectedSeatState.name),
+                            onDismissRequest = {
+                                isCancelPenaltiesConfirmationDialogVisible = false
+                            },
+                            onConfirmClick = {
+                                onCancelPenaltiesClick()
+                                onDismissRequest()
+                            },
                         )
-
-                        if (isCancelPenaltiesConfirmationDialogVisible) {
-                            ConfirmationDialog(
-                                title = stringResource(Res.string.cancel_playername_penalties)
-                                    .replace("{player_name}", state.data.selectedSeatState.name),
-                                onDismissRequest = { isCancelPenaltiesConfirmationDialogVisible = false },
-                                onConfirmClick = {
-                                    viewModel.cancelPenalties(state.data.selectedSeatState)
-                                    onDismissRequest()
-                                },
-                            )
-                        }
                     }
                 }
             }
@@ -178,6 +198,6 @@ private fun HandActionButton(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
     ) {
-        Text(text)
+        Text(text.uppercase())
     }
 }

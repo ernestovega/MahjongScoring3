@@ -26,7 +26,7 @@
     <string name="create_game">Create game</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
-    <string name="game_name">Game name</string>
+    <string name="game_name_optional">Game name (optional)</string>
     <string name="east_player">East player</string>
     <string name="south_player">South player</string>
     <string name="west_player">West player</string>
@@ -43,6 +43,8 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="divided">Divided</string>
+    <string name="points">Points</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>

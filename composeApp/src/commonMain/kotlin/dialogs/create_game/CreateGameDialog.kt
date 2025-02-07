@@ -1,18 +1,13 @@
 package dialogs.create_game
 
-import LocalNavController
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,10 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
-import dialogs.error.ErrorDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
@@ -33,16 +28,14 @@ import mahjongscoring3.composeapp.generated.resources.cancel
 import mahjongscoring3.composeapp.generated.resources.confirm
 import mahjongscoring3.composeapp.generated.resources.create_game
 import mahjongscoring3.composeapp.generated.resources.east_player
-import mahjongscoring3.composeapp.generated.resources.game_name
+import mahjongscoring3.composeapp.generated.resources.game_name_optional
 import mahjongscoring3.composeapp.generated.resources.north_player
 import mahjongscoring3.composeapp.generated.resources.south_player
 import mahjongscoring3.composeapp.generated.resources.west_player
-import navigateToGame
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import screens.common.model.states.ScreenState
-import screens.common.model.states.error
+import screens.common.ui.DialogButton
 import screens.common.ui.GameId
 import screens.common.ui.NameTextField
 import screens.common.ui.NameTextFieldState
@@ -60,83 +53,83 @@ data class CreateGameDialogState(
 @Composable
 fun CreateGameDialog(
     onDismissRequest: () -> Unit,
-    onCreateGame: (gameId: GameId) -> Unit,
+    onGameCreated: (gameId: GameId) -> Unit,
     viewModel: CreateGameDialogViewModel = koinViewModel<CreateGameDialogViewModel>(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = LocalNavController.current,
 ) {
     val state by viewModel.screenStateFlow.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
-    if (state is ScreenState.Error) {
-        ErrorDialog(state.error)
-    } else {
-        Dialog(onDismissRequest = onDismissRequest) {
-            Surface(shape = MaterialTheme.shapes.medium) {
-                Column(modifier = Modifier.padding(16.dp)) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Surface(shape = MaterialTheme.shapes.medium) {
+            Column(modifier = Modifier.padding(16.dp)) {
 
-                    // Title
-                    Text(
-                        text = stringResource(Res.string.create_game),
-                        style = MaterialTheme.typography.h6
+                // Title
+                Text(
+                    modifier = Modifier.padding(start = 8.dp, top = 8.dp),
+                    text = stringResource(Res.string.create_game),
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // TextFields
+                NameTextField(
+                    state = NameTextFieldState(state.data.gameName, Res.string.game_name_optional),
+                    focusRequester = focusRequester,
+                    onNameChanged = { viewModel.updateNames(gameName = it.trim()) },
+                )
+                NameTextField(
+                    state = NameTextFieldState(state.data.nameP1, Res.string.east_player),
+                    onNameChanged = { viewModel.updateNames(nameP1 = it.trim()) },
+                )
+                NameTextField(
+                    state = NameTextFieldState(state.data.nameP2, Res.string.south_player),
+                    onNameChanged = { viewModel.updateNames(nameP2 = it.trim()) },
+                )
+                NameTextField(
+                    state = NameTextFieldState(state.data.nameP3, Res.string.west_player),
+                    onNameChanged = { viewModel.updateNames(nameP3 = it.trim()) },
+                )
+                NameTextField(
+                    state = NameTextFieldState(state.data.nameP4, Res.string.north_player),
+                    onNameChanged = { viewModel.updateNames(nameP4 = it.trim()) },
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Buttons
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    DialogButton(
+                        text = stringResource(resource = Res.string.cancel),
+                        onClick = onDismissRequest,
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // TextFields
-                    NameTextField(
-                        state = NameTextFieldState(state.data.gameName, Res.string.game_name),
-                        focusRequester = focusRequester,
-                        onNameChanged = { viewModel.updateNames(gameName = it.trim()) },
-                    )
-                    NameTextField(
-                        state = NameTextFieldState(state.data.nameP1, Res.string.east_player),
-                        onNameChanged = { viewModel.updateNames(nameP1 = it.trim()) },
-                    )
-                    NameTextField(
-                        state = NameTextFieldState(state.data.nameP2, Res.string.south_player),
-                        onNameChanged = { viewModel.updateNames(nameP2 = it.trim()) },
-                    )
-                    NameTextField(
-                        state = NameTextFieldState(state.data.nameP3, Res.string.west_player),
-                        onNameChanged = { viewModel.updateNames(nameP3 = it.trim()) },
-                    )
-                    NameTextField(
-                        state = NameTextFieldState(state.data.nameP4, Res.string.north_player),
-                        onNameChanged = { viewModel.updateNames(nameP4 = it.trim()) },
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        TextButton(onClick = { navController.popBackStack() }) {
-                            Text(stringResource(Res.string.cancel))
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        TextButton(onClick = {
+                    DialogButton(
+                        modifier = Modifier.padding(start = 16.dp, end = 8.dp),
+                        text = stringResource(Res.string.confirm),
+                        enabled = state.data.nameP1.isNotBlank() &&
+                                state.data.nameP2.isNotBlank() &&
+                                state.data.nameP3.isNotBlank() &&
+                                state.data.nameP4.isNotBlank(),
+                        onClick = {
                             coroutineScope.launch {
                                 viewModel.createGame()?.let { gameId ->
-                                    onCreateGame(gameId)
                                     onDismissRequest()
-                                    navController.navigateToGame(gameId)
+                                    onGameCreated(gameId)
                                 }
                             }
-                        }) {
-                            Text(stringResource(Res.string.confirm))
-                        }
-                    }
+                        },
+                    )
                 }
             }
+        }
 
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
     }
 }

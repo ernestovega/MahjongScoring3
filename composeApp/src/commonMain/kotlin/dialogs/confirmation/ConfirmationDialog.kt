@@ -23,12 +23,12 @@ fun ConfirmationDialog(
         text = { Text(stringResource(Res.string.are_you_sure)) },
         confirmButton = {
             Button(onClick = onConfirmClick) {
-                Text(stringResource(Res.string.yes))
+                Text(stringResource(Res.string.yes).uppercase())
             }
         },
         dismissButton = {
             Button(onClick = onDismissRequest) {
-                Text(stringResource(Res.string.no))
+                Text(stringResource(Res.string.no).uppercase())
             }
         }
     )
