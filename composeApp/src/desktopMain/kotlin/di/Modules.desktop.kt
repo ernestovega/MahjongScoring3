@@ -1,8 +1,8 @@
 package di
 
-import database.AppDatabase
-import database.app.getDatabaseBuilder
-import database.getRoomDatabase
+import data.database.AppDatabase
+import data.database.app.getDatabaseBuilder
+import data.database.getRoomDatabase
 import org.koin.dsl.module
 
 actual val platformModule = module {

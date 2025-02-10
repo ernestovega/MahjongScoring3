@@ -2,8 +2,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import screens.common.ui.BaseViewModel
-import screens.common.ui.NOT_SET_GAME_ID
+import ui.common.BaseViewModel
+import ui.common.components.NOT_SET_GAME_ID
 
 class AppViewModel : BaseViewModel() {
 

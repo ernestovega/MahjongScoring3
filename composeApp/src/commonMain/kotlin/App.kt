@@ -16,16 +16,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
-import dialogs.create_game.CreateGameDialog
-import dialogs.hand_actions.HandActionsDialog
-import dialogs.penalty.PenaltyDialog
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import screens.common.ui.NOT_SET_GAME_ID
-import screens.game.GameScreen
-import screens.help.HelpScreen
-import screens.old_games.OldGamesScreen
+import ui.common.AppColors
+import ui.common.components.AppBottomBar
+import ui.common.components.AppBottomBarState
+import ui.common.components.AppTopBar
+import ui.common.components.NOT_SET_GAME_ID
+import ui.dialogs.create_game.CreateGameDialog
+import ui.dialogs.hand_actions.HandActionsDialog
+import ui.dialogs.penalty.PenaltyDialog
+import ui.screens.game.GameScreen
+import ui.screens.help.HelpScreen
+import ui.screens.old_games.OldGamesScreen
 
 
 @OptIn(KoinExperimentalAPI::class)
