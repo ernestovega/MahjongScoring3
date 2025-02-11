@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,8 +32,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import domain.model.SeatDiffs
+import domain.model.enums.TableWinds
 import domain.model.states.ScreenState
 import domain.use_cases.utils.fromJson
+import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.cancel_penalties
 import mahjongscoring3.composeapp.generated.resources.cancel_playername_penalties
@@ -43,6 +47,7 @@ import mahjongscoring3.composeapp.generated.resources.west
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import ui.common.components.GameId
 import ui.common.components.PlayerDiffsBig
 import ui.common.components.SeatState
 import ui.dialogs.confirmation.ConfirmationDialog
@@ -51,7 +56,7 @@ import ui.dialogs.confirmation.ConfirmationDialog
 data class HandActionsDialogState(
     val selectedSeatState: SeatState,
     val areDiffsVisible: Boolean,
-    val diffsState: DiffsState,
+    val seatDiffs: SeatDiffs,
     val isCancelPenaltiesVisible: Boolean,
 )
 
@@ -59,20 +64,21 @@ data class HandActionsDialogState(
 @Composable
 fun HandActionsDialog(
     onDismissRequest: () -> Unit,
-    goToHuDialog: (selectedSeat: SeatState) -> Unit,
-    goToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
+    goToHuDialog: (selectedSeatWind: TableWinds) -> Unit,
+    goToPenaltyDialog: (selectedSeatWind: TableWinds) -> Unit,
+    onError: (message: String, Throwable) -> Unit,
     viewModel: HandActionsDialogViewModel = koinViewModel<HandActionsDialogViewModel>(),
 ) {
     val navController = LocalNavController.current
     val state by viewModel.screenStateFlow.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(navController) {
-        navController
-            .currentBackStackEntry
-            ?.arguments
-            ?.getString("selectedSeat")
-            ?.fromJson<SeatState>()
-            ?.let(viewModel::setSelectedSeatState)
+        val navArgs = navController.currentBackStackEntry?.arguments
+        val gameIdArg = navArgs?.getString("gameId")?.fromJson<GameId>()
+        val selectedSeatArg = navArgs?.getString("selectedSeat")?.fromJson<TableWinds>()
+        gameIdArg?.let(viewModel::setGameId)
+        selectedSeatArg?.let(viewModel::setSelectedSeatWind)
     }
 
     HandActionsDialogInternal(
@@ -80,8 +86,24 @@ fun HandActionsDialog(
         onDismissRequest = onDismissRequest,
         goToHuDialog = goToHuDialog,
         goToPenaltyDialog = goToPenaltyDialog,
-        onDrawClick = { viewModel.saveDrawRound() },
-        onCancelPenaltiesClick = { viewModel.cancelPenalties(state.data.selectedSeatState) },
+        onDrawClick = {
+            coroutineScope.launch {
+                viewModel.saveDrawRound()
+                    .fold(
+                        onSuccess = { },
+                        onFailure = { onError("Failed to set draw", it) },
+                    )
+            }
+        },
+        onCancelPenaltiesClick = {
+            coroutineScope.launch {
+                viewModel.cancelPenalties()
+                    .fold(
+                        onSuccess = { },
+                        onFailure = { onError("Failed to cancel penalties", it) },
+                    )
+            }
+        },
     )
 }
 
@@ -89,8 +111,8 @@ fun HandActionsDialog(
 fun HandActionsDialogInternal(
     state: ScreenState<HandActionsDialogState>,
     onDismissRequest: () -> Unit,
-    goToHuDialog: (selectedSeat: SeatState) -> Unit,
-    goToPenaltyDialog: (selectedSeat: SeatState) -> Unit,
+    goToHuDialog: (selectedSeatWind: TableWinds) -> Unit,
+    goToPenaltyDialog: (selectedSeatWind: TableWinds) -> Unit,
     onDrawClick: () -> Unit,
     onCancelPenaltiesClick: () -> Unit,
 ) {
@@ -124,7 +146,7 @@ fun HandActionsDialogInternal(
 
                 // Diffs
                 if (state.data.areDiffsVisible) {
-                    PlayerDiffsBig(state.data.diffsState.playerDiffs)
+                    PlayerDiffsBig(state.data.seatDiffs)
                 }
 
                 Divider(thickness = 1.dp, modifier = Modifier.padding(vertical = 16.dp))
@@ -134,7 +156,7 @@ fun HandActionsDialogInternal(
                     text = stringResource(Res.string.hu),
                     onClick = {
                         onDismissRequest()
-                        goToHuDialog(state.data.selectedSeatState)
+                        goToHuDialog(state.data.selectedSeatState.wind)
                     },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -154,7 +176,7 @@ fun HandActionsDialogInternal(
                     text = stringResource(Res.string.penalty),
                     onClick = {
                         onDismissRequest()
-                        goToPenaltyDialog(state.data.selectedSeatState)
+                        goToPenaltyDialog(state.data.selectedSeatState.wind)
                     },
                 )
 

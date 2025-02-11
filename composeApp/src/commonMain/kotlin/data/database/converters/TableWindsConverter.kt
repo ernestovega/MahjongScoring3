@@ -12,13 +12,13 @@ class TableWindsConverter {
     @TypeConverter
     fun toTableWind(code: Int): TableWinds =
         when (code) {
-            EAST.code -> EAST
-            SOUTH.code -> SOUTH
-            WEST.code -> WEST
-            NORTH.code -> NORTH
+            EAST.index -> EAST
+            SOUTH.index -> SOUTH
+            WEST.index -> WEST
+            NORTH.index -> NORTH
             else -> NONE
         }
 
     @TypeConverter
-    fun toCode(tableWinds: TableWinds): Int = tableWinds.code
+    fun toCode(tableWinds: TableWinds): Int = tableWinds.index
 }

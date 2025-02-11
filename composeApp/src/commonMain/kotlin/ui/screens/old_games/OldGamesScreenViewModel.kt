@@ -1,6 +1,7 @@
 package ui.screens.old_games
 
 import domain.model.UiGame
+import domain.model.getCurrentSeatStates
 import domain.use_cases.GetAllGamesFlowUseCase
 import domain.use_cases.utils.fourth
 import domain.use_cases.utils.second
@@ -23,37 +24,13 @@ class OldGamesScreenViewModel(
 
     private fun toOldGamesScreenState(games: List<UiGame>) = OldGamesScreenState(
         gamesStates = games.map { game ->
-            val winds = game.getSeatsCurrentWind()
-            val names = game.getPlayersNamesByCurrentSeat()
-            val points = game.getPlayersTotalPointsByCurrentSeat()
             OldGameItemState(
                 gameId = game.gameId,
                 oldGameItemHeaderState = OldGameItemHeaderState(
                     gameName = game.gameName.ifEmpty { "#${game.gameId}" }
                 ),
                 oldGameItemBodyState = OldGameItemBodyState(
-                    smallSeatsState = SmallSeatsState(
-                        eastSeat = SeatState(
-                            wind = winds.first(),
-                            name = names.first(),
-                            points = points.first(),
-                        ),
-                        southSeat = SeatState(
-                            wind = winds.second(),
-                            name = names.second(),
-                            points = points.second(),
-                        ),
-                        westSeat = SeatState(
-                            wind = winds.third(),
-                            name = names.third(),
-                            points = points.third(),
-                        ),
-                        northSeat = SeatState(
-                            wind = winds.fourth(),
-                            name = names.fourth(),
-                            points = points.fourth(),
-                        )
-                    ),
+                    smallSeatsState = game.getCurrentSeatStates(),
                     oldGameItemBodyInfoState = game.getBestHand().let { bestHand ->
                         OldGameItemBodyInfoState(
                             date = game.startDate,

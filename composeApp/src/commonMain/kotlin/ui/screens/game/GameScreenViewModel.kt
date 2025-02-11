@@ -1,6 +1,7 @@
 package ui.screens.game
 
 import domain.model.enums.TableWinds
+import domain.model.getCurrentSeatStates
 import domain.use_cases.GetOneGameFlowUseCase
 import domain.use_cases.utils.fourth
 import domain.use_cases.utils.second
@@ -19,8 +20,6 @@ import mahjongscoring3.composeapp.generated.resources.totals
 import ui.common.BaseViewModel
 import ui.common.components.GameId
 import ui.common.components.NOT_SET_GAME_ID
-import ui.common.components.SeatState
-import ui.common.components.SmallSeatsState
 
 class GameScreenViewModel(
     private val getOneGameFlowUseCase: GetOneGameFlowUseCase,
@@ -37,35 +36,12 @@ class GameScreenViewModel(
         _gameIdFlow
             .flatMapLatest(getOneGameFlowUseCase::invoke)
             .map { game ->
-                val gameWinds = game.getSeatsCurrentWind()
                 val gameNames = game.getPlayersNamesByCurrentSeat()
                 val gameTotalPoints = game.getPlayersTotalPointsByCurrentSeat()
-                val ongoingRound = game.ongoingOrLastRound
                 GameScreenState(
                     gamePageTableState = GamePageTableState(
                         gameName = game.gameName,
-                        smallSeatsState = SmallSeatsState(
-                            eastSeat = SeatState(
-                                wind = gameWinds.first(),
-                                name = gameNames.first(),
-                                points = gameTotalPoints.first(),
-                            ),
-                            southSeat = SeatState(
-                                wind = gameWinds.second(),
-                                name = gameNames.second(),
-                                points = gameTotalPoints.second(),
-                            ),
-                            westSeat = SeatState(
-                                wind = gameWinds.third(),
-                                name = gameNames.third(),
-                                points = gameTotalPoints.third(),
-                            ),
-                            northSeat = SeatState(
-                                wind = gameWinds.fourth(),
-                                name = gameNames.fourth(),
-                                points = gameTotalPoints.fourth(),
-                            )
-                        ),
+                        smallSeatsState = game.getCurrentSeatStates(),
                     ),
                     gamePageListState = GamePageListState(
                         gamePageListHeaderState = GamePageListHeaderState(
@@ -104,11 +80,11 @@ class GameScreenViewModel(
                         },
                         gamePageListPenaltiesFooterState = GamePageListFooterState(
                             title = Res.string.penalties,
-                            pointsPlayerEastSeat = ongoingRound.penaltyP1,
-                            pointsPlayerSouthSeat = ongoingRound.penaltyP2,
-                            pointsPlayerWestSeat = ongoingRound.penaltyP3,
-                            pointsPlayerNorthSeat = ongoingRound.penaltyP4,
-                        ).takeIf { ongoingRound.areTherePenalties },
+                            pointsPlayerEastSeat = game.ongoingOrLastRound.penaltyP1,
+                            pointsPlayerSouthSeat = game.ongoingOrLastRound.penaltyP2,
+                            pointsPlayerWestSeat = game.ongoingOrLastRound.penaltyP3,
+                            pointsPlayerNorthSeat = game.ongoingOrLastRound.penaltyP4,
+                        ).takeIf { game.ongoingOrLastRound.areTherePenalties },
                         gamePageListTotalsFooterState = GamePageListFooterState(
                             title = Res.string.totals,
                             pointsPlayerEastSeat = gameTotalPoints.first(),

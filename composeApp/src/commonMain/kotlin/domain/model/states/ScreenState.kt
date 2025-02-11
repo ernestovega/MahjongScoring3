@@ -19,3 +19,18 @@ sealed interface ScreenState<T> {
 }
 
 val ScreenState<*>.error get() = (this as? ScreenState.Error<*>)?.error
+
+
+//package domain.model.states
+//
+//sealed interface ScreenState {
+//
+//    data class Error(val error: Throwable): ScreenState
+//
+//    data object Loading: ScreenState
+//
+//    data class Success<T>(val data: T): ScreenState
+//}
+//
+//val ScreenState.error get() = (this as? ScreenState.Error)?.error
+//val ScreenState.data get() = (this as? ScreenState.Success<*>)?.data

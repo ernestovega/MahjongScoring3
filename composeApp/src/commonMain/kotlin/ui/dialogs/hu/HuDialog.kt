@@ -1,14 +1,18 @@
-package ui.dialogs.penalty
+package ui.dialogs.hu
 
 import LocalNavController
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Checkbox
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -37,8 +41,8 @@ import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.cancel
 import mahjongscoring3.composeapp.generated.resources.confirm
-import mahjongscoring3.composeapp.generated.resources.divided
-import mahjongscoring3.composeapp.generated.resources.penalty
+import mahjongscoring3.composeapp.generated.resources.discarder
+import mahjongscoring3.composeapp.generated.resources.points
 import mahjongscoring3.composeapp.generated.resources.west
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,13 +51,19 @@ import ui.common.components.DialogButton
 import ui.common.components.GameId
 import ui.common.components.NumPad
 import ui.common.components.SeatState
+import ui.common.components.SmallSeat
+
+data class HuDialogState(
+    val selectedSeat: SeatState,
+    val notSelectedSeats: List<SeatState>,
+)
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
-fun PenaltyDialog(
+fun HuDialog(
     onDismissRequest: () -> Unit,
     onError: (message: String, Throwable) -> Unit,
-    viewModel: PenaltyDialogViewModel = koinViewModel<PenaltyDialogViewModel>(),
+    viewModel: HuDialogViewModel = koinViewModel<HuDialogViewModel>(),
 ) {
     val navController = LocalNavController.current
     val state by viewModel.screenStateFlow.collectAsState()
@@ -67,15 +77,15 @@ fun PenaltyDialog(
         selectedSeatArg?.let(viewModel::setSelectedSeatWind)
     }
 
-    PenaltyDialogInternal(
-        selectedSeat = state.data,
+    HuDialogInternal(
+        state = state.data,
         onDismissRequest = onDismissRequest,
-        onConfirmClick = { points, isDivided ->
+        onConfirmClick = { points, discarderSeat ->
             coroutineScope.launch {
-                viewModel.setPenalty(points, isDivided)
+                viewModel.setHu(points, discarderSeat)
                     .fold(
                         onSuccess = { },
-                        onFailure = { onError("Failed to set penalty", it) },
+                        onFailure = { onError("Failed to set hu", it) },
                     )
             }
         },
@@ -83,13 +93,13 @@ fun PenaltyDialog(
 }
 
 @Composable
-fun PenaltyDialogInternal(
-    selectedSeat: SeatState,
+private fun HuDialogInternal(
+    state: HuDialogState,
     onDismissRequest: () -> Unit,
-    onConfirmClick: (points: Int, isDivided: Boolean) -> Unit,
+    onConfirmClick: (points: Int, discarderSeat: TableWinds) -> Unit,
 ) {
-    var penaltyPoints by remember { mutableStateOf(0) }
-    var isDivided by remember { mutableStateOf(true) }
+    var huPoints by remember { mutableStateOf(0) }
+    var discarderSeat by remember { mutableStateOf(TableWinds.NONE) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
@@ -109,7 +119,7 @@ fun PenaltyDialogInternal(
                 Text(
                     textAlign = TextAlign.Center,
                     overflow = TextOverflow.Ellipsis,
-                    text = selectedSeat.name,
+                    text = state.selectedSeat.name,
                     fontSize = 24.sp,
                     maxLines = 1,
                 )
@@ -119,29 +129,42 @@ fun PenaltyDialogInternal(
                     modifier = Modifier.padding(16.dp),
                 )
 
-                // NumPad
-                NumPad(
-                    title = stringResource(Res.string.penalty),
-                    onNumberChanged = { penaltyPoints = it },
+                // Discarder
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = "${stringResource(Res.string.discarder)}:",
+                    fontSize = 20.sp,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Checkbox
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = isDivided,
-                        onCheckedChange = { isChecked ->
-                            if (isDivided != isChecked) isDivided = isChecked
-                        },
-                    )
-                    Text(
-                        text = stringResource(Res.string.divided),
-                        fontSize = 20.sp,
-                    )
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    state.notSelectedSeats.forEach { seatState ->
+                        DiscarderButton(
+                            seatState = seatState,
+                            isSelected = seatState.wind == discarderSeat,
+                            onClick = {
+                                discarderSeat = if (seatState.wind == discarderSeat) TableWinds.NONE else seatState.wind
+                            },
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Divider(
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // NumPad
+                NumPad(
+                    title = stringResource(Res.string.points),
+                    onNumberChanged = { huPoints = it },
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Buttons
                 Row {
@@ -155,14 +178,35 @@ fun PenaltyDialogInternal(
                     DialogButton(
                         modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         text = stringResource(Res.string.confirm),
-                        enabled = penaltyPoints > 0 && (!isDivided || penaltyPoints % 3 == 0),
+                        enabled = huPoints >= 8,
                         onClick = {
-                            onConfirmClick(penaltyPoints, isDivided)
+                            onConfirmClick(huPoints, discarderSeat)
                             onDismissRequest()
                         }
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RowScope.DiscarderButton(
+    seatState: SeatState,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = Modifier
+            .weight(1f)
+            .padding(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.surface,
+            contentColor = if (isSelected) MaterialTheme.colors.secondary else MaterialTheme.colors.onSurface,
+        ),
+        border = if (isSelected) BorderStroke(4.dp, MaterialTheme.colors.secondary) else null,
+        onClick = onClick,
+    ) {
+        SmallSeat(seatState)
     }
 }

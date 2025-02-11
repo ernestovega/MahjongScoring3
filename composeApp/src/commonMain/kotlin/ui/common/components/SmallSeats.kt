@@ -10,6 +10,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import domain.model.enums.TableWinds
 
 @Immutable
 data class SmallSeatsState(
@@ -17,7 +18,17 @@ data class SmallSeatsState(
     val southSeat: SeatState = SeatState(),
     val westSeat: SeatState = SeatState(),
     val northSeat: SeatState = SeatState(),
-)
+) {
+    operator fun get(wind: TableWinds): SeatState = when (wind) {
+        TableWinds.EAST -> eastSeat
+        TableWinds.SOUTH -> southSeat
+        TableWinds.WEST -> westSeat
+        TableWinds.NORTH -> northSeat
+        TableWinds.NONE -> throw IllegalArgumentException("Invalid wind: $wind")
+    }
+
+    fun asList(): List<SeatState> = listOf(eastSeat, southSeat, westSeat, northSeat)
+}
 
 @Composable
 fun SmallSeats(

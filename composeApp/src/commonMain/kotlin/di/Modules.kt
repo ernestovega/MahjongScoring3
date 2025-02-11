@@ -28,7 +28,9 @@ import domain.use_cases.GetOneGameFlowUseCase
 import domain.use_cases.HuDiscardUseCase
 import domain.use_cases.HuDrawUseCase
 import domain.use_cases.HuSelfPickUseCase
+import domain.use_cases.HuUseCase
 import domain.use_cases.ImportGamesFromJsonUseCase
+import domain.use_cases.PenaltyUseCase
 import domain.use_cases.ResumeGameUseCase
 import domain.use_cases.SetPenaltyUseCase
 import org.koin.compose.viewmodel.dsl.viewModelOf
@@ -39,6 +41,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import ui.dialogs.create_game.CreateGameDialogViewModel
 import ui.dialogs.hand_actions.HandActionsDialogViewModel
+import ui.dialogs.hu.HuDialogViewModel
 import ui.dialogs.penalty.PenaltyDialogViewModel
 import ui.screens.game.GameScreenViewModel
 import ui.screens.help.diffs.DiffsScreenViewModel
@@ -58,6 +61,7 @@ val sharedModule = module {
     //Dialogs ViewModels
     viewModelOf(::CreateGameDialogViewModel)
     viewModelOf(::HandActionsDialogViewModel)
+    viewModelOf(::HuDialogViewModel)
     viewModelOf(::PenaltyDialogViewModel)
 
     //UseCases
@@ -80,6 +84,9 @@ val sharedModule = module {
     factoryOf(::ImportGamesFromJsonUseCase)
     factoryOf(::ResumeGameUseCase)
     factoryOf(::SetPenaltyUseCase)
+
+    factoryOf(::HuUseCase)
+    factoryOf(::PenaltyUseCase)
 
     //Repositories
     singleOf(::DefaultDiffsRepository).bind<DiffsRepository>()

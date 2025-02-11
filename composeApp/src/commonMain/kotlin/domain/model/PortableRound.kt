@@ -23,8 +23,8 @@ data class PortableRound(
 
 fun UiRound.toPortableRound() = PortableRound(
     roundNumber = roundNumber,
-    winnerInitialSeat = winnerInitialSeat?.code,
-    discarderInitialSeat = discarderInitialSeat?.code,
+    winnerInitialSeat = winnerInitialSeat?.index,
+    discarderInitialSeat = discarderInitialSeat?.index,
     handPoints = handPoints,
     pointsP1 = pointsP1,
     pointsP2 = pointsP2,

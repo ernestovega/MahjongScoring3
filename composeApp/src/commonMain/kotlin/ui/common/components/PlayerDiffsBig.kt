@@ -10,10 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import ui.screens.help.diffs.Diff
+import domain.model.SeatDiffs
+import domain.use_cases.utils.toStringOrHyphen
 
 @Composable
-fun PlayerDiffsBig(playerDiffs: Diff) {
+fun PlayerDiffsBig(playerDiffs: SeatDiffs) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -26,21 +27,21 @@ fun PlayerDiffsBig(playerDiffs: Diff) {
         }
         Row {
             PlayerDiffsBigCellTitle("1st")
-            PlayerDiffsBigCellBody("23")
-            PlayerDiffsBigCellBody("45")
-            PlayerDiffsBigCellBody("89")
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeFirst?.bySelfPick.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeFirst?.byDirectHu.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeFirst?.byIndirectHu.toStringOrHyphen())
         }
         Row {
             PlayerDiffsBigCellTitle("2nd")
-            PlayerDiffsBigCellBody("8")
-            PlayerDiffsBigCellBody("8")
-            PlayerDiffsBigCellBody("8")
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeSecond?.bySelfPick.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeSecond?.byDirectHu.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeSecond?.byIndirectHu.toStringOrHyphen())
         }
         Row {
             PlayerDiffsBigCellTitle("3rd")
-            PlayerDiffsBigCellBody("-")
-            PlayerDiffsBigCellBody("-")
-            PlayerDiffsBigCellBody("-")
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeThird?.bySelfPick.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeThird?.byDirectHu.toStringOrHyphen())
+            PlayerDiffsBigCellBody(playerDiffs.pointsToBeThird?.byIndirectHu.toStringOrHyphen())
         }
     }
 }

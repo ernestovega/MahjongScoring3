@@ -45,6 +45,7 @@
     <string name="no">No</string>
     <string name="divided">Divided</string>
     <string name="points">Points</string>
+    <string name="discarder">Discarder</string>
 
     <string name="pure_double_chow">Pure double chow</string>
     <string name="mixed_double_chow">Mixed double chow</string>

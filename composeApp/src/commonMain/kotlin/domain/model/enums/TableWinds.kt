@@ -1,6 +1,6 @@
 package domain.model.enums
 
-enum class TableWinds(val code: Int) {
+enum class TableWinds(val index: Int) {
     NONE(-1),
     EAST(0),
     SOUTH(1),
@@ -8,12 +8,12 @@ enum class TableWinds(val code: Int) {
     NORTH(3);
 
     companion object {
-        fun from(code: Int?): TableWinds? =
-            when (code) {
-                EAST.code -> EAST
-                SOUTH.code -> SOUTH
-                WEST.code -> WEST
-                NORTH.code -> NORTH
+        fun from(index: Int?): TableWinds? =
+            when (index) {
+                EAST.index -> EAST
+                SOUTH.index -> SOUTH
+                WEST.index -> WEST
+                NORTH.index -> NORTH
                 null -> null
                 else -> NONE
             }

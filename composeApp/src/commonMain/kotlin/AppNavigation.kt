@@ -1,15 +1,16 @@
 import androidx.navigation.NavHostController
+import domain.model.enums.TableWinds
 import domain.use_cases.utils.toJson
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.create_game
 import mahjongscoring3.composeapp.generated.resources.game
 import mahjongscoring3.composeapp.generated.resources.hand_actions
 import mahjongscoring3.composeapp.generated.resources.help
+import mahjongscoring3.composeapp.generated.resources.hu
 import mahjongscoring3.composeapp.generated.resources.old_games
 import mahjongscoring3.composeapp.generated.resources.penalty
 import org.jetbrains.compose.resources.StringResource
 import ui.common.components.GameId
-import ui.common.components.SeatState
 
 enum class AppScreens(
     val title: StringResource,
@@ -22,8 +23,10 @@ enum class AppScreens(
 
     //Dialogs
     CreateGameDialog(title = Res.string.create_game, route = "CreateGameDialog"),
-    HandActionsDialog(title = Res.string.hand_actions, route = "HandActionsDialog/{selectedSeat}"),
-    PenaltyDialog(title = Res.string.penalty, route = "PenaltyDialog/{selectedSeat}",);
+    HandActionsDialog(title = Res.string.hand_actions, route = "HandActionsDialog/{gameId}/{selectedSeat}"),
+    HuDialog(title = Res.string.hu, route = "HuDialog/{gameId}/{selectedSeat}"),
+    PenaltyDialog(title = Res.string.penalty, route = "PenaltyDialog/{gameId}/{selectedSeat}")
+    ;
 
     companion object {
         fun fromRoute(route: String) = when(route) {
@@ -31,22 +34,18 @@ enum class AppScreens(
             HelpScreen.route -> HelpScreen
             CreateGameDialog.route -> CreateGameDialog
             HandActionsDialog.route -> HandActionsDialog
+            HuDialog.route -> HuDialog
             PenaltyDialog.route -> PenaltyDialog
             else -> OldGamesScreen
         }
     }
 
     fun getRoute(gameId: GameId): String =
-        route.replace(
-            oldValue = "{gameId}",
-            newValue = gameId.toJson(),
-        )
+        route.replace(oldValue = "{gameId}", newValue = gameId.toJson())
 
-    fun getRoute(seatState: SeatState): String =
-        route.replace(
-            oldValue = "{selectedSeat}",
-            newValue = seatState.toJson(),
-        )
+    fun getRoute(gameId: GameId, selectedSeat: TableWinds): String =
+        route.replace(oldValue = "{gameId}", newValue = gameId.toJson())
+            .replace(oldValue = "{selectedSeat}", newValue = selectedSeat.toJson())
 }
 
 fun NavHostController.navigateToOldGames() {
@@ -69,16 +68,16 @@ fun NavHostController.showDiceDialog() {
 //    navigateTo(AppScreens.DiceDialog)
 }
 
-fun NavHostController.showHandActionsDialog(selectedSeat: SeatState) {
-    navigateTo(AppScreens.HandActionsDialog.getRoute(selectedSeat))
+fun NavHostController.showHandActionsDialog(gameId: GameId, selectedSeat: TableWinds) {
+    navigateTo(AppScreens.HandActionsDialog.getRoute(gameId, selectedSeat))
 }
 
-fun NavHostController.showHuDialog(selectedSeat: SeatState) {
-//    navigateTo(AppScreens.HuDialog, args = selectedSeat)
+fun NavHostController.showHuDialog(gameId: GameId, selectedSeat: TableWinds) {
+    navigateTo(AppScreens.HuDialog.getRoute(gameId, selectedSeat))
 }
 
-fun NavHostController.showPenaltyDialog(selectedSeat: SeatState) {
-    navigateTo(AppScreens.PenaltyDialog.getRoute(selectedSeat))
+fun NavHostController.showPenaltyDialog(gameId: GameId, selectedSeat: TableWinds) {
+    navigateTo(AppScreens.PenaltyDialog.getRoute(gameId, selectedSeat))
 }
 
 private fun NavHostController.navigateTo(

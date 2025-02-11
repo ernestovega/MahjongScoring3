@@ -136,7 +136,7 @@ data class TableDiffs(
                 if (fourth().pointsToBeSecond.areEquals(fourth().pointsToBeFirst)) {
                     fourth().pointsToBeSecond = null
                 }
-            }.sortedBy { it.seat.code }
+            }.sortedBy { it.seat.index }
     }
 
     private fun getPointsDiffs(pointsDiff: Int) =

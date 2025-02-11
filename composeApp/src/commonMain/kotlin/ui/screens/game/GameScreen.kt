@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import domain.model.enums.TableWinds
 import domain.use_cases.utils.fromJson
 import kotlinx.coroutines.launch
 import mahjongscoring3.composeapp.generated.resources.Res
@@ -24,7 +25,6 @@ import mahjongscoring3.composeapp.generated.resources.table
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import ui.common.components.SeatState
 
 @Immutable
 data class GameScreenState(
@@ -36,8 +36,8 @@ data class GameScreenState(
 @Composable
 fun GameScreen(
     viewModel: GameScreenViewModel = koinViewModel<GameScreenViewModel>(),
-    onSeatClick: (selectedSeat: SeatState) -> Unit,
-    onDiceClick: () -> Unit,
+    goToHandActionsDialog: (selectedSeat: TableWinds) -> Unit,
+    goToDiceDialog: () -> Unit,
 ) {
     LocalNavController.current.currentBackStackEntry
         ?.arguments
@@ -81,8 +81,8 @@ fun GameScreen(
             when (page) {
                 0 -> GamePageTable(
                     state = state.gamePageTableState,
-                    onSeatClick = onSeatClick,
-                    onDiceClick = onDiceClick,
+                    onSeatClick = goToHandActionsDialog,
+                    onDiceClick = goToDiceDialog,
                 )
                 1 -> GamePageList(state.gamePageListState)
             }

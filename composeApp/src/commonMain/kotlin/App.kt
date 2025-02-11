@@ -7,7 +7,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -26,6 +28,7 @@ import ui.common.components.AppTopBar
 import ui.common.components.NOT_SET_GAME_ID
 import ui.dialogs.create_game.CreateGameDialog
 import ui.dialogs.hand_actions.HandActionsDialog
+import ui.dialogs.hu.HuDialog
 import ui.dialogs.penalty.PenaltyDialog
 import ui.screens.game.GameScreen
 import ui.screens.help.HelpScreen
@@ -74,20 +77,21 @@ fun MahjongScoringApp(
                 )
             }
         }
+        var errorMessage by remember { mutableStateOf<Pair<String, Throwable>?>(null) }
 
         Scaffold(
             topBar = {
                 AppTopBar(
                     currentScreen = currentScreen,
-                    onColorModeClick = { viewModel.changeColorMode() },
+                    onColorModeClick = viewModel::changeColorMode,
                 )
             },
             bottomBar = {
                 AppBottomBar(
                     state = appBottomBarState,
-                    navigateToOldGames = { navController.navigateToOldGames() },
+                    navigateToOldGames = navController::navigateToOldGames,
                     navigateToGame = { navController.navigateToGame(ongoingGameId) },
-                    navigateToHelp = { navController.navigateToHelp() },
+                    navigateToHelp = navController::navigateToHelp,
                 )
             }
         ) { innerPadding ->
@@ -101,19 +105,19 @@ fun MahjongScoringApp(
                 }
                 composable(route = AppScreens.GameScreen.route) {
                     GameScreen(
-                        onSeatClick = { selectedSeat ->
-                            navController.showHandActionsDialog(
-                                selectedSeat
-                            )
+                        goToHandActionsDialog = { selectedSeat ->
+                            navController.showHandActionsDialog(ongoingGameId, selectedSeat)
                         },
-                        onDiceClick = { navController.showDiceDialog() },
+                        goToDiceDialog = navController::showDiceDialog,
                     )
                 }
-                composable(route = AppScreens.HelpScreen.route) { HelpScreen() }
+                composable(route = AppScreens.HelpScreen.route) {
+                    HelpScreen()
+                }
 
                 dialog(route = AppScreens.CreateGameDialog.route) {
                     CreateGameDialog(
-                        onDismissRequest = { navController.popBackStack() },
+                        onDismissRequest = navController::popBackStack,
                         onGameCreated = { gameId ->
                             viewModel.setOngoingGameId(gameId)
                             navController.navigateToGame(gameId)
@@ -122,13 +126,27 @@ fun MahjongScoringApp(
                 }
                 dialog(route = AppScreens.HandActionsDialog.route) {
                     HandActionsDialog(
-                        onDismissRequest = { navController.popBackStack() },
-                        goToHuDialog = { navController.showHuDialog(it) },
-                        goToPenaltyDialog = { navController.showPenaltyDialog(it) },
+                        onDismissRequest = navController::popBackStack,
+                        goToHuDialog = { selectedSeat ->
+                            navController.showHuDialog(ongoingGameId, selectedSeat)
+                        },
+                        goToPenaltyDialog = { selectedSeat ->
+                            navController.showPenaltyDialog(ongoingGameId, selectedSeat)
+                        },
+                        onError = { message, throwable -> errorMessage = message to throwable },
                     )
                 }
                 dialog(route = AppScreens.PenaltyDialog.route) {
-                    PenaltyDialog(onDismissRequest = { navController.popBackStack() })
+                    PenaltyDialog(
+                        onDismissRequest = navController::popBackStack,
+                        onError = { message, throwable -> errorMessage = message to throwable },
+                    )
+                }
+                dialog(route = AppScreens.HuDialog.route) {
+                    HuDialog(
+                        onDismissRequest = navController::popBackStack,
+                        onError = { message, throwable -> errorMessage = message to throwable },
+                    )
                 }
             }
         }

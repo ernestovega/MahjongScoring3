@@ -1,4 +1,4 @@
-package ui.screens.help.diffs
+package domain.model
 
 import androidx.compose.runtime.Immutable
 import ui.common.components.getNeededPointsByDirectHu

@@ -6,6 +6,9 @@ import domain.model.enums.TableWinds.NONE
 import domain.model.enums.TableWinds.NORTH
 import domain.model.enums.TableWinds.SOUTH
 import domain.model.enums.TableWinds.WEST
+import domain.use_cases.utils.fourth
+import domain.use_cases.utils.second
+import domain.use_cases.utils.third
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ui.common.components.GameId
@@ -13,6 +16,8 @@ import ui.common.components.MIN_MCR_POINTS
 import ui.common.components.NOT_SET_GAME_ID
 import ui.common.components.NUM_NO_WINNER_PLAYERS
 import ui.common.components.POINTS_DISCARD_NEUTRAL_PLAYERS
+import ui.common.components.SeatState
+import ui.common.components.SmallSeatsState
 
 data class UiGame(
     val gameId: GameId,
@@ -159,10 +164,10 @@ data class UiGame(
     fun getCurrentEastSeatPlayerName(): String? {
         val playersNamesByCurrentRoundSeat = getPlayersNamesByCurrentSeat()
         return when (ongoingOrLastRound.roundNumber) {
-            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[EAST.code]
-            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[SOUTH.code]
-            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[WEST.code]
-            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[NORTH.code]
+            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[EAST.index]
+            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[SOUTH.index]
+            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[WEST.index]
+            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[NORTH.index]
             else -> null
         }
     }
@@ -170,10 +175,10 @@ data class UiGame(
     fun getCurrentSouthSeatPlayerName(): String? {
         val playersNamesByCurrentRoundSeat = getPlayersNamesByCurrentSeat()
         return when (ongoingOrLastRound.roundNumber) {
-            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[SOUTH.code]
-            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[WEST.code]
-            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[NORTH.code]
-            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[EAST.code]
+            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[SOUTH.index]
+            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[WEST.index]
+            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[NORTH.index]
+            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[EAST.index]
             else -> null
         }
     }
@@ -181,10 +186,10 @@ data class UiGame(
     fun getCurrentWestSeatPlayerName(): String? {
         val playersNamesByCurrentRoundSeat = getPlayersNamesByCurrentSeat()
         return when (ongoingOrLastRound.roundNumber) {
-            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[WEST.code]
-            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[NORTH.code]
-            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[EAST.code]
-            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[SOUTH.code]
+            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[WEST.index]
+            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[NORTH.index]
+            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[EAST.index]
+            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[SOUTH.index]
             else -> null
         }
     }
@@ -192,10 +197,10 @@ data class UiGame(
     fun getCurrentNorthSeatPlayerName(): String? {
         val playersNamesByCurrentRoundSeat = getPlayersNamesByCurrentSeat()
         return when (ongoingOrLastRound.roundNumber) {
-            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[NORTH.code]
-            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[EAST.code]
-            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[SOUTH.code]
-            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[WEST.code]
+            1, 5, 9, 13 -> playersNamesByCurrentRoundSeat[NORTH.index]
+            2, 6, 10, 14 -> playersNamesByCurrentRoundSeat[EAST.index]
+            3, 7, 11, 15 -> playersNamesByCurrentRoundSeat[SOUTH.index]
+            4, 8, 12, 16 -> playersNamesByCurrentRoundSeat[WEST.index]
             else -> null
         }
     }
@@ -203,10 +208,10 @@ data class UiGame(
     fun getPlayersNamesByCurrentSeat(): Array<String> {
         val namesListByCurrentSeat = arrayOf("", "", "", "")
         val currentRoundNumber = ongoingOrLastRound.roundNumber
-        namesListByCurrentSeat[getInitialEastPlayerCurrentSeat(currentRoundNumber).code] = nameP1
-        namesListByCurrentSeat[getInitialSouthPlayerCurrentSeat(currentRoundNumber).code] = nameP2
-        namesListByCurrentSeat[getInitialWestPlayerCurrentSeat(currentRoundNumber).code] = nameP3
-        namesListByCurrentSeat[getInitialNorthPlayerCurrentSeat(currentRoundNumber).code] = nameP4
+        namesListByCurrentSeat[getInitialEastPlayerCurrentSeat(currentRoundNumber).index] = nameP1
+        namesListByCurrentSeat[getInitialSouthPlayerCurrentSeat(currentRoundNumber).index] = nameP2
+        namesListByCurrentSeat[getInitialWestPlayerCurrentSeat(currentRoundNumber).index] = nameP3
+        namesListByCurrentSeat[getInitialNorthPlayerCurrentSeat(currentRoundNumber).index] = nameP4
         return namesListByCurrentSeat
     }
 
@@ -218,10 +223,10 @@ data class UiGame(
             ongoingOrLastRound.totalPointsP4,
         )
         return intArrayOf(
-            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).code],
-            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).code],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).index],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).index],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).index],
+            totalPointsByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).index],
         )
     }
 
@@ -233,20 +238,20 @@ data class UiGame(
             ongoingOrLastRound.penaltyP4,
         )
         return intArrayOf(
-            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).code],
-            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).code],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(EAST).index],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(SOUTH).index],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(WEST).index],
+            penaltiesByInitialSeat[getPlayerInitialSeatByOngoingOrLastRoundSeat(NORTH).index],
         )
     }
 
     fun getTableDiffs(): TableDiffs =
         with(getPlayersTotalPointsByCurrentSeat()) {
             TableDiffs(
-                eastSeatPoints = this[EAST.code],
-                southSeatPoints = this[SOUTH.code],
-                westSeatPoints = this[WEST.code],
-                northSeatPoints = this[NORTH.code],
+                eastSeatPoints = this[EAST.index],
+                southSeatPoints = this[SOUTH.index],
+                westSeatPoints = this[WEST.index],
+                northSeatPoints = this[NORTH.index],
             )
         }
 
@@ -366,4 +371,31 @@ data class UiGame(
         fun getPenaltyOtherPlayersPoints(penaltyPoints: Int) =
             penaltyPoints / NUM_NO_WINNER_PLAYERS
     }
+}
+
+fun UiGame.getCurrentSeatStates(): SmallSeatsState {
+    val gameNames = this.getPlayersNamesByCurrentSeat()
+    val gameTotalPoints = this.getPlayersTotalPointsByCurrentSeat()
+    return SmallSeatsState(
+        eastSeat = SeatState(
+            wind = EAST,
+            name = gameNames.first(),
+            points = gameTotalPoints.first(),
+        ),
+        southSeat = SeatState(
+            wind = SOUTH,
+            name = gameNames.second(),
+            points = gameTotalPoints.second(),
+        ),
+        westSeat = SeatState(
+            wind = WEST,
+            name = gameNames.third(),
+            points = gameTotalPoints.third(),
+        ),
+        northSeat = SeatState(
+            wind = NORTH,
+            name = gameNames.fourth(),
+            points = gameTotalPoints.fourth(),
+        )
+    )
 }

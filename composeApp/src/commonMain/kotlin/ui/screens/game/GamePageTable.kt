@@ -19,10 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import domain.model.enums.TableWinds
 import mahjongscoring3.composeapp.generated.resources.Res
 import mahjongscoring3.composeapp.generated.resources.dice
 import org.jetbrains.compose.resources.stringResource
-import ui.common.components.SeatState
 import ui.common.components.SmallSeats
 import ui.common.components.SmallSeatsState
 
@@ -35,7 +35,7 @@ data class GamePageTableState(
 @Composable
 fun GamePageTable(
     state: GamePageTableState,
-    onSeatClick: (selectedSeat: SeatState) -> Unit,
+    onSeatClick: (selectedSeat: TableWinds) -> Unit,
     onDiceClick: () -> Unit,
 ) {
     Box(
@@ -62,7 +62,7 @@ fun GamePageTable(
             ) {
                 SmallSeats(
                     state = state.smallSeatsState,
-                    onSeatClick = { selectedSeat -> onSeatClick(selectedSeat) },
+                    onSeatClick = { selectedSeat -> onSeatClick(selectedSeat.wind) },
                 )
             }
         }

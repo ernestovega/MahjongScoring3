@@ -2,7 +2,7 @@ package data.repositories.diffs
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import ui.screens.help.diffs.Diff
+import domain.model.Diff
 
 
 class DefaultDiffsRepository: DiffsRepository {
