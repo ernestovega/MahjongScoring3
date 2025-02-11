@@ -4,9 +4,9 @@ import domain.model.SeatDiffs
 import domain.model.enums.TableWinds
 import domain.model.getCurrentSeatStates
 import domain.model.states.ScreenState
+import domain.use_cases.CancelAllPenaltiesUseCase
 import domain.use_cases.GetOneGameFlowUseCase
-import domain.use_cases.HuUseCase
-import domain.use_cases.PenaltyUseCase
+import domain.use_cases.HuDrawUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -19,12 +19,13 @@ import ui.common.BaseViewModel
 import ui.common.components.GameId
 import ui.common.components.NOT_SET_GAME_ID
 import ui.common.components.SeatState
+import ui.common.withOngoingRound
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HandActionsDialogViewModel(
     private val oneGameFlowUseCase: GetOneGameFlowUseCase,
-    private val huUseCase: HuUseCase,
-    private val penaltyUseCase: PenaltyUseCase,
+    private val setDrawUseCase: HuDrawUseCase,
+    private val cancelAllPenaltiesUseCase: CancelAllPenaltiesUseCase,
 ) : BaseViewModel() {
 
     private val _gameId = MutableStateFlow(NOT_SET_GAME_ID)
@@ -71,22 +72,12 @@ class HandActionsDialogViewModel(
     }
 
     suspend fun saveDrawRound(): Result<Boolean> =
-        gameFlow.value?.let { game ->
-            huUseCase.invoke(
-                roundId = game.ongoingOrLastRound.roundId,
-                winnerInitialSeat = TableWinds.NONE,
-                discarderInitialSeat = TableWinds.NONE,
-                points = 0,
-            )
-        } ?: Result.failure(Exception("Game not found"))
+        gameFlow.withOngoingRound { uiRound ->
+            setDrawUseCase.invoke(uiRound)
+        }
 
     suspend fun cancelPenalties(): Result<Boolean> =
-        gameFlow.value?.let { game ->
-            penaltyUseCase.invoke(
-                roundId = game.ongoingOrLastRound.roundId,
-                points = 0,
-                isDivided = false,
-                penalizedPlayerInitialSeat = TableWinds.NONE,
-            )
-        } ?: Result.failure(Exception("Game not found"))
+        gameFlow.withOngoingRound { uiRound ->
+            cancelAllPenaltiesUseCase.invoke(uiRound)
+        }
 }

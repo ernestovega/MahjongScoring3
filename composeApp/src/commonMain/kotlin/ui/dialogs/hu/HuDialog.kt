@@ -82,11 +82,11 @@ fun HuDialog(
         onDismissRequest = onDismissRequest,
         onConfirmClick = { points, discarderSeat ->
             coroutineScope.launch {
-                viewModel.setHu(points, discarderSeat)
-                    .fold(
-                        onSuccess = { },
-                        onFailure = { onError("Failed to set hu", it) },
-                    )
+                if (discarderSeat == TableWinds.NONE) {
+                    viewModel.setHuSelfPick(points)
+                } else {
+                    viewModel.setHuDiscard(discarderSeat, points)
+                }.fold({ onDismissRequest() }, { onError("Failed to set hu", it) })
             }
         },
     )
@@ -101,7 +101,7 @@ private fun HuDialogInternal(
     var huPoints by remember { mutableStateOf(0) }
     var discarderSeat by remember { mutableStateOf(TableWinds.NONE) }
 
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -179,10 +179,7 @@ private fun HuDialogInternal(
                         modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         text = stringResource(Res.string.confirm),
                         enabled = huPoints >= 8,
-                        onClick = {
-                            onConfirmClick(huPoints, discarderSeat)
-                            onDismissRequest()
-                        }
+                        onClick = { onConfirmClick(huPoints, discarderSeat) }
                     )
                 }
             }

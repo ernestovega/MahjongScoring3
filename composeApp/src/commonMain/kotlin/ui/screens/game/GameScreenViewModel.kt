@@ -36,8 +36,6 @@ class GameScreenViewModel(
         _gameIdFlow
             .flatMapLatest(getOneGameFlowUseCase::invoke)
             .map { game ->
-                val gameNames = game.getPlayersNamesByCurrentSeat()
-                val gameTotalPoints = game.getPlayersTotalPointsByCurrentSeat()
                 GameScreenState(
                     gamePageTableState = GamePageTableState(
                         gameName = game.gameName,
@@ -45,10 +43,10 @@ class GameScreenViewModel(
                     ),
                     gamePageListState = GamePageListState(
                         gamePageListHeaderState = GamePageListHeaderState(
-                            playerNameEastSeat = gameNames.first(),
-                            playerNameSouthSeat = gameNames.second(),
-                            playerNameWestSeat = gameNames.third(),
-                            playerNameNorthSeat = gameNames.fourth(),
+                            playerNameEastSeat = game.nameP1,
+                            playerNameSouthSeat = game.nameP2,
+                            playerNameWestSeat = game.nameP3,
+                            playerNameNorthSeat = game.nameP4,
                         ),
                         roundsStates = game.endedUiRounds.map { round ->
                             val areTherePenalties = round.areTherePenalties
@@ -87,10 +85,10 @@ class GameScreenViewModel(
                         ).takeIf { game.ongoingOrLastRound.areTherePenalties },
                         gamePageListTotalsFooterState = GamePageListFooterState(
                             title = Res.string.totals,
-                            pointsPlayerEastSeat = gameTotalPoints.first(),
-                            pointsPlayerSouthSeat = gameTotalPoints.second(),
-                            pointsPlayerWestSeat = gameTotalPoints.third(),
-                            pointsPlayerNorthSeat = gameTotalPoints.fourth(),
+                            pointsPlayerEastSeat = game.ongoingOrLastRound.totalPointsP1,
+                            pointsPlayerSouthSeat = game.ongoingOrLastRound.totalPointsP2,
+                            pointsPlayerWestSeat = game.ongoingOrLastRound.totalPointsP3,
+                            pointsPlayerNorthSeat = game.ongoingOrLastRound.totalPointsP4,
                         ),
                     )
                 )

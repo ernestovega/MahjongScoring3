@@ -37,9 +37,6 @@ fun GamePageList(state: GamePageListState) {
         ) {
             itemsIndexed(state.roundsStates) { index, roundState ->
                 GamePageListItem(state = roundState)
-                if (index < state.roundsStates.size - 1) {
-                    Divider()
-                }
             }
         }
 

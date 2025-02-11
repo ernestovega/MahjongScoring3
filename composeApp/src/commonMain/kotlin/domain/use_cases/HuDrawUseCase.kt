@@ -2,15 +2,16 @@ package domain.use_cases
 
 import data.database.tables.DbRound
 import data.repositories.rounds.RoundsRepository
-import domain.model.UiGame
+import domain.model.UiRound
 import domain.model.enums.TableWinds.NONE
+import ui.common.components.GameId
 
 class HuDrawUseCase(
     private val roundsRepository: RoundsRepository,
     private val endRoundUseCase: EndRoundUseCase,
 ) {
-    suspend operator fun invoke(uiGame: UiGame): Result<Boolean> =
-        with(uiGame.ongoingOrLastRound) {
+    suspend operator fun invoke(uiRound: UiRound): Result<Boolean> =
+        with(uiRound) {
             roundsRepository.updateOne(
                 DbRound(
                     gameId = this.gameId,
@@ -24,6 +25,5 @@ class HuDrawUseCase(
                     penaltyP4 = this.penaltyP4,
                 )
             )
-        }
-            .onSuccess { endRoundUseCase.invoke(uiGame.gameId) }
+        }.onSuccess { endRoundUseCase.invoke(uiRound.gameId) }
 }

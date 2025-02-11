@@ -4,7 +4,8 @@ import domain.model.enums.TableWinds
 import domain.model.getCurrentSeatStates
 import domain.model.states.ScreenState
 import domain.use_cases.GetOneGameFlowUseCase
-import domain.use_cases.HuUseCase
+import domain.use_cases.HuDiscardUseCase
+import domain.use_cases.HuSelfPickUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -17,11 +18,13 @@ import ui.common.BaseViewModel
 import ui.common.components.GameId
 import ui.common.components.NOT_SET_GAME_ID
 import ui.common.components.SeatState
+import ui.common.with
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HuDialogViewModel(
     private val oneGameFlowUseCase: GetOneGameFlowUseCase,
-    private val huUseCase: HuUseCase,
+    private val huDiscardUseCase: HuDiscardUseCase,
+    private val huSelfPickUseCase: HuSelfPickUseCase,
 ) : BaseViewModel() {
 
     private val _gameId = MutableStateFlow(NOT_SET_GAME_ID)
@@ -60,21 +63,23 @@ class HuDialogViewModel(
         _selectedSeatWind.value = selectedSeatWind
     }
 
-    suspend fun setHu(
-        points: Int,
+    suspend fun setHuDiscard(
         discarderSeat: TableWinds,
-    ) = gameFlow.value?.let { game ->
+        points: Int,
+    ): Result<Boolean> =
+        gameFlow.with { game ->
+            val uiRound = game.ongoingOrLastRound
             val winnerInitialSeat =
                 game.getPlayerInitialSeatByOngoingOrLastRoundSeat(_selectedSeatWind.value)
-            val discarderInitialSeat = if (discarderSeat == TableWinds.NONE)
-                TableWinds.NONE
-            else
+            val discarderInitialSeat =
                 game.getPlayerInitialSeatByOngoingOrLastRoundSeat(discarderSeat)
-            huUseCase.invoke(
-                roundId = game.ongoingOrLastRound.roundId,
-                winnerInitialSeat = winnerInitialSeat,
-                discarderInitialSeat = discarderInitialSeat,
-                points = points,
-            )
-        } ?: Result.failure(Exception("Game not found"))
+            huDiscardUseCase.invoke(uiRound, winnerInitialSeat, discarderInitialSeat, points)
+        }
+
+    suspend fun setHuSelfPick(points: Int): Result<Boolean> =
+        gameFlow.with { game ->
+            val uiRound = game.ongoingOrLastRound
+            val winnerInitialSeat = game.getPlayerInitialSeatByOngoingOrLastRoundSeat(_selectedSeatWind.value)
+            huSelfPickUseCase.invoke(uiRound, winnerInitialSeat, points)
+        }
 }

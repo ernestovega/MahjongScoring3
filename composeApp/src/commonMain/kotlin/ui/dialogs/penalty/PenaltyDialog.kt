@@ -74,7 +74,7 @@ fun PenaltyDialog(
             coroutineScope.launch {
                 viewModel.setPenalty(points, isDivided)
                     .fold(
-                        onSuccess = { },
+                        onSuccess = { onDismissRequest() },
                         onFailure = { onError("Failed to set penalty", it) },
                     )
             }
@@ -91,7 +91,7 @@ fun PenaltyDialogInternal(
     var penaltyPoints by remember { mutableStateOf(0) }
     var isDivided by remember { mutableStateOf(true) }
 
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -156,10 +156,7 @@ fun PenaltyDialogInternal(
                         modifier = Modifier.padding(start = 16.dp, end = 8.dp),
                         text = stringResource(Res.string.confirm),
                         enabled = penaltyPoints > 0 && (!isDivided || penaltyPoints % 3 == 0),
-                        onClick = {
-                            onConfirmClick(penaltyPoints, isDivided)
-                            onDismissRequest()
-                        }
+                        onClick = { onConfirmClick(penaltyPoints, isDivided) }
                     )
                 }
             }

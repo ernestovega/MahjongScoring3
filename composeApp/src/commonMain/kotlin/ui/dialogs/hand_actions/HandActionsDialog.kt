@@ -84,24 +84,24 @@ fun HandActionsDialog(
     HandActionsDialogInternal(
         state = state,
         onDismissRequest = onDismissRequest,
-        goToHuDialog = goToHuDialog,
-        goToPenaltyDialog = goToPenaltyDialog,
+        goToHuDialog = {
+            onDismissRequest()
+            goToHuDialog(state.data.selectedSeatState.wind)
+        },
+        goToPenaltyDialog = {
+            onDismissRequest()
+            goToPenaltyDialog(state.data.selectedSeatState.wind)
+        },
         onDrawClick = {
             coroutineScope.launch {
                 viewModel.saveDrawRound()
-                    .fold(
-                        onSuccess = { },
-                        onFailure = { onError("Failed to set draw", it) },
-                    )
+                    .fold({ onDismissRequest() }, { onError("Failed to set draw", it) })
             }
         },
         onCancelPenaltiesClick = {
             coroutineScope.launch {
                 viewModel.cancelPenalties()
-                    .fold(
-                        onSuccess = { },
-                        onFailure = { onError("Failed to cancel penalties", it) },
-                    )
+                    .fold({ onDismissRequest() }, { onError("Failed to cancel penalties", it) })
             }
         },
     )
@@ -111,8 +111,8 @@ fun HandActionsDialog(
 fun HandActionsDialogInternal(
     state: ScreenState<HandActionsDialogState>,
     onDismissRequest: () -> Unit,
-    goToHuDialog: (selectedSeatWind: TableWinds) -> Unit,
-    goToPenaltyDialog: (selectedSeatWind: TableWinds) -> Unit,
+    goToHuDialog: () -> Unit,
+    goToPenaltyDialog: () -> Unit,
     onDrawClick: () -> Unit,
     onCancelPenaltiesClick: () -> Unit,
 ) {
@@ -154,30 +154,21 @@ fun HandActionsDialogInternal(
                 // Hu
                 HandActionButton(
                     text = stringResource(Res.string.hu),
-                    onClick = {
-                        onDismissRequest()
-                        goToHuDialog(state.data.selectedSeatState.wind)
-                    },
+                    onClick = goToHuDialog,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Draw
                 HandActionButton(
                     text = stringResource(Res.string.draw),
-                    onClick = {
-                        onDrawClick()
-                        onDismissRequest()
-                    },
+                    onClick = onDrawClick,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Penalty
                 HandActionButton(
                     text = stringResource(Res.string.penalty),
-                    onClick = {
-                        onDismissRequest()
-                        goToPenaltyDialog(state.data.selectedSeatState.wind)
-                    },
+                    onClick = goToPenaltyDialog,
                 )
 
                 // Cancel penalties
@@ -197,10 +188,7 @@ fun HandActionsDialogInternal(
                             onDismissRequest = {
                                 isCancelPenaltiesConfirmationDialogVisible = false
                             },
-                            onConfirmClick = {
-                                onCancelPenaltiesClick()
-                                onDismissRequest()
-                            },
+                            onConfirmClick = { onCancelPenaltiesClick() },
                         )
                     }
                 }

@@ -1,7 +1,11 @@
 package ui.screens.game
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import domain.use_cases.utils.toSignedString
 import ui.common.AppColors.greenMM
 import ui.common.AppColors.red
+import ui.common.components.applyIf
 
 @Immutable
 data class GamePageListItemState(
@@ -55,13 +60,16 @@ fun GamePageListItem(
     state: GamePageListItemState,
     modifier: Modifier = Modifier,
 ) {
+    val secondaryRowBgColor = MaterialTheme.colors.onPrimary
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .applyIf(state.roundNum % 2 == 0) { background(secondaryRowBgColor) }
             .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        GamePageListItemCell(state.roundNum, FontWeight.Normal)
-        GamePageListItemCell(state.handPoints)
+        GamePageListItemCell(state.roundNum, FontWeight.Normal, Modifier.weight(.5f))
+        GamePageListItemCell(state.handPoints, modifier = Modifier.weight(.5f))
         GamePageListItemCell(state.roundPointsEastSeat, state.penaltiesEastSeat, state.roundTotalPointsEastSeat, state.isEastWinner, state.isEastLooser)
         GamePageListItemCell(state.roundPointsSouthSeat, state.penaltiesSouthSeat, state.roundTotalPointsSouthSeat, state.isSouthWinner, state.isSouthLooser)
         GamePageListItemCell(state.roundPointsWestSeat, state.penaltiesWestSeat, state.roundTotalPointsWestSeat, state.isWestWinner, state.isWestLooser)
@@ -73,9 +81,10 @@ fun GamePageListItem(
 private fun RowScope.GamePageListItemCell(
     text: Int,
     fontWeight: FontWeight = FontWeight.Bold,
+    modifier: Modifier = Modifier.weight(1f),
 ) {
     Column(
-        modifier = Modifier.weight(.5f),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         GamePageListItemCellText(text = text, shouldBeSigned = false, fontWeight = fontWeight)
@@ -90,47 +99,46 @@ private fun RowScope.GamePageListItemCell(
     isWinner: Boolean,
     isLooser: Boolean,
 ) {
-    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-        Column {
+    Box(
+        modifier = Modifier.weight(1f),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             GamePageListItemCellText(text = roundPoints, isWinner = isWinner, isLooser = isLooser)
             GamePageListItemCellText(text = roundTotalPoints, fontWeight = FontWeight.Normal)
         }
 
-        if (roundPenalty != null) {
-            GamePageListItemCellTextSmall(text = roundPenalty)
-        }
+        roundPenalty?.let { GamePageListItemCellTextSmall(it) }
     }
 }
 
 @Composable
-private fun GamePageListItemCellText(
+private fun ColumnScope.GamePageListItemCellText(
     text: Int,
     shouldBeSigned: Boolean = true,
     isWinner: Boolean = false,
     isLooser: Boolean = false,
     fontWeight: FontWeight = FontWeight.Bold,
 ) {
-    Box(modifier = Modifier.padding(4.dp)) {
-        Text(
-            text = if (shouldBeSigned) text.toSignedString() else text.toString(),
-            color = when {
-                isWinner -> greenMM
-                isLooser -> red
-                else -> MaterialTheme.colors.onSurface
-            },
-            fontWeight = fontWeight,
-        )
-    }
+    Text(
+        modifier = Modifier.padding(4.dp),
+        text = if (shouldBeSigned) text.toSignedString() else text.toString(),
+        color = when {
+            isWinner -> greenMM
+            isLooser -> red
+            else -> MaterialTheme.colors.onSurface
+        },
+        fontWeight = fontWeight,
+    )
 }
 
 @Composable
 private fun GamePageListItemCellTextSmall(text: Int) {
-    Box(modifier = Modifier.padding(start = 24.dp, bottom = 2.dp)) {
-        Text(
-            text =text.toSignedString(),
-            color = if (text < 0) red else greenMM,
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.caption,
-        )
-    }
+    Text(
+        modifier = Modifier.padding(start = 24.dp, bottom = 2.dp),
+        text = text.toSignedString(),
+        color = if (text < 0) red else greenMM,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.caption,
+    )
 }

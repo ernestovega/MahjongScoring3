@@ -43,20 +43,22 @@ fun GamePageListTotalsFooter(
             .background(MaterialTheme.colors.primary),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        GamePageListFooterCell(text = stringResource(state.title), modifier = Modifier.weight(2f),)
-        GamePageListFooterCell(text = state.pointsPlayerEastSeat.toSignedString())
-        GamePageListFooterCell(text = state.pointsPlayerSouthSeat.toSignedString())
-        GamePageListFooterCell(text = state.pointsPlayerWestSeat.toSignedString())
-        GamePageListFooterCell(text = state.pointsPlayerNorthSeat.toSignedString())
+        GamePageListFooterCell(stringResource(state.title))
+        GamePageListFooterCell(state.pointsPlayerEastSeat.toSignedString())
+        GamePageListFooterCell(state.pointsPlayerSouthSeat.toSignedString())
+        GamePageListFooterCell(state.pointsPlayerWestSeat.toSignedString())
+        GamePageListFooterCell(state.pointsPlayerNorthSeat.toSignedString())
     }
 }
 
 @Composable
-private fun RowScope.GamePageListFooterCell(
-    text: String,
-    modifier: Modifier = Modifier.weight(1f),
-) {
-    Box(modifier = modifier.padding(4.dp), contentAlignment = Alignment.Center) {
+private fun RowScope.GamePageListFooterCell(text: String) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .padding(4.dp),
+        contentAlignment = Alignment.Center,
+    ) {
         Text(
             text = text,
             color = MaterialTheme.colors.onPrimary,
