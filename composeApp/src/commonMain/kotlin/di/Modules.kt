@@ -25,6 +25,7 @@ import domain.use_cases.ExportGameToTextUseCase
 import domain.use_cases.ExportGamesToJsonUseCase
 import domain.use_cases.GetAllGamesFlowUseCase
 import domain.use_cases.GetOneGameFlowUseCase
+import domain.use_cases.GetOneGameUseCase
 import domain.use_cases.HuDiscardUseCase
 import domain.use_cases.HuDrawUseCase
 import domain.use_cases.HuSelfPickUseCase
@@ -77,6 +78,7 @@ val sharedModule = module {
     factoryOf(::ExportGameToJsonUseCase)
     factoryOf(::ExportGameToTextUseCase)
     factoryOf(::GetAllGamesFlowUseCase)
+    factoryOf(::GetOneGameUseCase)
     factoryOf(::GetOneGameFlowUseCase)
     factoryOf(::HuDiscardUseCase)
     factoryOf(::HuDrawUseCase)
