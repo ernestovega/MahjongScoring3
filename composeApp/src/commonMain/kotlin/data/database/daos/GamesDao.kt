@@ -1,5 +1,6 @@
 package data.database.daos
 
+import androidx.annotation.VisibleForTesting
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,6 +15,10 @@ interface GamesDao {
 
     @Query("SELECT * from Games ORDER BY startDate DESC, gameId DESC")
     fun getAllFlow(): Flow<List<DbGame>>
+
+    @VisibleForTesting
+    @Query("SELECT * from Games ORDER BY startDate DESC, gameId DESC")
+    suspend fun getAll(): List<DbGame>
 
     @Query("SELECT * from Games WHERE gameId = :gameId")
     fun getOneFlow(gameId: GameId): Flow<DbGame>

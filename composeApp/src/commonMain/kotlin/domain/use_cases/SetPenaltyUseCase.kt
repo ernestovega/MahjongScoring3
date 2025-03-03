@@ -2,7 +2,6 @@ package domain.use_cases
 
 import data.database.tables.DbRound
 import data.repositories.rounds.RoundsRepository
-import domain.model.PenaltyData
 import domain.model.UiRound
 import domain.model.enums.TableWinds
 import domain.model.enums.TableWinds.EAST
@@ -13,27 +12,24 @@ import domain.model.enums.TableWinds.WEST
 class SetPenaltyUseCase(
     private val roundsRepository: RoundsRepository,
 ) {
-    suspend operator fun invoke(uiRound: UiRound, penaltyData: PenaltyData): Result<Boolean> =
+    suspend operator fun invoke(
+        uiRound: UiRound, 
+        isDivided: Boolean,
+        penalizedPlayerInitialSeat: TableWinds,
+        points: Int,
+    ): Result<Boolean> =
         roundsRepository.updateOne(
-            if (penaltyData.isDivided) {
-                getDbRoundApplyingAllPlayersPenaltyPoints(
-                    uiRound,
-                    penaltyData.penalizedPlayerInitialSeat,
-                    penaltyData.points
-                )
+            if (isDivided) {
+                getDbRoundApplyingAllPlayersPenaltyPoints(uiRound, penalizedPlayerInitialSeat, points)
             } else {
-                getDbRoundApplyingOnePlayerPenaltyPoints(
-                    uiRound,
-                    penaltyData.penalizedPlayerInitialSeat,
-                    penaltyData.points
-                )
+                getDbRoundApplyingOnePlayerPenaltyPoints(uiRound, penalizedPlayerInitialSeat, points)
             }
         )
 
     private fun getDbRoundApplyingAllPlayersPenaltyPoints(
         uiRound: UiRound,
         penalizedPlayerInitialSeat: TableWinds,
-        penaltyPoints: Int
+        penaltyPoints: Int,
     ): DbRound =
         with(uiRound) {
             domain.model.UiGame.getPenaltyOtherPlayersPoints(penaltyPoints).let { noPenalizedPlayerPoints ->
@@ -54,7 +50,7 @@ class SetPenaltyUseCase(
     private fun getDbRoundApplyingOnePlayerPenaltyPoints(
         uiRound: UiRound,
         penalizedPlayerInitialPosition: TableWinds,
-        penaltyPoints: Int
+        penaltyPoints: Int,
     ): DbRound =
         with(uiRound) {
             DbRound(

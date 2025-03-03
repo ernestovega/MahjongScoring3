@@ -91,7 +91,7 @@ fun PenaltyDialogInternal(
     var penaltyPoints by remember { mutableStateOf(0) }
     var isDivided by remember { mutableStateOf(true) }
 
-    Dialog(onDismissRequest) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column(
                 modifier = Modifier.padding(16.dp),

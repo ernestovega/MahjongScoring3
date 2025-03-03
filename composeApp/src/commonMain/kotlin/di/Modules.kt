@@ -93,8 +93,6 @@ val sharedModule = module {
     singleOf(::DefaultFanRepository).bind<FanRepository>()
     singleOf(::DefaultRoundsRepository).bind<RoundsRepository>()
     singleOf(::DefaultGamesRepository).bind<GamesRepository>()
-//    singleOf(::FakeRoundsRepository).bind<RoundsRepository>()
-//    singleOf(::FakeGamesRepository).bind<GamesRepository>()
 
     //Database
     single<GamesDao> { get<AppDatabase>().gamesDao }

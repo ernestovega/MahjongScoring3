@@ -101,7 +101,7 @@ private fun HuDialogInternal(
     var huPoints by remember { mutableStateOf(0) }
     var discarderSeat by remember { mutableStateOf(TableWinds.NONE) }
 
-    Dialog(onDismissRequest) {
+    Dialog(onDismissRequest = onDismissRequest) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column(
                 modifier = Modifier.padding(16.dp),

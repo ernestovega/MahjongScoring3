@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -19,7 +20,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm("desktop")
 
     listOf(
@@ -34,7 +35,7 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -44,6 +45,9 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.room.runtime.android)
+
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.androidx.test.junit)
         }
         val commonMain by getting {
             kotlin.srcDir("build/generated/ksp/metadata")
@@ -66,12 +70,19 @@ kotlin {
                 implementation(libs.room.runtime)
                 implementation(libs.sqlite)
                 implementation(libs.sqlite.bundled)
+                implementation(libs.kotlin.test)
             }
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
     }
@@ -91,6 +102,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packaging {
         resources {
@@ -140,4 +152,8 @@ dependencies {
     ).forEach {
         add(it, libs.room.compiler)
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

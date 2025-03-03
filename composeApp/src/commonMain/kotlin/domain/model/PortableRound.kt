@@ -4,6 +4,7 @@ import data.database.tables.DbRound
 import domain.model.enums.TableWinds
 import kotlinx.serialization.Serializable
 import ui.common.components.GameId
+import ui.common.components.NOT_SET_ROUND_ID
 
 @Serializable
 data class PortableRound(

@@ -12,18 +12,17 @@ class HuDrawUseCase(
 ) {
     suspend operator fun invoke(uiRound: UiRound): Result<Boolean> =
         with(uiRound) {
-            roundsRepository.updateOne(
-                DbRound(
-                    gameId = this.gameId,
-                    roundId = this.roundId,
-                    winnerInitialSeat = NONE,
-                    discarderInitialSeat = NONE,
-                    handPoints = this.handPoints,
-                    penaltyP1 = this.penaltyP1,
-                    penaltyP2 = this.penaltyP2,
-                    penaltyP3 = this.penaltyP3,
-                    penaltyP4 = this.penaltyP4,
-                )
+            val updatedRound = DbRound(
+                gameId = this.gameId,
+                roundId = this.roundId,
+                winnerInitialSeat = NONE,
+                discarderInitialSeat = NONE,
+                handPoints = this.handPoints,
+                penaltyP1 = this.penaltyP1,
+                penaltyP2 = this.penaltyP2,
+                penaltyP3 = this.penaltyP3,
+                penaltyP4 = this.penaltyP4,
             )
+            roundsRepository.updateOne(updatedRound)
         }.onSuccess { endRoundUseCase.invoke(uiRound.gameId) }
 }
