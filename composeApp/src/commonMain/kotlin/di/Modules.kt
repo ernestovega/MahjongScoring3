@@ -1,9 +1,9 @@
 package di
 
 import AppViewModel
-import data.database.AppDatabase
-import data.database.daos.GamesDao
-import data.database.daos.RoundsDao
+import data.database.room.AppDatabase
+import data.database.room.daos.GamesDao
+import data.database.room.daos.RoundsDao
 import data.repositories.diffs.DefaultDiffsRepository
 import data.repositories.diffs.DiffsRepository
 import data.repositories.fan.DefaultFanRepository

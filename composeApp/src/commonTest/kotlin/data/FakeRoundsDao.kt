@@ -1,7 +1,7 @@
 package data
 
-import data.database.daos.RoundsDao
-import data.database.tables.DbRound
+import data.database.room.daos.RoundsDao
+import data.database.room.tables.DbRound
 import domain.model.exceptions.RoundNotFoundException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

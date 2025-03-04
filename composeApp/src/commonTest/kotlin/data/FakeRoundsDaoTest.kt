@@ -1,6 +1,6 @@
 package data
 
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import domain.model.enums.TableWinds.EAST
 import domain.model.enums.TableWinds.NORTH
 import domain.model.enums.TableWinds.SOUTH

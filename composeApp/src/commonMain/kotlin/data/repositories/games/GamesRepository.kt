@@ -1,6 +1,6 @@
 package data.repositories.games
 
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 

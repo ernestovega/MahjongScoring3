@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import data.repositories.rounds.RoundsRepository
 import ui.common.components.NOT_SET_ROUND_ID
 import ui.common.components.RoundId

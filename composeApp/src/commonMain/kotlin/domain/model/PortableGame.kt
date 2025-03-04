@@ -1,6 +1,6 @@
 package domain.model
 
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import ui.common.components.GameId

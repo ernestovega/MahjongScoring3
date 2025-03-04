@@ -1,7 +1,7 @@
 package data
 
-import data.database.daos.GamesDao
-import data.database.tables.DbGame
+import data.database.room.daos.GamesDao
+import data.database.room.tables.DbGame
 import domain.model.exceptions.GameNotFoundException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

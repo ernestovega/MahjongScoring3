@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.exceptions.GameNotFoundException
 import ui.common.components.GameId

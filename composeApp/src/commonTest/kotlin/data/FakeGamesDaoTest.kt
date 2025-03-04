@@ -1,6 +1,6 @@
 package data
 
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import domain.model.exceptions.GameNotFoundException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

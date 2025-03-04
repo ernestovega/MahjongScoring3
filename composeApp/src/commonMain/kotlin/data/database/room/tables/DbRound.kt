@@ -1,11 +1,11 @@
-package data.database.tables
+package data.database.room.tables
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import data.database.converters.TableWindsConverter
+import data.database.room.converters.TableWindsConverter
 import domain.model.enums.TableWinds
 import ui.common.components.GameId
 import ui.common.components.NOT_SET_ROUND_ID

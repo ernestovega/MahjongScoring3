@@ -1,11 +1,11 @@
-package data.database.tables
+package data.database.room.tables
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import data.database.converters.DateConverter
+import data.database.room.converters.DateConverter
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import ui.common.components.GameId

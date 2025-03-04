@@ -1,4 +1,4 @@
-package data.database.converters
+package data.database.room.converters
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant

@@ -4,7 +4,7 @@ package domain.use_cases
 //import android.net.Uri
 //import screens.common.model.exceptions.JsonGamesNotValidException
 import androidx.annotation.VisibleForTesting
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import domain.model.PortableGame

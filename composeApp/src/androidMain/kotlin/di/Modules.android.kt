@@ -1,8 +1,8 @@
 package di
 
-import com.etologic.mahjongscoring.data.database.getDatabaseBuilder
-import data.database.AppDatabase
-import data.database.getRoomDatabase
+import com.etologic.mahjongscoring.data.database.room.getDatabaseBuilder
+import data.database.room.AppDatabase
+import data.database.room.getRoomDatabase
 import org.koin.dsl.module
 
 actual val platformModule = module {

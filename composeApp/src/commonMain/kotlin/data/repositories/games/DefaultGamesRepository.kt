@@ -1,7 +1,7 @@
 package data.repositories.games
 
-import data.database.daos.GamesDao
-import data.database.tables.DbGame
+import data.database.room.daos.GamesDao
+import data.database.room.tables.DbGame
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 

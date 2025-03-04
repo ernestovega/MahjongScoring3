@@ -1,6 +1,6 @@
 package data.repositories.rounds
 
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 import ui.common.components.RoundId

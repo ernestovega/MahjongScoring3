@@ -1,4 +1,4 @@
-package data.database
+package data.database.room
 
 import androidx.room.ConstructedBy
 import androidx.room.Database
@@ -6,12 +6,12 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import data.database.converters.DateConverter
-import data.database.converters.TableWindsConverter
-import data.database.daos.GamesDao
-import data.database.daos.RoundsDao
-import data.database.tables.DbGame
-import data.database.tables.DbRound
+import data.database.room.converters.DateConverter
+import data.database.room.converters.TableWindsConverter
+import data.database.room.daos.GamesDao
+import data.database.room.daos.RoundsDao
+import data.database.room.tables.DbGame
+import data.database.room.tables.DbRound
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 

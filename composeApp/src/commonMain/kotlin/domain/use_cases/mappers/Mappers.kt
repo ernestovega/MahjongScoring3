@@ -1,8 +1,8 @@
 
 package domain.use_cases.mappers
 
-import data.database.tables.DbGame
-import data.database.tables.DbRound
+import data.database.room.tables.DbGame
+import data.database.room.tables.DbRound
 import domain.model.UiGame
 import domain.model.UiRound
 

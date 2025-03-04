@@ -1,8 +1,7 @@
-package data.database.app
+package data.database.room
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import data.database.AppDatabase
 import ui.common.components.APP_DATABASE_NAME
 import java.io.File
 

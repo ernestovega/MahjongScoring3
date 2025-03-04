@@ -1,4 +1,4 @@
-package data.database.daos
+package data.database.room.daos
 
 import androidx.annotation.VisibleForTesting
 import androidx.room.Dao
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 

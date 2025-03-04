@@ -1,11 +1,11 @@
-package data.database.daos
+package data.database.room.daos
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 import ui.common.components.RoundId

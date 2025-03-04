@@ -3,7 +3,7 @@ package domain.usecases
 import data.FakeAppDatabase
 import data.FakeGamesDao
 import data.FakeRoundsDao
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import data.repositories.games.DefaultGamesRepository
 import data.repositories.rounds.DefaultRoundsRepository
 import domain.model.UiGame

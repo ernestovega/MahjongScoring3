@@ -1,7 +1,7 @@
 package domain.use_cases
 
-import data.database.tables.DbGame
-import data.database.tables.DbRound
+import data.database.room.tables.DbGame
+import data.database.room.tables.DbRound
 import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import domain.model.UiGame

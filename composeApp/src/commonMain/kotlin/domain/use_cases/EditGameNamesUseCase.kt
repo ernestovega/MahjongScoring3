@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.tables.DbGame
+import data.database.room.tables.DbGame
 import data.repositories.games.GamesRepository
 import domain.model.UiGame
 import domain.use_cases.utils.normalizeName

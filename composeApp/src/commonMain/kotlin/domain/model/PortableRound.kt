@@ -1,6 +1,6 @@
 package domain.model
 
-import data.database.tables.DbRound
+import data.database.room.tables.DbRound
 import domain.model.enums.TableWinds
 import kotlinx.serialization.Serializable
 import ui.common.components.GameId

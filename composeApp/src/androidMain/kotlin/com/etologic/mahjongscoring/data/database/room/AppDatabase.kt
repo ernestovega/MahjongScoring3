@@ -1,9 +1,9 @@
-package com.etologic.mahjongscoring.data.database
+package com.etologic.mahjongscoring.data.database.room
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import data.database.AppDatabase
+import data.database.room.AppDatabase
 import ui.common.components.APP_DATABASE_NAME
 
 internal fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
