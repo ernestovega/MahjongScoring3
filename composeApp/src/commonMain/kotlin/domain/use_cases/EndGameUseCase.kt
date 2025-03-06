@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.room.tables.DbGame
+import com.etologic.mahjongscoring.DbGame
 import data.repositories.games.GamesRepository
 import domain.model.UiGame
 import kotlinx.datetime.Clock
@@ -8,7 +8,7 @@ import kotlinx.datetime.Clock
 class EndGameUseCase(
     private val gamesRepository: GamesRepository,
 ) {
-    suspend operator fun invoke(uiGame: UiGame): Result<Boolean> =
+    suspend operator fun invoke(uiGame: UiGame): Result<Unit> =
         gamesRepository.updateOne(
             DbGame(
                 gameId = uiGame.gameId,

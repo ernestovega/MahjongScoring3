@@ -1,0 +1,60 @@
+import kotlinx.datetime.Instant;
+
+CREATE TABLE DbGame (
+    gameId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    gameName TEXT NOT NULL DEFAULT '',
+    nameP1 TEXT NOT NULL,
+    nameP2 TEXT NOT NULL,
+    nameP3 TEXT NOT NULL,
+    nameP4 TEXT NOT NULL,
+    startDate INTEGER AS Instant NOT NULL,
+    endDate INTEGER AS Instant DEFAULT NULL
+);
+
+createUniqueIndexOnGameId:
+CREATE UNIQUE INDEX index_Games_gameId ON DbGame(gameId);
+
+-- Use .asFlow() for getAllFlow and executeAsOne() (or executeAsOneOrNull()) for getOne.
+getAllGames:
+SELECT * FROM DbGame ORDER BY startDate DESC, gameId DESC;
+
+-- Use .asFlow() for getOneFlow and executeAsOne() (or executeAsOneOrNull()) for getOne.
+getGameById:
+SELECT * FROM DbGame WHERE gameId = :gameId;
+
+insertOne:
+INSERT INTO DbGame (
+    gameName,
+    nameP1,
+    nameP2,
+    nameP3,
+    nameP4,
+    startDate,
+    endDate
+)
+VALUES (
+    :gameName,
+    :nameP1,
+    :nameP2,
+    :nameP3,
+    :nameP4,
+    :startDate,
+    :endDate
+);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+updateOne:
+UPDATE DbGame
+SET gameName = :gameName,
+    nameP1 = :nameP1,
+    nameP2 = :nameP2,
+    nameP3 = :nameP3,
+    nameP4 = :nameP4,
+    startDate = :startDate,
+    endDate = :endDate
+WHERE gameId = :gameId;
+
+deleteOne:
+DELETE FROM DbGame WHERE gameId = :gameId;

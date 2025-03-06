@@ -1,16 +1,23 @@
 package di
 
 import AppViewModel
-import data.database.room.AppDatabase
-import data.database.room.daos.GamesDao
-import data.database.room.daos.RoundsDao
+import com.etologic.mahjongscoring.DbGame
+import com.etologic.mahjongscoring.DbRound
+import com.etologic.mahjongscoring.MS3Database
+import data.database.sqldelight.DatabaseDriverFactory
+import data.database.sqldelight.DateAdapter
+import data.database.sqldelight.TableWindsAdapter
 import data.repositories.diffs.DefaultDiffsRepository
 import data.repositories.diffs.DiffsRepository
 import data.repositories.fan.DefaultFanRepository
 import data.repositories.fan.FanRepository
+import data.repositories.games.DefaultGamesDataSource
 import data.repositories.games.DefaultGamesRepository
+import data.repositories.games.GamesDataSource
 import data.repositories.games.GamesRepository
+import data.repositories.rounds.DefaultRoundsDataSource
 import data.repositories.rounds.DefaultRoundsRepository
+import data.repositories.rounds.RoundsDataSource
 import data.repositories.rounds.RoundsRepository
 import domain.use_cases.CancelAllPenaltiesUseCase
 import domain.use_cases.CreateGameUseCase
@@ -93,10 +100,23 @@ val sharedModule = module {
     //Repositories
     singleOf(::DefaultDiffsRepository).bind<DiffsRepository>()
     singleOf(::DefaultFanRepository).bind<FanRepository>()
-    singleOf(::DefaultRoundsRepository).bind<RoundsRepository>()
     singleOf(::DefaultGamesRepository).bind<GamesRepository>()
+    singleOf(::DefaultRoundsRepository).bind<RoundsRepository>()
+    singleOf(::DefaultGamesDataSource).bind<GamesDataSource>()
+    singleOf(::DefaultRoundsDataSource).bind<RoundsDataSource>()
 
     //Database
-    single<GamesDao> { get<AppDatabase>().gamesDao }
-    single<RoundsDao> { get<AppDatabase>().roundsDao }
+    single<MS3Database> {
+        MS3Database(
+            driver = get<DatabaseDriverFactory>().create(),
+            DbGameAdapter = DbGame.Adapter(
+                startDateAdapter = DateAdapter,
+                endDateAdapter = DateAdapter,
+            ),
+            DbRoundAdapter = DbRound.Adapter(
+                winnerInitialSeatAdapter = TableWindsAdapter,
+                discarderInitialSeatAdapter = TableWindsAdapter,
+            ),
+        )
+    }
 }

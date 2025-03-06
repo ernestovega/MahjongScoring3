@@ -8,7 +8,7 @@ class DeleteGameUseCase(
     private val gamesRepository: GamesRepository,
     private val roundsRepository: RoundsRepository,
 ) {
-    suspend operator fun invoke(gameId: GameId): Result<Boolean> =
+    suspend operator fun invoke(gameId: GameId): Result<Unit> =
         roundsRepository.deleteGameRounds(gameId)
             .also { gamesRepository.deleteOne(gameId) }
 }

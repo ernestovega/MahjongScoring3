@@ -3,7 +3,7 @@ package data.repositories.diffs
 import kotlinx.coroutines.flow.Flow
 import domain.model.Diff
 
-interface DiffsRepository{
+interface DiffsRepository {
 
     val getDiffsFlow: Flow<List<Diff>>
 

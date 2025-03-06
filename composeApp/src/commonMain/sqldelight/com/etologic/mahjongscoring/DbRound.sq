@@ -1,0 +1,73 @@
+import domain.model.enums.TableWinds;
+
+CREATE TABLE DbRound (
+    roundId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    gameId INTEGER NOT NULL,
+    winnerInitialSeat TEXT AS TableWinds DEFAULT NULL,
+    discarderInitialSeat TEXT AS TableWinds DEFAULT NULL,
+    handPoints INTEGER NOT NULL DEFAULT 0,
+    penaltyP1 INTEGER NOT NULL DEFAULT 0,
+    penaltyP2 INTEGER NOT NULL DEFAULT 0,
+    penaltyP3 INTEGER NOT NULL DEFAULT 0,
+    penaltyP4 INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (gameId) REFERENCES DbGame(gameId)
+);
+
+createUniqueIndexOnGameIdRoundId:
+CREATE UNIQUE INDEX index_Rounds_gameId_roundId ON DbRound(gameId, roundId);
+
+getAllRoundsFlow:
+SELECT * FROM DbRound;
+
+getGameRoundsFlow:
+SELECT * FROM DbRound WHERE gameId = :gameId;
+
+getGameRounds:
+SELECT * FROM DbRound WHERE gameId = :gameId ORDER BY roundId ASC;
+
+-- Query to retrieve a single round by its roundId.
+getOne:
+SELECT * FROM DbRound WHERE roundId = :roundId;
+
+insertOne:
+INSERT INTO DbRound (
+    gameId,
+    winnerInitialSeat,
+    discarderInitialSeat,
+    handPoints,
+    penaltyP1,
+    penaltyP2,
+    penaltyP3,
+    penaltyP4
+)
+VALUES (
+    :gameId,
+    :winnerInitialSeat,
+    :discarderInitialSeat,
+    :handPoints,
+    :penaltyP1,
+    :penaltyP2,
+    :penaltyP3,
+    :penaltyP4
+);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
+
+updateOne:
+UPDATE DbRound
+SET gameId = :gameId,
+    winnerInitialSeat = :winnerInitialSeat,
+    discarderInitialSeat = :discarderInitialSeat,
+    handPoints = :handPoints,
+    penaltyP1 = :penaltyP1,
+    penaltyP2 = :penaltyP2,
+    penaltyP3 = :penaltyP3,
+    penaltyP4 = :penaltyP4
+WHERE roundId = :roundId;
+
+deleteGameRounds:
+DELETE FROM DbRound WHERE gameId = :gameId;
+
+deleteOne:
+DELETE FROM DbRound WHERE roundId = :roundId;

@@ -17,6 +17,14 @@ enum class TableWinds(val index: Int) {
                 null -> null
                 else -> NONE
             }
+        fun from(name: String?): TableWinds =
+            when (name) {
+                EAST.name -> EAST
+                SOUTH.name -> SOUTH
+                WEST.name -> WEST
+                NORTH.name -> NORTH
+                else -> NONE
+            }
 
         val asArray = arrayOf(EAST, SOUTH, WEST, NORTH)
     }

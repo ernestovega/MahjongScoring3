@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.room.tables.DbGame
+import com.etologic.mahjongscoring.DbGame
 import data.repositories.games.GamesRepository
 import domain.model.UiGame
 import domain.use_cases.utils.normalizeName
@@ -15,7 +15,7 @@ class EditGameNamesUseCase(
         newNameP2: String,
         newNameP3: String,
         newNameP4: String,
-    ): Result<Boolean> =
+    ): Result<Unit> =
         gamesRepository.updateOne(
             DbGame(
                 gameId = uiGame.gameId,

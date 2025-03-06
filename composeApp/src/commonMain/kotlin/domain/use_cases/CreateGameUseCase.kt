@@ -1,7 +1,7 @@
 package domain.use_cases
 
-import data.database.room.tables.DbGame
-import data.database.room.tables.DbRound
+import com.etologic.mahjongscoring.DbGame
+import com.etologic.mahjongscoring.DbRound
 import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import kotlinx.datetime.Clock
@@ -35,7 +35,14 @@ class CreateGameUseCase(
                 roundsRepository.insertOne(
                     DbRound(
                         gameId = gameId,
-                        roundId = NOT_SET_ROUND_ID
+                        roundId = NOT_SET_ROUND_ID,
+                        winnerInitialSeat = null,
+                        discarderInitialSeat = null,
+                        handPoints = 0,
+                        penaltyP1 = 0,
+                        penaltyP2 = 0,
+                        penaltyP3 = 0,
+                        penaltyP4 = 0,
                     )
                 )
             }

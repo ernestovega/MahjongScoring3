@@ -1,6 +1,6 @@
 package domain.model
 
-import data.database.room.tables.DbRound
+import com.etologic.mahjongscoring.DbRound
 import domain.model.enums.TableWinds
 import kotlinx.serialization.Serializable
 import ui.common.components.GameId
@@ -43,11 +43,12 @@ fun List<PortableRound>.toDbRounds(gameId: GameId): List<DbRound> =
 private fun PortableRound.toDbRound(gameId: GameId): DbRound =
     DbRound(
         gameId = gameId,
+        roundId = NOT_SET_ROUND_ID,
         winnerInitialSeat = TableWinds.from(winnerInitialSeat),
         discarderInitialSeat = TableWinds.from(discarderInitialSeat),
-        handPoints = handPoints,
-        penaltyP1 = penaltyP1,
-        penaltyP2 = penaltyP2,
-        penaltyP3 = penaltyP3,
-        penaltyP4 = penaltyP4,
+        handPoints = handPoints.toLong(),
+        penaltyP1 = penaltyP1.toLong(),
+        penaltyP2 = penaltyP2.toLong(),
+        penaltyP3 = penaltyP3.toLong(),
+        penaltyP4 = penaltyP4.toLong(),
     )

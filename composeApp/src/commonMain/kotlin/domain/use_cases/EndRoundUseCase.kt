@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.room.tables.DbRound
+import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.exceptions.GameNotFoundException
 import ui.common.components.GameId
@@ -12,7 +12,7 @@ class EndRoundUseCase(
     private val endGameUseCase: EndGameUseCase,
     private val getOneGameUseCase: GetOneGameUseCase,
 ) {
-    suspend operator fun invoke(gameId: GameId): Result<Boolean> =
+    suspend operator fun invoke(gameId: GameId): Result<Unit> =
         runCatching {
             getOneGameUseCase.invoke(gameId)
                 ?.let { uiGame ->
@@ -20,7 +20,14 @@ class EndRoundUseCase(
                         roundsRepository.insertOne(
                             DbRound(
                                 gameId = uiGame.gameId,
-                                roundId = NOT_SET_ROUND_ID
+                                roundId = NOT_SET_ROUND_ID,
+                                winnerInitialSeat = null,
+                                discarderInitialSeat = null,
+                                handPoints = 0,
+                                penaltyP1 = 0,
+                                penaltyP2 = 0,
+                                penaltyP3 = 0,
+                                penaltyP4 = 0,
                             )
                         )
                     } else {

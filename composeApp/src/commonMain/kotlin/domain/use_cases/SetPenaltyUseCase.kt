@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.room.tables.DbRound
+import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.UiRound
 import domain.model.enums.TableWinds
@@ -17,7 +17,7 @@ class SetPenaltyUseCase(
         isDivided: Boolean,
         penalizedPlayerInitialSeat: TableWinds,
         points: Int,
-    ): Result<Boolean> =
+    ): Result<Unit> =
         roundsRepository.updateOne(
             if (isDivided) {
                 getDbRoundApplyingAllPlayersPenaltyPoints(uiRound, penalizedPlayerInitialSeat, points)
@@ -38,11 +38,11 @@ class SetPenaltyUseCase(
                     roundId = roundId,
                     winnerInitialSeat = winnerInitialSeat,
                     discarderInitialSeat = discarderInitialSeat,
-                    handPoints = handPoints,
-                    penaltyP1 = penaltyP1 + if (EAST === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints,
-                    penaltyP2 = penaltyP2 + if (SOUTH === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints,
-                    penaltyP3 = penaltyP3 + if (WEST === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints,
-                    penaltyP4 = penaltyP4 + if (NORTH === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints,
+                    handPoints = handPoints.toLong(),
+                    penaltyP1 = (penaltyP1 + if (EAST === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints).toLong(),
+                    penaltyP2 = (penaltyP2 + if (SOUTH === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints).toLong(),
+                    penaltyP3 = (penaltyP3 + if (WEST === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints).toLong(),
+                    penaltyP4 = (penaltyP4 + if (NORTH === penalizedPlayerInitialSeat) -penaltyPoints else noPenalizedPlayerPoints).toLong(),
                 )
             }
         }
@@ -58,11 +58,11 @@ class SetPenaltyUseCase(
                 roundId = roundId,
                 winnerInitialSeat = winnerInitialSeat,
                 discarderInitialSeat = discarderInitialSeat,
-                handPoints = handPoints,
-                penaltyP1 = if (penalizedPlayerInitialPosition == EAST) penaltyP1 - penaltyPoints else penaltyP1,
-                penaltyP2 = if (penalizedPlayerInitialPosition == SOUTH) penaltyP2 - penaltyPoints else penaltyP2,
-                penaltyP3 = if (penalizedPlayerInitialPosition == WEST) penaltyP3 - penaltyPoints else penaltyP3,
-                penaltyP4 = if (penalizedPlayerInitialPosition == NORTH) penaltyP4 - penaltyPoints else penaltyP4,
+                handPoints = handPoints.toLong(),
+                penaltyP1 = (if (penalizedPlayerInitialPosition == EAST) penaltyP1 - penaltyPoints else penaltyP1).toLong(),
+                penaltyP2 = (if (penalizedPlayerInitialPosition == SOUTH) penaltyP2 - penaltyPoints else penaltyP2).toLong(),
+                penaltyP3 = (if (penalizedPlayerInitialPosition == WEST) penaltyP3 - penaltyPoints else penaltyP3).toLong(),
+                penaltyP4 = (if (penalizedPlayerInitialPosition == NORTH) penaltyP4 - penaltyPoints else penaltyP4).toLong(),
             )
         }
 }

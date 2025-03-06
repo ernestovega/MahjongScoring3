@@ -71,12 +71,12 @@ class HandActionsDialogViewModel(
         _selectedSeatWind.value = selectedSeatWind
     }
 
-    suspend fun saveDrawRound(): Result<Boolean> =
+    suspend fun saveDrawRound(): Result<Unit> =
         gameFlow.withOngoingRound { uiRound ->
             setDrawUseCase.invoke(uiRound)
         }
 
-    suspend fun cancelPenalties(): Result<Boolean> =
+    suspend fun cancelPenalties(): Result<Unit> =
         gameFlow.withOngoingRound { uiRound ->
             cancelAllPenaltiesUseCase.invoke(uiRound)
         }

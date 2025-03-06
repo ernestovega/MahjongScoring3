@@ -1,21 +1,34 @@
 package data.repositories.games
 
-import data.database.room.daos.GamesDao
-import data.database.room.tables.DbGame
+import com.etologic.mahjongscoring.DbGame
 import kotlinx.coroutines.flow.Flow
 import ui.common.components.GameId
 
-class DefaultGamesRepository(private var gamesDao: GamesDao) : GamesRepository {
+class DefaultGamesRepository(private var gamesDataSource: GamesDataSource) : GamesRepository {
 
-    override fun getAllFlow(): Flow<List<DbGame>> = gamesDao.getAllFlow()
+    override fun getAllFlow(): Flow<List<DbGame>> =
+        gamesDataSource.getAllFlow()
 
-    override fun getOneFlow(gameId: GameId): Flow<DbGame> = gamesDao.getOneFlow(gameId)
+    override fun getOneFlow(gameId: GameId): Flow<DbGame> =
+        gamesDataSource.getOneFlow(gameId)
 
-    override suspend fun getOne(gameId: GameId): Result<DbGame> = runCatching { gamesDao.getOne(gameId) }
+    override suspend fun getOne(gameId: GameId): Result<DbGame> =
+        runCatching {
+            gamesDataSource.getOne(gameId)
+        }
 
-    override suspend fun insertOne(dbGame: DbGame): Result<GameId> = runCatching { gamesDao.insertOne(dbGame) }
+    override suspend fun insertOne(dbGame: DbGame): Result<GameId> =
+        runCatching {
+            gamesDataSource.insertOne(dbGame)
+        }
 
-    override suspend fun updateOne(dbGame: DbGame): Result<Boolean> = runCatching { gamesDao.updateOne(dbGame) == 1 }
+    override suspend fun updateOne(dbGame: DbGame): Result<Unit> =
+        runCatching {
+            gamesDataSource.updateOne(dbGame)
+        }
 
-    override suspend fun deleteOne(gameId: GameId): Result<Boolean> = runCatching { gamesDao.deleteOne(gameId) == 1 }
+    override suspend fun deleteOne(gameId: GameId): Result<Unit> =
+        runCatching {
+            gamesDataSource.deleteOne(gameId)
+        }
 }

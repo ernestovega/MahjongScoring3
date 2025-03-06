@@ -1,6 +1,4 @@
-import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -10,12 +8,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -31,26 +28,36 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            // Required when using NativeSQLiteDriver
             linkerOpts.add("-lsqlite3")
         }
     }
 
+    sqldelight {
+        databases {
+            create("MS3Database") {
+                packageName = "com.etologic.mahjongscoring"
+            }
+        }
+    }
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(compose.components.uiToolingPreview)
+        val androidMain by getting {
+            kotlin.srcDir("build/generated/sqldelight/code/androidMain")
+            dependencies {
+                implementation(compose.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.koin.android)
+                implementation(libs.koin.androidx.compose)
+                implementation(libs.sqldelight.android)
 
-            implementation(libs.koin.android)
-            implementation(libs.koin.androidx.compose)
-            implementation(libs.room.runtime.android)
-
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.androidx.test.junit)
+                implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.androidx.test.junit)
+            }
         }
         val commonMain by getting {
             kotlin.srcDir("build/generated/ksp/metadata")
+            kotlin.srcDir("build/generated/sqldelight/code/commonMain")
             dependencies {
                 api(libs.koin.core)
                 implementation(compose.runtime)
@@ -66,24 +73,28 @@ kotlin {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.lifecycle.viewmodel)
-                implementation(libs.kermit.logging)
-                implementation(libs.room.runtime)
-                implementation(libs.sqlite)
-                implementation(libs.sqlite.bundled)
+                implementation(libs.sqldelight.coroutines)
+
                 implementation(libs.kotlin.test)
             }
         }
         val desktopMain by getting {
+            kotlin.srcDir("build/generated/sqldelight/code/desktopMain")
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.sqldelight.jvm)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.koin.test)
             }
+        }
+        nativeMain.dependencies {
+            implementation(libs.sqldelight.native)
         }
     }
 }
@@ -135,22 +146,6 @@ compose.desktop {
             packageName = "com.etologic.mahjongscoring"
             packageVersion = "1.0.0"
         }
-    }
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
-}
-
-dependencies {
-    listOf(
-        "kspAndroid",
-        "kspDesktop",
-        "kspIosSimulatorArm64",
-        "kspIosX64",
-        "kspIosArm64",
-    ).forEach {
-        add(it, libs.room.compiler)
     }
 }
 

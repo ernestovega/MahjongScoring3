@@ -1,6 +1,6 @@
 package domain.use_cases
 
-import data.database.room.tables.DbRound
+import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.UiRound
 import domain.model.enums.TableWinds
@@ -14,7 +14,7 @@ class HuSelfPickUseCase(
         uiRound: UiRound,
         winnerInitialSeat: TableWinds,
         points: Int,
-    ): Result<Boolean> =
+    ): Result<Unit> =
         with(uiRound) {
             roundsRepository.updateOne(
                 DbRound(
@@ -22,11 +22,11 @@ class HuSelfPickUseCase(
                     roundId = this.roundId,
                     winnerInitialSeat = winnerInitialSeat,
                     discarderInitialSeat = NONE,
-                    handPoints = points,
-                    penaltyP1 = this.penaltyP1,
-                    penaltyP2 = this.penaltyP2,
-                    penaltyP3 = this.penaltyP3,
-                    penaltyP4 = this.penaltyP4,
+                    handPoints = points.toLong(),
+                    penaltyP1 = this.penaltyP1.toLong(),
+                    penaltyP2 = this.penaltyP2.toLong(),
+                    penaltyP3 = this.penaltyP3.toLong(),
+                    penaltyP4 = this.penaltyP4.toLong(),
                 )
             )
         }

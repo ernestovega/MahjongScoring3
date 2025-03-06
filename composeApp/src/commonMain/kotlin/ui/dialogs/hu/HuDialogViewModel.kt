@@ -66,7 +66,7 @@ class HuDialogViewModel(
     suspend fun setHuDiscard(
         discarderSeat: TableWinds,
         points: Int,
-    ): Result<Boolean> =
+    ): Result<Unit> =
         gameFlow.with { game ->
             val uiRound = game.ongoingOrLastRound
             val winnerInitialSeat =
@@ -76,7 +76,7 @@ class HuDialogViewModel(
             huDiscardUseCase.invoke(uiRound, winnerInitialSeat, discarderInitialSeat, points)
         }
 
-    suspend fun setHuSelfPick(points: Int): Result<Boolean> =
+    suspend fun setHuSelfPick(points: Int): Result<Unit> =
         gameFlow.with { game ->
             val uiRound = game.ongoingOrLastRound
             val winnerInitialSeat = game.getPlayerInitialSeatByOngoingOrLastRoundSeat(_selectedSeatWind.value)

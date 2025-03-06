@@ -13,14 +13,16 @@ class HuUseCase(
         winnerInitialSeat: TableWinds,
         discarderInitialSeat: TableWinds,
         points: Int,
-    ): Result<Boolean> =
+    ): Result<Unit> =
         roundsRepository.getOne(roundId)
             .getOrThrow()
             .let { round ->
-                round.winnerInitialSeat = winnerInitialSeat
-                round.discarderInitialSeat = discarderInitialSeat
-                round.handPoints = points
-                roundsRepository.updateOne(round)
+                val updatedRound = round.copy(
+                    winnerInitialSeat = winnerInitialSeat,
+                    discarderInitialSeat = discarderInitialSeat,
+                    handPoints = points.toLong(),
+                )
+                roundsRepository.updateOne(updatedRound)
                     .onSuccess { endRoundUseCase.invoke(round.gameId) }
             }
 }

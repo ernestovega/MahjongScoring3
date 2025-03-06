@@ -1,6 +1,7 @@
 package ui.common.components
 
 const val APP_DATABASE_NAME = "MahjongScoring3.db"
+const val DB_NAME = "MS3Database"
 const val NOT_SET_GAME_ID: Long = 0
 const val NOT_SET_ROUND_ID: Long = 0
 

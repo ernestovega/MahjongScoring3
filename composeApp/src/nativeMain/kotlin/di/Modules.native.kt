@@ -1,11 +1,9 @@
 package di
 
-import data.database.room.AppDatabase
-import data.database.room.getDatabaseBuilder
-import data.database.room.getRoomDatabase
+import data.database.sqldelight.DatabaseDriverFactory
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 actual val platformModule = module {
-    //Database
-    single<AppDatabase> { getRoomDatabase(getDatabaseBuilder()) }
+    singleOf(::DatabaseDriverFactory)
 }

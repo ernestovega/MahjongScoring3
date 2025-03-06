@@ -56,7 +56,7 @@ class PenaltyDialogViewModel(
         _selectedSeatWind.value = selectedSeatWind
     }
 
-    suspend fun setPenalty(points: Int, isDivided: Boolean): Result<Boolean> =
+    suspend fun setPenalty(points: Int, isDivided: Boolean): Result<Unit> =
         gameFlow.value?.let { game ->
             val penalizedPlayerInitialSeat =
                 game.getPlayerInitialSeatByOngoingOrLastRoundSeat(_selectedSeatWind.value)

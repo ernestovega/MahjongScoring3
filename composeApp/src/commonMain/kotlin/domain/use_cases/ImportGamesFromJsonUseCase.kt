@@ -4,16 +4,18 @@ package domain.use_cases
 //import android.net.Uri
 //import screens.common.model.exceptions.JsonGamesNotValidException
 import androidx.annotation.VisibleForTesting
-import data.database.room.tables.DbGame
+import com.etologic.mahjongscoring.DbGame
 import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import domain.model.PortableGame
 import domain.model.PortableRound
 import domain.model.toDbGame
 import domain.model.toDbRounds
+import kotlinx.datetime.Clock
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import ui.common.components.GameId
+import ui.common.components.NOT_SET_GAME_ID
 
 class ImportGamesFromJsonUseCase(
     private val gamesRepository: GamesRepository,
@@ -34,7 +36,18 @@ class ImportGamesFromJsonUseCase(
     }
 
     private suspend fun createGameInDb(portableGame: PortableGame) =
-        gamesRepository.insertOne(DbGame())
+        gamesRepository.insertOne(
+            DbGame(
+                gameId = NOT_SET_GAME_ID,
+                gameName = "",
+                nameP1 = "",
+                nameP2 = "",
+                nameP3 = "",
+                nameP4 = "",
+                startDate = Clock.System.now(),
+                endDate = null,
+            )
+        )
             .getOrThrow()
             .also { gameId ->
                 createDbGameInDb(gameId, portableGame)
