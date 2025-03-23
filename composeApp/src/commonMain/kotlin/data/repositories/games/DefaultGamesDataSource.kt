@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class DefaultGamesDataSource(private val db: MS3Database) : GamesDataSource {
+class DefaultGamesDataSource(db: MS3Database) : GamesDataSource {
 
     private val queries = db.dbGameQueries
 

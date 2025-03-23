@@ -3,9 +3,9 @@ package domain.use_cases
 import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.exceptions.GameNotFoundException
-import ui.common.components.GameId
-import ui.common.components.MAX_MCR_ROUNDS
-import ui.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.MAX_MCR_ROUNDS
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
 
 class EndRoundUseCase(
     private val roundsRepository: RoundsRepository,

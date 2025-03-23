@@ -14,8 +14,8 @@ import domain.model.toDbRounds
 import kotlinx.datetime.Clock
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import ui.common.components.GameId
-import ui.common.components.NOT_SET_GAME_ID
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.NOT_SET_GAME_ID
 
 class ImportGamesFromJsonUseCase(
     private val gamesRepository: GamesRepository,

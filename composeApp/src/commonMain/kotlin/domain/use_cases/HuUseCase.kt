@@ -2,7 +2,7 @@ package domain.use_cases
 
 import data.repositories.rounds.RoundsRepository
 import domain.model.enums.TableWinds
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.RoundId
 
 class HuUseCase(
     private val roundsRepository: RoundsRepository,

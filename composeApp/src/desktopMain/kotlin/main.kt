@@ -1,6 +1,7 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import di.initKoin
+import com.etologic.mahjongscoring.App
+import com.etologic.mahjongscoring.initKoin
 
 fun main() {
     initKoin()

@@ -7,7 +7,7 @@ import domain.use_cases.mappers.toUiGame
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import ui.common.components.GameId
+import com.etologic.mahjongscoring.common.components.GameId
 
 class GetOneGameFlowUseCase(
     private val gamesRepository: GamesRepository,

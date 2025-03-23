@@ -1,5 +1,8 @@
 package domain.model.enums
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class TableWinds(val index: Int) {
     NONE(-1),
     EAST(0),

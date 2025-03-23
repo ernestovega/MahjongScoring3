@@ -2,10 +2,10 @@
 package domain.model
 
 import domain.model.enums.TableWinds
-import ui.common.components.GameId
-import ui.common.components.NOT_SET_GAME_ID
-import ui.common.components.NOT_SET_ROUND_ID
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.NOT_SET_GAME_ID
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.RoundId
 
 data class UiRound(
     val gameId: GameId,

@@ -2,8 +2,8 @@ package domain.use_cases
 
 import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
-import ui.common.components.NOT_SET_ROUND_ID
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.RoundId
 
 class DeleteRoundUseCase(
     private val roundsRepository: RoundsRepository,

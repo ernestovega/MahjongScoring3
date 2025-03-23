@@ -6,8 +6,8 @@ import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import domain.model.UiGame
 import domain.model.exceptions.GameRoundsNumberExceededException
-import ui.common.components.MAX_MCR_ROUNDS
-import ui.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.MAX_MCR_ROUNDS
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
 
 class ResumeGameUseCase(
     private val gamesRepository: GamesRepository,

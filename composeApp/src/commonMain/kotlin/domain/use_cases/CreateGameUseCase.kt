@@ -5,9 +5,9 @@ import com.etologic.mahjongscoring.DbRound
 import data.repositories.games.GamesRepository
 import data.repositories.rounds.RoundsRepository
 import kotlinx.datetime.Clock
-import ui.common.components.GameId
-import ui.common.components.NOT_SET_GAME_ID
-import ui.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.NOT_SET_GAME_ID
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
 
 class CreateGameUseCase(
     private val gamesRepository: GamesRepository,

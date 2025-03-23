@@ -4,7 +4,7 @@ import domain.model.enums.TableWinds
 import domain.use_cases.utils.fourth
 import domain.use_cases.utils.second
 import domain.use_cases.utils.third
-import ui.common.components.MIN_MCR_POINTS
+import com.etologic.mahjongscoring.common.components.MIN_MCR_POINTS
 import kotlin.math.abs
 import kotlin.math.ceil
 

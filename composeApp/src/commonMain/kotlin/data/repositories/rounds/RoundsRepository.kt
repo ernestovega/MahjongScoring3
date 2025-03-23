@@ -2,8 +2,8 @@ package data.repositories.rounds
 
 import com.etologic.mahjongscoring.DbRound
 import kotlinx.coroutines.flow.Flow
-import ui.common.components.GameId
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.RoundId
 
 interface RoundsRepository {
     fun getAllFlow(): Flow<List<DbRound>>

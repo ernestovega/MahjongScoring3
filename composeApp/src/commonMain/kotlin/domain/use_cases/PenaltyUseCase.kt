@@ -7,8 +7,8 @@ import domain.model.enums.TableWinds.NONE
 import domain.model.enums.TableWinds.NORTH
 import domain.model.enums.TableWinds.SOUTH
 import domain.model.enums.TableWinds.WEST
-import ui.common.components.NUM_NO_WINNER_PLAYERS
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.NUM_NO_WINNER_PLAYERS
+import com.etologic.mahjongscoring.common.components.RoundId
 
 class PenaltyUseCase(
     private val roundsRepository: RoundsRepository,

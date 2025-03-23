@@ -3,8 +3,8 @@ package domain.model
 import com.etologic.mahjongscoring.DbRound
 import domain.model.enums.TableWinds
 import kotlinx.serialization.Serializable
-import ui.common.components.GameId
-import ui.common.components.NOT_SET_ROUND_ID
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.NOT_SET_ROUND_ID
 
 @Serializable
 data class PortableRound(

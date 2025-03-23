@@ -2,7 +2,7 @@ package data.repositories.games
 
 import com.etologic.mahjongscoring.DbGame
 import kotlinx.coroutines.flow.Flow
-import ui.common.components.GameId
+import com.etologic.mahjongscoring.common.components.GameId
 
 interface GamesRepository {
     fun getAllFlow(): Flow<List<DbGame>>

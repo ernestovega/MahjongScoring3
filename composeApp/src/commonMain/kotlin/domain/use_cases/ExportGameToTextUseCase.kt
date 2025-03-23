@@ -8,7 +8,7 @@ import domain.use_cases.utils.RankingTableHelper
 import domain.use_cases.utils.prettifyOneLine
 import domain.use_cases.utils.toSignedString
 import kotlinx.coroutines.flow.firstOrNull
-import ui.common.components.GameId
+import com.etologic.mahjongscoring.common.components.GameId
 
 class ExportGameToTextUseCase(
     private val getOneGameFlowUseCase: GetOneGameFlowUseCase,

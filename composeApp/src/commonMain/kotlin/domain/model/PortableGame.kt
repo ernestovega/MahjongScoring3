@@ -3,7 +3,7 @@ package domain.model
 import com.etologic.mahjongscoring.DbGame
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
-import ui.common.components.GameId
+import com.etologic.mahjongscoring.common.components.GameId
 
 @Serializable
 data class PortableGame(

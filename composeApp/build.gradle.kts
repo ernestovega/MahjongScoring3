@@ -1,5 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -18,8 +20,6 @@ kotlin {
         }
     }
 
-    jvm("desktop")
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -32,13 +32,7 @@ kotlin {
         }
     }
 
-    sqldelight {
-        databases {
-            create("MS3Database") {
-                packageName = "com.etologic.mahjongscoring"
-            }
-        }
-    }
+    jvm("desktop")
 
     sourceSets {
         val androidMain by getting {
@@ -50,10 +44,15 @@ kotlin {
                 implementation(libs.koin.android)
                 implementation(libs.koin.androidx.compose)
                 implementation(libs.sqldelight.android)
-
-                implementation(libs.kotlinx.coroutines.test)
-                implementation(libs.androidx.test.junit)
             }
+        }
+//        val androidTest.dependencies {
+//            implementation(libs.sqldelight.android)
+//            implementation(libs.androidx.test.core)
+//        }
+        androidUnitTest.dependencies {
+            implementation(libs.sqldelight.android)
+            implementation(libs.androidx.test.core)
         }
         val commonMain by getting {
             kotlin.srcDir("build/generated/ksp/metadata")
@@ -74,9 +73,12 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.lifecycle.viewmodel)
                 implementation(libs.sqldelight.coroutines)
-
-                implementation(libs.kotlin.test)
             }
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.sqldelight.coroutines)
         }
         val desktopMain by getting {
             kotlin.srcDir("build/generated/sqldelight/code/desktopMain")
@@ -86,15 +88,24 @@ kotlin {
                 implementation(libs.sqldelight.jvm)
             }
         }
-        val commonTest by getting {
+        val desktopTest by getting {
             dependencies {
-                implementation(libs.kotlin.test)
-                implementation(libs.kotlinx.coroutines.test)
-                implementation(libs.koin.test)
+                implementation(libs.sqldelight.jvm)
             }
         }
-        nativeMain.dependencies {
+        iosMain.dependencies {
             implementation(libs.sqldelight.native)
+        }
+        iosTest.dependencies {
+            implementation(libs.sqldelight.native)
+        }
+    }
+
+    sqldelight {
+        databases {
+            create("MS3Database") {
+                packageName = "com.etologic.mahjongscoring"
+            }
         }
     }
 }
@@ -129,12 +140,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        compose = true
-    }
-    dependencies {
-        debugImplementation(compose.uiTooling)
-    }
+//    buildFeatures {
+//        compose = true
+//    }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {

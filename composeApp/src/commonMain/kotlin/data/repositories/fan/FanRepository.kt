@@ -1,7 +1,7 @@
 package data.repositories.fan
 
 import kotlinx.coroutines.flow.Flow
-import ui.screens.help.fan.Fan
+import com.etologic.mahjongscoring.screens.help.fan.Fan
 
 interface FanRepository {
 

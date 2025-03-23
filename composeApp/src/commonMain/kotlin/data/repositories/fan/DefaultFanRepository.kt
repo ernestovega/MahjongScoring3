@@ -96,7 +96,7 @@ import mahjongscoring3.composeapp.generated.resources.two_melded_kongs
 import mahjongscoring3.composeapp.generated.resources.two_terminal_chows
 import mahjongscoring3.composeapp.generated.resources.upper_four
 import mahjongscoring3.composeapp.generated.resources.upper_tiles
-import ui.screens.help.fan.Fan
+import com.etologic.mahjongscoring.screens.help.fan.Fan
 
 class DefaultFanRepository : FanRepository {
 

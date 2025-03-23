@@ -11,13 +11,13 @@ import domain.use_cases.utils.second
 import domain.use_cases.utils.third
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import ui.common.components.GameId
-import ui.common.components.MIN_MCR_POINTS
-import ui.common.components.NOT_SET_GAME_ID
-import ui.common.components.NUM_NO_WINNER_PLAYERS
-import ui.common.components.POINTS_DISCARD_NEUTRAL_PLAYERS
-import ui.common.components.SeatState
-import ui.common.components.SmallSeatsState
+import com.etologic.mahjongscoring.common.components.GameId
+import com.etologic.mahjongscoring.common.components.MIN_MCR_POINTS
+import com.etologic.mahjongscoring.common.components.NOT_SET_GAME_ID
+import com.etologic.mahjongscoring.common.components.NUM_NO_WINNER_PLAYERS
+import com.etologic.mahjongscoring.common.components.POINTS_DISCARD_NEUTRAL_PLAYERS
+import com.etologic.mahjongscoring.common.components.SeatState
+import com.etologic.mahjongscoring.common.components.SmallSeatsState
 
 data class UiGame(
     val gameId: GameId,

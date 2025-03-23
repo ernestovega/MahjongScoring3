@@ -4,7 +4,7 @@ import com.etologic.mahjongscoring.DbRound
 import data.repositories.rounds.RoundsRepository
 import domain.model.UiRound
 import domain.model.enums.TableWinds.NONE
-import ui.common.components.GameId
+import com.etologic.mahjongscoring.common.components.GameId
 
 class HuDrawUseCase(
     private val roundsRepository: RoundsRepository,

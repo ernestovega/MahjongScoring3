@@ -1,6 +1,6 @@
 package domain.model.exceptions
 
-import ui.common.components.RoundId
+import com.etologic.mahjongscoring.common.components.RoundId
 
 class RoundNotFoundException(val roundId: RoundId) : Exception() {
 
