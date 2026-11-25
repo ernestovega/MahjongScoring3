@@ -89,6 +89,8 @@ import com.etologic.mahjongscoring3.resources.start
 import com.etologic.mahjongscoring3.resources.start_new_game
 import com.etologic.mahjongscoring3.resources.table_csv
 import com.etologic.mahjongscoring3.resources.there_arent_games_yet_start_one
+import com.etologic.mahjongscoring3.ui.common.ArrowHeight
+import com.etologic.mahjongscoring3.ui.common.ArrowWidth
 import com.etologic.mahjongscoring3.ui.common.ConfirmDialog
 import com.etologic.mahjongscoring3.ui.common.EmptyState
 import com.etologic.mahjongscoring3.ui.common.ErrorDialog
@@ -161,7 +163,7 @@ fun OldGamesScreen(
                                         top = MmDimens.DoubleMargin,
                                         end = MmDimens.DoubleMargin,
                                         bottom = MmDimens.DoubleMargin,
-                                    ),
+                                    ).size(ArrowWidth, ArrowHeight),
                                 )
                             },
                         )

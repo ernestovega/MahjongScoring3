@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,6 +60,10 @@ import com.etologic.mahjongscoring3.resources.img_empty_box
 import com.etologic.mahjongscoring3.resources.search
 import com.etologic.mahjongscoring3.resources.there_arent_combinations_try_new_search
 import com.etologic.mahjongscoring3.resources.toggle_descriptions
+import com.etologic.mahjongscoring3.ui.common.ArrowHeight
+import com.etologic.mahjongscoring3.ui.common.ArrowWidth
+import com.etologic.mahjongscoring3.ui.common.EmptyBoxHeight
+import com.etologic.mahjongscoring3.ui.common.EmptyBoxWidth
 import com.etologic.mahjongscoring3.ui.theme.MmColors
 import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
@@ -261,6 +266,7 @@ private fun CombinationsEmptyState() {
             colorFilter = ColorFilter.tint(MmColors.Gray),
             modifier = Modifier
                 .padding(start = MmDimens.QuadrupleMargin, top = MmDimens.DoubleMargin, end = MmDimens.DoubleMargin, bottom = MmDimens.DoubleMargin)
+                .size(ArrowWidth, ArrowHeight)
                 .graphicsLayer(rotationZ = -90f, rotationY = 180f),
         )
         Image(
@@ -269,7 +275,8 @@ private fun CombinationsEmptyState() {
             colorFilter = ColorFilter.tint(MmColors.Gray),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(start = MmDimens.DoubleMargin, top = MmDimens.StandardMargin, end = MmDimens.DoubleMargin),
+                .padding(start = MmDimens.DoubleMargin, top = MmDimens.StandardMargin, end = MmDimens.DoubleMargin)
+                .size(EmptyBoxWidth, EmptyBoxHeight),
         )
         Text(
             text = stringResource(Res.string.there_arent_combinations_try_new_search),

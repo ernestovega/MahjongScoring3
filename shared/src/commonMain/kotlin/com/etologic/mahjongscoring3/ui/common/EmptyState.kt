@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +37,9 @@ fun EmptyState(
             painter = painterResource(Res.drawable.img_empty_box),
             contentDescription = null,
             colorFilter = ColorFilter.tint(MmColors.Gray),
-            modifier = Modifier.padding(start = MmDimens.DoubleMargin, top = topMargin, end = MmDimens.DoubleMargin),
+            modifier = Modifier
+                .padding(start = MmDimens.DoubleMargin, top = topMargin, end = MmDimens.DoubleMargin)
+                .size(EmptyBoxWidth, EmptyBoxHeight),
         )
         Text(
             text = message,
@@ -50,3 +53,9 @@ fun EmptyState(
         footer()
     }
 }
+
+/** Sizes of the MS2 density-specific images, in dp. */
+val EmptyBoxWidth = 171.dp
+val EmptyBoxHeight = 145.dp
+val ArrowWidth = 168.dp
+val ArrowHeight = 160.dp
