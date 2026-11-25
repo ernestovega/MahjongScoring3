@@ -195,6 +195,7 @@ fun OldGamesScreen(
     }
 
     if (showSetupDialog) {
+        val defaultNames = defaultPlayerNames()
         NamesDialog(
             initial = GameNames(
                 gameName = "",
@@ -206,7 +207,7 @@ fun OldGamesScreen(
             gameNameHint = remember { Clock.System.now().toEpochMilliseconds().toGameNameFormat() },
             confirmText = stringResource(Res.string.start),
             onConfirm = { names ->
-                viewModel.createGame(names.withDefaultPlayerNames(defaultPlayerNames())) { gameId ->
+                viewModel.createGame(names.withDefaultPlayerNames(defaultNames)) { gameId ->
                     showSetupDialog = false
                     onOpenGame(gameId)
                 }
@@ -250,7 +251,7 @@ fun OldGamesScreen(
 }
 
 @Composable
-private fun defaultPlayerNames() = listOf(
+internal fun defaultPlayerNames() = listOf(
     stringResource(Res.string.player_one),
     stringResource(Res.string.player_two),
     stringResource(Res.string.player_three),
