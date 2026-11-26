@@ -1,6 +1,6 @@
-import UIKit
 import SwiftUI
-import ComposeApp
+import UIKit
+import Shared
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
@@ -13,9 +13,8 @@ struct ComposeView: UIViewControllerRepresentable {
 struct ContentView: View {
     var body: some View {
         ComposeView()
-                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
+            // Status bar area painted with MS2 colorPrimaryDark; Compose handles the rest of the insets
+            .background(Color(red: 0, green: 0x7B / 255.0, blue: 0x49 / 255.0))
+            .ignoresSafeArea(.all)
     }
 }
-
-
-

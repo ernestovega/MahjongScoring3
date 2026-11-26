@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Exported games (Platform.android.kt writes them to cacheDir/exports) -->
+    <cache-path
+        name="exports"
+        path="exports/" />
+</paths>

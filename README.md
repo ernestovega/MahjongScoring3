@@ -1,21 +1,23 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
+# Mahjong Scoring 3
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+Kotlin Multiplatform + Compose Multiplatform port of [Mahjong Scoring 2](https://github.com/ernestovega/MahjongScoring2), with the same features, look and behavior, for Android and iOS.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Structure
 
+- `shared`: all the app. Domain (models, use cases), data (Room KMP, DataStore), Koin, ViewModels and Compose UI. Platform specifics live in `androidMain` / `iosMain` (`platform/Platform.*.kt`, `di/`).
+- `androidApp`: Android entry point (`MainActivity`, `MahjongScoringApplication`).
+- `iosApp`: Xcode project that embeds the `Shared` framework (`MainViewControllerKt.MainViewController()`).
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+## Compatibility with Mahjong Scoring 2
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [GitHub](https://github.com/JetBrains/compose-multiplatform/issues).
+The Android app keeps MS2's `applicationId` (`com.mahjongscoring.activities`), so it is published as its update. It keeps the same Room database (`MahjongScoring2`, version 2) and DataStore file (`MahjongScoring2.preferences_pb`), so users keep their games and settings. The JSON export format is the same, so games can be moved between both apps and platforms.
 
-You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
+## Build
+
+- Android: `./gradlew :androidApp:assembleDebug`
+- iOS: open `iosApp/iosApp.xcodeproj` in Xcode (set your team in `iosApp/Configuration/Config.xcconfig`), or `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build`
+- Tests: `./gradlew :shared:allTests`
+
+## UI tests
+
+Composables carry `Modifier.testTag(...)` with the same ids as MS2 views (for example `btHandActionsDialogHu`, `fabGameTable`), so MS2's UI tests can be ported to Compose UI tests that run on Android and iOS.
