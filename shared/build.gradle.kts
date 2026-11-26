@@ -102,3 +102,13 @@ dependencies {
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
+
+// MS2 golden files (shared/src/commonTest/resources/golden) were recorded in UTC
+tasks.withType<Test>().configureEach {
+    systemProperty("user.timezone", "UTC")
+    systemProperty("goldens.dir", "$projectDir/src/commonTest/resources/golden")
+}
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
+    environment("SIMCTL_CHILD_GOLDENS_DIR", "$projectDir/src/commonTest/resources/golden")
+    environment("SIMCTL_CHILD_TZ", "UTC")
+}

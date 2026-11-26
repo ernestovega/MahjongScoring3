@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-/** In-memory repositories mimicking SQLite AUTOINCREMENT ids (never reused). */
+/**
+ * In-memory repositories mimicking the Room DAOs (AUTOINCREMENT ids, explicit ids kept, ordering, return values).
+ * Same behavior as Mahjong Scoring 2 testutil/FakeRepositories, so its tests can be ported as they are.
+ */
 class FakeGamesRepository : GamesRepository {
     private var lastId: GameId = 0
     val games = MutableStateFlow<List<GameRecord>>(emptyList())
@@ -23,22 +26,29 @@ class FakeGamesRepository : GamesRepository {
     override suspend fun getOne(gameId: GameId): Result<GameRecord> =
         runCatching { games.value.first { it.gameId == gameId } }
 
-    override suspend fun insertOne(gameRecord: GameRecord): Result<GameId> {
-        val newId = ++lastId
-        games.value = games.value + gameRecord.copy(gameId = newId)
-        return Result.success(newId)
+    /** When not null, every write operation fails with this exception. */
+    var failure: Throwable? = null
+
+    override suspend fun insertOne(gameRecord: GameRecord): Result<GameId> = runCatching {
+        failure?.let { throw it }
+        val id = if (gameRecord.gameId == 0L) ++lastId else gameRecord.gameId.also { lastId = maxOf(lastId, it) }
+        require(games.value.none { it.gameId == id }) { "UNIQUE constraint failed: Games.gameId" }
+        games.value = games.value + gameRecord.copy(gameId = id)
+        id
     }
 
-    override suspend fun updateOne(gameRecord: GameRecord): Result<Boolean> {
+    override suspend fun updateOne(gameRecord: GameRecord): Result<Boolean> = runCatching {
+        failure?.let { throw it }
         val exists = games.value.any { it.gameId == gameRecord.gameId }
-        games.value = games.value.map { if (it.gameId == gameRecord.gameId) gameRecord else it }
-        return Result.success(exists)
+        if (exists) games.value = games.value.map { if (it.gameId == gameRecord.gameId) gameRecord else it }
+        exists
     }
 
-    override suspend fun deleteOne(gameId: GameId): Result<Boolean> {
+    override suspend fun deleteOne(gameId: GameId): Result<Boolean> = runCatching {
+        failure?.let { throw it }
         val exists = games.value.any { it.gameId == gameId }
         games.value = games.value.filterNot { it.gameId == gameId }
-        return Result.success(exists)
+        exists
     }
 }
 
@@ -57,25 +67,32 @@ class FakeRoundsRepository : RoundsRepository {
     override suspend fun getOne(roundId: RoundId): Result<RoundRecord> =
         runCatching { rounds.value.first { it.roundId == roundId } }
 
-    override suspend fun insertOne(roundRecord: RoundRecord): Result<Boolean> {
-        rounds.value = rounds.value + roundRecord.copy(roundId = ++lastId)
-        return Result.success(true)
+    var failure: Throwable? = null
+
+    override suspend fun insertOne(roundRecord: RoundRecord): Result<Boolean> = runCatching {
+        failure?.let { throw it }
+        val id = if (roundRecord.roundId == 0L) ++lastId else roundRecord.roundId.also { lastId = maxOf(lastId, it) }
+        rounds.value = rounds.value + roundRecord.copy(roundId = id)
+        id > 0
     }
 
-    override suspend fun updateOne(roundRecord: RoundRecord): Result<Boolean> {
+    override suspend fun updateOne(roundRecord: RoundRecord): Result<Boolean> = runCatching {
+        failure?.let { throw it }
         val exists = rounds.value.any { it.roundId == roundRecord.roundId }
-        rounds.value = rounds.value.map { if (it.roundId == roundRecord.roundId) roundRecord else it }
-        return Result.success(exists)
+        if (exists) rounds.value = rounds.value.map { if (it.roundId == roundRecord.roundId) roundRecord else it }
+        exists
     }
 
-    override suspend fun deleteGameRounds(gameId: GameId): Result<Boolean> {
+    override suspend fun deleteGameRounds(gameId: GameId): Result<Boolean> = runCatching {
+        failure?.let { throw it }
         rounds.value = rounds.value.filterNot { it.gameId == gameId }
-        return Result.success(true)
+        true
     }
 
-    override suspend fun deleteOne(roundId: RoundId): Result<Boolean> {
+    override suspend fun deleteOne(roundId: RoundId): Result<Boolean> = runCatching {
+        failure?.let { throw it }
         val exists = rounds.value.any { it.roundId == roundId }
         rounds.value = rounds.value.filterNot { it.roundId == roundId }
-        return Result.success(exists)
+        exists
     }
 }

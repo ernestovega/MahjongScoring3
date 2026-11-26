@@ -34,10 +34,10 @@ fun Long.prettifyOneLine(timeZone: TimeZone = TimeZone.currentSystemDefault()): 
 fun Long.prettifyTwoLines(timeZone: TimeZone = TimeZone.currentSystemDefault()): String =
     with(toLocalDateTime(timeZone)) { "${day.pad2()}/${month.number.pad2()}/$year\n${hour.pad2()}:${minute.pad2()}" }
 
-/** Readable full date for CSV exports, similar to java.util.Date.toString() used by Mahjong Scoring 2. */
+/** Same text as java.util.Date.toString(), used by Mahjong Scoring 2 CSV exports: "Wed Jan 15 11:00:00 UTC 2025". */
 fun Long.toCsvDateFormat(timeZone: TimeZone = TimeZone.currentSystemDefault()): String =
     with(toLocalDateTime(timeZone)) {
         val dayName = dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
         val monthName = month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-        "$dayName $monthName ${day.pad2()} ${hour.pad2()}:${minute.pad2()}:${second.pad2()} ${timeZone.id} $year"
+        "$dayName $monthName ${day.pad2()} ${hour.pad2()}:${minute.pad2()}:${second.pad2()} ${timeZoneAbbreviation(timeZone, this@toCsvDateFormat)} $year"
     }

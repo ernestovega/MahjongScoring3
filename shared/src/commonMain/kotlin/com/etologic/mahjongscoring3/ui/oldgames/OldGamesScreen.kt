@@ -278,7 +278,7 @@ fun ShareGameDialog(
             stringResource(Res.string.importable),
         ),
         selectedIndex = -1,
-        onSelected = { index -> onOptionSelected(ShareGameOptions.entries[index]) },
+        onSelected = { index -> onOptionSelected(ShareGameOptions.fromIndex(index)) },
         onDismiss = onDismiss,
     )
 }
