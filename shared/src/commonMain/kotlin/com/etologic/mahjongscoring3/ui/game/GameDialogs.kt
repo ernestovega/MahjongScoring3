@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -505,51 +507,63 @@ fun RankingDialog(
             contentColor = MmColors.GrayMM,
             modifier = Modifier.fillMaxWidth().padding(MmDimens.StandardMargin),
         ) {
-            Column(Modifier.verticalScroll(rememberScrollState()).padding(MmDimens.HalfMargin)) {
-                Text(
-                    text = stringResource(Res.string.final_results),
-                    color = MmColors.GrayMM,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(MmDimens.HalfMargin),
-                )
-                val positions = listOf(null, Res.string._2nd, Res.string._3rd, Res.string._4th)
-                rankingData.sortedPlayersRankings.forEachIndexed { index, player ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(Modifier.weight(2f), contentAlignment = Alignment.Center) {
-                            val position = positions[index]
-                            if (position == null) {
-                                Image(painterResource(Res.drawable.ic_trophy_golden), contentDescription = null, modifier = Modifier.size(24.dp))
-                            } else {
-                                Text(stringResource(position), color = MmColors.GrayMM, fontSize = 16.sp)
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                // MS2 tlRanking: TableLayout padding 20dp, each TableRow margin 8dp
+                Column(Modifier.padding(20.dp)) {
+                    Text(
+                        text = stringResource(Res.string.final_results),
+                        color = MmColors.GrayMM,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp,
+                        modifier = Modifier.padding(MmDimens.HalfMargin).padding(bottom = 32.dp),
+                    )
+                    val positions = listOf(null, Res.string._2nd, Res.string._3rd, Res.string._4th)
+                    rankingData.sortedPlayersRankings.forEachIndexed { index, player ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(Modifier.weight(2f), contentAlignment = Alignment.Center) {
+                                val position = positions[index]
+                                if (position == null) {
+                                    Image(painterResource(Res.drawable.ic_trophy_golden), contentDescription = null, modifier = Modifier.size(24.dp))
+                                } else {
+                                    Text(stringResource(position), color = MmColors.GrayMM, fontSize = 14.sp)
+                                }
                             }
+                            RankingCell(player.name, 6f, tag = "tvRankingDialogPlayer${index + 1}Name", fontSize = 18, horizontalMargin = MmDimens.StandardMargin)
+                            RankingCell(player.points, 2f, tag = "tvRankingDialogPlayer${index + 1}Points", fontSize = 18)
+                            RankingCell(formatScore(player.score), 3f, tag = "tvRankingDialogPlayer${index + 1}Score", fontSize = 14)
                         }
-                        RankingCell(player.name, 6f, tag = "tvRankingDialogPlayer${index + 1}Name", TextAlign.Start, bold = false)
-                        RankingCell(player.points, 2f, tag = "tvRankingDialogPlayer${index + 1}Points", TextAlign.Center, bold = false)
-                        RankingCell(formatScore(player.score), 3f, tag = "tvRankingDialogPlayer${index + 1}Score", TextAlign.End, bold = false)
                     }
                 }
-                Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = MmDimens.HalfMargin))
+                Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(MmDimens.StandardMargin))
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin),
+                    modifier = Modifier.fillMaxWidth().padding(end = MmDimens.StandardMargin),
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("${stringResource(Res.string.best_hand)}:", fontSize = 16.sp, textAlign = TextAlign.End, modifier = Modifier.weight(4f))
-                    Text(rankingData.bestHandPlayerPoints, color = MmColors.GrayMM, textAlign = TextAlign.End, modifier = Modifier.weight(2f).testTag("tvRankingDialogBestHandPlayerPoints"))
-                    Text("-", color = MmColors.GrayMM, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                    Text("${stringResource(Res.string.best_hand)}:", color = MmColors.GrayMM, fontSize = 16.sp)
+                    Text(
+                        rankingData.bestHandPlayerPoints,
+                        color = MmColors.GrayMM,
+                        maxLines = 1,
+                        modifier = Modifier.padding(start = 32.dp).testTag("tvRankingDialogBestHandPlayerPoints"),
+                    )
+                    Text("-", color = MmColors.GrayMM, modifier = Modifier.padding(horizontal = MmDimens.StandardMargin))
                     Text(
                         rankingData.bestHandPlayerName,
                         color = MmColors.GrayMM,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(5f).testTag("tvRankingDialogBestHandPlayerName"),
+                        modifier = Modifier.weight(1f, fill = false).testTag("tvRankingDialogBestHandPlayerName"),
                     )
                 }
-                Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = MmDimens.HalfMargin))
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(MmDimens.StandardMargin))
+                Row(
+                    Modifier.fillMaxWidth().padding(start = 24.dp, end = MmDimens.StandardMargin, bottom = MmDimens.StandardMargin),
+                    horizontalArrangement = Arrangement.End,
+                ) {
                     if (rankingData.numRounds < MAX_MCR_ROUNDS) {
                         TextButton(onClick = { onResume(); onDismiss() }, modifier = Modifier.testTag("btRankingDialogResume")) {
                             Text(stringResource(Res.string.resume).uppercase(), color = MmColors.Accent)
@@ -559,6 +573,7 @@ fun RankingDialog(
                     TextButton(onClick = onShare, modifier = Modifier.testTag("btRankingDialogShare")) {
                         Text(stringResource(Res.string.share).uppercase(), color = MmColors.Accent)
                     }
+                    Spacer(Modifier.width(MmDimens.StandardMargin))
                     TextButton(onClick = onDismiss, modifier = Modifier.testTag("btRankingDialogClose")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
                     }
@@ -568,17 +583,17 @@ fun RankingDialog(
     }
 }
 
+/** MS2 TextViewRankingDialogTableContent: start-aligned, one line, ellipsized. */
 @Composable
-private fun RowScope.RankingCell(text: String, weight: Float, tag: String, align: TextAlign, bold: Boolean) {
+private fun RowScope.RankingCell(text: String, weight: Float, tag: String, fontSize: Int, horizontalMargin: Dp = 0.dp) {
     Text(
         text = text,
         color = MmColors.GrayMM,
-        fontSize = 16.sp,
-        fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
-        textAlign = align,
+        fontSize = fontSize.sp,
+        textAlign = TextAlign.Start,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.weight(weight).testTag(tag).padding(horizontal = MmDimens.QuarterMargin),
+        modifier = Modifier.weight(weight).padding(horizontal = horizontalMargin).testTag(tag),
     )
 }
 

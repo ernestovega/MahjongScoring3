@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,12 +32,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.etologic.mahjongscoring3.resources.Res
 import com.etologic.mahjongscoring3.resources.blank_name_warn
@@ -120,12 +123,12 @@ fun NamesDialog(
                         .padding(top = MmDimens.HalfMargin, end = MmDimens.StandardMargin, bottom = MmDimens.HalfMargin),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.testTag("btNamesDialogCancel")) {
+                    TextButton(onClick = onDismiss, modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogCancel")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.GrayMM)
                     }
                     TextButton(
                         onClick = { onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text)) },
-                        modifier = Modifier.testTag("btNamesDialogSave"),
+                        modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogSave"),
                     ) {
                         Text(confirmText.uppercase(), color = MmColors.Accent)
                     }
@@ -154,12 +157,22 @@ private fun NameField(
         modifier = modifier.fillMaxWidth().onFocusChanged { state ->
             if (state.isFocused) onValueChange(value.copy(selection = TextRange(0, value.text.length)))
         },
-        label = { Text(label) },
+        // MS2 TextInputLayout: the hint takes the EditText typeface and gravity (game name: bold italic, centered)
+        label = {
+            Text(
+                label,
+                fontWeight = if (bold) FontWeight.Bold else null,
+                fontStyle = if (bold) FontStyle.Italic else null,
+                textAlign = if (bold) TextAlign.Center else TextAlign.Start,
+                modifier = if (bold) Modifier.fillMaxWidth() else Modifier,
+            )
+        },
         placeholder = placeholder?.let { { Text(it) } },
         leadingIcon = icon?.let { { Image(painterResource(it), contentDescription = null, modifier = Modifier.size(24.dp)) } },
         singleLine = singleLine,
         maxLines = if (singleLine) 1 else 2,
         textStyle = androidx.compose.material.LocalTextStyle.current.copy(
+            fontSize = 18.sp, // MS2 EditText default text size
             fontWeight = if (bold) FontWeight.Bold else null,
             fontStyle = if (bold) FontStyle.Italic else null,
             textAlign = if (bold) TextAlign.Center else TextAlign.Start,
@@ -170,7 +183,8 @@ private fun NameField(
             focusedIndicatorColor = MmColors.Accent,
             cursorColor = MmColors.Accent,
             focusedLabelColor = MmColors.Gray,
-            unfocusedLabelColor = MmColors.Gray,
+            // MS2 hintTextColor (gray) applies only while focused; otherwise the Material default
+            unfocusedLabelColor = Color.Black.copy(alpha = 0.6f),
         ),
     )
 }
