@@ -69,11 +69,19 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-private data class ResolvedCombination(
+internal data class ResolvedCombination(
     val combination: Combination,
     val name: String,
     val description: String?,
 )
+
+/** Same filter as MS2 CombinationsViewModel: by localized name, description or points, ignoring case. */
+internal fun filterCombinations(combinations: List<ResolvedCombination>, filter: String): List<ResolvedCombination> =
+    combinations.filter {
+        it.name.contains(filter, ignoreCase = true) ||
+            it.description?.contains(filter, ignoreCase = true) == true ||
+            it.combination.points.toString().contains(filter, ignoreCase = true)
+    }
 
 @Composable
 fun CombinationsScreen(onOpenDrawer: () -> Unit) {
@@ -90,11 +98,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
             description = combination.description?.let { stringResource(it) },
         )
     }
-    val filtered = resolved.filter {
-        it.name.contains(filter, ignoreCase = true) ||
-            it.description?.contains(filter, ignoreCase = true) == true ||
-            it.combination.points.toString().contains(filter, ignoreCase = true)
-    }
+    val filtered = filterCombinations(resolved, filter)
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(

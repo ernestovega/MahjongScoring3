@@ -38,10 +38,13 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.jetbrains.compose.resources.stringResource
 
-private const val MIN_POINTS_NEEDED = 32
-private const val NUM_CALCS_INTERVAL = 200
-private const val MAX_INTERVALS = 10
-private const val MAX_ITEMS = NUM_CALCS_INTERVAL * MAX_INTERVALS
+internal const val MIN_POINTS_NEEDED = 32
+internal const val NUM_CALCS_INTERVAL = 200
+internal const val MAX_INTERVALS = 10
+internal const val MAX_ITEMS = NUM_CALCS_INTERVAL * MAX_INTERVALS
+
+/** Row [index] of the calculator: MS2 starts at 32 points and grows up to [MAX_ITEMS] rows. */
+internal fun diffsCalculatorRow(index: Int): Diff = Diff(MIN_POINTS_NEEDED + index)
 
 @Composable
 fun DiffsCalculatorScreen(onBack: () -> Unit) {
@@ -77,7 +80,7 @@ fun DiffsCalculatorScreen(onBack: () -> Unit) {
             modifier = Modifier.fillMaxSize().background(MmColors.Gray),
         ) {
             items(MAX_ITEMS) { index ->
-                val diff = remember(index) { Diff(MIN_POINTS_NEEDED + index) }
+                val diff = remember(index) { diffsCalculatorRow(index) }
                 Row(
                     Modifier
                         .fillMaxWidth()
