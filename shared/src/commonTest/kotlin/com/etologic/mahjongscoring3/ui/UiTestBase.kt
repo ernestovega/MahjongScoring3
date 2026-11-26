@@ -30,6 +30,12 @@ import com.etologic.mahjongscoring3.testutil.testSqliteDriver
 import com.etologic.mahjongscoring3.ui.main.App
 import com.etologic.mahjongscoring3.platform.LocalPlatformActionsOverride
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.WindowInsets
+import com.etologic.mahjongscoring3.ui.main.AppInsets
+import com.etologic.mahjongscoring3.ui.main.LocalAppInsetsOverride
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
@@ -61,9 +67,11 @@ abstract class UiTestBase : UiPlatformTest() {
         isDiffsFeatureEnabled: Boolean? = null,
         language: String = "en",
         restorable: Boolean = false,
+        screen: TestScreen = TestScreen.PHONE,
         block: ComposeUiTest.() -> Unit,
-    ) = runAppUiTest {
+    ) = runAppUiTest(screen) {
         val id = nextId++
+        appInsets = null
         platformActions.calls.clear()
         val db = buildAppDatabase(testDatabaseBuilder(testFilePath("ui-$id.db")), testSqliteDriver())
         val dataStore = createDataStore { testFilePath("ui-$id.preferences_pb") }
@@ -87,13 +95,17 @@ abstract class UiTestBase : UiPlatformTest() {
             }
             val content: @androidx.compose.runtime.Composable () -> Unit = {
                 UiTestHost {
-                    CompositionLocalProvider(LocalPlatformActionsOverride provides platformActions) { App() }
+                    CompositionLocalProvider(
+                        LocalPlatformActionsOverride provides platformActions,
+                        LocalAppInsetsOverride provides appInsets,
+                    ) { App() }
                 }
             }
+            appContent = content
             if (restorable) {
                 // The content can be rebuilt from its saved state, like an activity recreation (see [recreate])
                 val restorer = StateRestorer().also { stateRestorer = it }
-                setContent { restorer.Content(content) }
+                setContent(restorableContent(restorer, window = null, content))
             } else {
                 stateRestorer = null
                 setContent(content)
@@ -107,6 +119,55 @@ abstract class UiTestBase : UiPlatformTest() {
     }
 
     private var stateRestorer: StateRestorer? = null
+
+    /** Fake window insets for the app (null: the real ones of the test window, none). See [sendInsets]. */
+    private var appInsets by mutableStateOf<AppInsets?>(null)
+
+    /**
+     * Sends fake system bar, display cutout and keyboard insets to the app, like MS2 EdgeToEdgeTest does with
+     * ViewCompat.dispatchApplyWindowInsets. Each call replaces the insets of the previous one.
+     */
+    protected fun ComposeUiTest.sendInsets(
+        systemBars: WindowInsets,
+        displayCutout: WindowInsets = WindowInsets(0, 0, 0, 0),
+        ime: WindowInsets = WindowInsets(0, 0, 0, 0),
+    ) {
+        appInsets = AppInsets(systemBars, displayCutout, ime)
+        waitForIdle()
+    }
+
+    private var appContent: (@androidx.compose.runtime.Composable () -> Unit)? = null
+
+    /**
+     * Every test window gets its content from this one call site. The keys of rememberSaveable come from the
+     * position in the composition, so a different call site in the new window would restore nothing.
+     */
+    private fun restorableContent(
+        restorer: StateRestorer,
+        window: Any?,
+        content: @androidx.compose.runtime.Composable () -> Unit,
+    ): @androidx.compose.runtime.Composable () -> Unit = { restorer.Content(window, content) }
+
+    /**
+     * A rotation (or a window resize) on Android 16 large screens: the activity is recreated with the size of
+     * [screen], and [block] goes on with the test there. Needs appTest(restorable = true).
+     * On iOS the test window cannot change its size, so the content moves to a new test window (see [withScreen]).
+     */
+    protected fun ComposeUiTest.rotate(screen: TestScreen, block: ComposeUiTest.() -> Unit) {
+        val restorer = checkNotNull(stateRestorer) { "rotate() needs appTest(restorable = true)" }
+        val content = checkNotNull(appContent)
+        val oldWindow = this
+        with(restorer) { saveAndRemove() }
+        withScreen(screen) {
+            if (this !== oldWindow) {
+                val newWindow = this
+                restorer.moveTo(newWindow)
+                setContent(restorableContent(restorer, newWindow, content))
+            }
+            with(restorer) { restore() }
+            block()
+        }
+    }
 
     /**
      * Saves the state of the content, disposes it and builds it again from the saved state, like an

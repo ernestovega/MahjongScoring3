@@ -35,18 +35,29 @@ import platform.posix.getenv
 
 actual abstract class UiPlatformTest actual constructor()
 
-private const val DENSITY = 420f / 160f
+@OptIn(ExperimentalTestApi::class)
+private fun runSkikoTest(screen: TestScreen, block: ComposeUiTest.() -> Unit) {
+    val density = screen.dpi / 160f
+    runSkikoComposeUiTest(size = Size(screen.widthDp * density, screen.heightDp * density), density = Density(density)) { block() }
+}
 
 @OptIn(ExperimentalTestApi::class)
-actual fun runAppUiTest(block: ComposeUiTest.() -> Unit) {
+actual fun runAppUiTest(screen: TestScreen, block: ComposeUiTest.() -> Unit) {
     val owner = TestOwner()
     currentOwner = owner
     try {
-        runSkikoComposeUiTest(size = Size(411 * DENSITY, 891 * DENSITY), density = Density(DENSITY)) { block() }
+        runSkikoTest(screen, block)
     } finally {
         owner.viewModelStore.clear()
     }
 }
+
+/**
+ * The Skiko test window has a fixed size, and dialogs are laid out in that size, so a new test window of the
+ * [screen] size runs [block]. The ViewModelStoreOwner stays (see [currentOwner]), like in a rotation.
+ */
+@OptIn(ExperimentalTestApi::class)
+actual fun ComposeUiTest.withScreen(screen: TestScreen, block: ComposeUiTest.() -> Unit) = runSkikoTest(screen, block)
 
 /** On iOS dialogs and popups are drawn in the same scene, so the first root has the whole screen. */
 @OptIn(ExperimentalTestApi::class)

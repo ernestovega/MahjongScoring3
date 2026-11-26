@@ -159,7 +159,8 @@ fun GameScreen(
                             ),
                             contentDescription = stringResource(Res.string.rotate_seats),
                             tint = MmColors.White,
-                            modifier = Modifier.size(24.dp),
+                            // MS2 action menu icons are drawn at their own size, up to 32dp: the seat icons are 48dp
+                            modifier = Modifier.size(if (loaded.seatsArrangement == SeatsArrangement.RANKING) 24.dp else 32.dp),
                         )
                     }
                     OverflowMenu(gameMenuItems(loaded, viewModel, platformActions,
