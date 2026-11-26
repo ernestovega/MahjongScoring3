@@ -296,7 +296,8 @@ private fun androidx.compose.foundation.layout.RowScope.BottomItem(
         selected = currentRoute == route,
         onClick = { navController.navigateTo(route) },
         icon = { Icon(icon, contentDescription = null) },
-        label = { Text(label, maxLines = 1, fontWeight = if (currentRoute == route) FontWeight.Bold else FontWeight.Normal) },
+        // MS2 BottomNavigationView: active label 14sp, inactive 12sp
+        label = { Text(label, maxLines = 1, fontSize = if (currentRoute == route) 14.sp else 12.sp, fontWeight = if (currentRoute == route) FontWeight.Bold else FontWeight.Normal) },
         enabled = enabled,
         alwaysShowLabel = true,
         selectedContentColor = if (enabled) MmColors.White else MmColors.Gray,
