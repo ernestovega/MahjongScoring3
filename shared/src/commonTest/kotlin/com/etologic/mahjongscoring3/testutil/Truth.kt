@@ -64,6 +64,7 @@ class Subject<T>(val actual: T) {
     fun containsNoneOf(vararg unexpected: Any?) = assertTrue(unexpected.none { it in items() }, "Expected $actual to contain none of ${unexpected.toList()}")
     fun isIn(collection: Iterable<*>) = assertTrue(actual in collection, "Expected <$actual> in $collection")
     fun containsKey(key: Any?) = assertTrue((actual as Map<*, *>).containsKey(key), "Expected key <$key> in $actual")
+    fun matches(regex: String) = assertTrue(Regex(regex).matches(actual as CharSequence), "Expected <$actual> to match <$regex>")
     fun hasLength(length: Int) = assertEquals(length, (actual as CharSequence).length)
 }
 

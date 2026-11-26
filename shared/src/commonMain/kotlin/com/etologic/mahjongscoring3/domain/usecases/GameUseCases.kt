@@ -75,11 +75,12 @@ class CreateGameUseCase(
         val startDate = timeProvider.nowMillis()
         val newGame = GameRecord(
             gameId = NOT_SET_GAME_ID,
-            gameName = normalizeName(gameName).ifBlank { startDate.toGameNameFormat() },
-            nameP1 = normalizeName(nameP1),
-            nameP2 = normalizeName(nameP2),
-            nameP3 = normalizeName(nameP3),
-            nameP4 = normalizeName(nameP4),
+            // Stored as typed, as Mahjong Scoring 2 (names are only normalized when edited)
+            gameName = gameName.ifBlank { startDate.toGameNameFormat() },
+            nameP1 = nameP1,
+            nameP2 = nameP2,
+            nameP3 = nameP3,
+            nameP4 = nameP4,
             startDate = startDate,
             endDate = null,
         )
