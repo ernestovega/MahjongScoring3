@@ -153,6 +153,7 @@ fun OldGamesScreen(
                         EmptyState(
                             message = stringResource(Res.string.there_arent_games_yet_start_one),
                             modifier = Modifier.testTag("emptyLayoutOldGames"),
+                            centerVertically = true,
                             footer = {
                                 Image(
                                     painter = painterResource(Res.drawable.arrow),

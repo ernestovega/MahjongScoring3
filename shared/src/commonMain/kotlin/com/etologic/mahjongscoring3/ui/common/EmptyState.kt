@@ -27,11 +27,14 @@ fun EmptyState(
     message: String,
     modifier: Modifier = Modifier,
     topMargin: androidx.compose.ui.unit.Dp = 120.dp,
+    /** MS2 Old games empty layout uses android:gravity="center": the whole block is centered vertically. */
+    centerVertically: Boolean = false,
     footer: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxSize().background(MmColors.GrayLight),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = if (centerVertically) androidx.compose.foundation.layout.Arrangement.Center else androidx.compose.foundation.layout.Arrangement.Top,
     ) {
         Image(
             painter = painterResource(Res.drawable.img_empty_box),

@@ -52,7 +52,10 @@ class ScreenshotsTest : UiTestBase() {
     // region Old games
 
     @Test
-    fun oldGames_empty() = appTest { screenshot("old_games_empty") }
+    fun oldGames_empty() = appTest {
+        awaitView("emptyLayoutOldGames")
+        screenshot("old_games_empty")
+    }
 
     @Test
     fun oldGames_list() = appTest(GameScenarios.fullGame, GameScenarios.penalties, GameScenarios.specialNames, GameScenarios.newGame) {
