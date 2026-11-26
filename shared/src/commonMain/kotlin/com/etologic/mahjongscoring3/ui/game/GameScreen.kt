@@ -182,6 +182,7 @@ fun GameScreen(
         ) {
             listOf(GamePages.TABLE to Res.string.table, GamePages.LIST to Res.string.list).forEach { (page, title) ->
                 Tab(
+                    modifier = Modifier.testTag("tabGame" + page.name),
                     selected = pagerState.currentPage == page.index,
                     onClick = { showPage(page) },
                     text = { Text(stringResource(title).uppercase(), color = MmColors.White) },
@@ -303,18 +304,18 @@ private fun gameMenuItems(
     onShare: () -> Unit,
 ): List<OverflowItem> {
     val game = state.game
-    val items = mutableListOf(OverflowItem(stringResource(Res.string.edit_names), onEditNames))
+    val items = mutableListOf(OverflowItem(stringResource(Res.string.edit_names), "action_edit_names", onEditNames))
     items += if (state.isDiffsCalcsFeatureEnabled) {
-        OverflowItem(stringResource(Res.string.disable_diffs_calcs)) { viewModel.setDiffsCalcsFeatureEnabled(false) }
+        OverflowItem(stringResource(Res.string.disable_diffs_calcs), "action_disable_diffs_calcs") { viewModel.setDiffsCalcsFeatureEnabled(false) }
     } else {
-        OverflowItem(stringResource(Res.string.enable_diffs_calcs)) { viewModel.setDiffsCalcsFeatureEnabled(true) }
+        OverflowItem(stringResource(Res.string.enable_diffs_calcs), "action_enable_diffs_calcs") { viewModel.setDiffsCalcsFeatureEnabled(true) }
     }
-    items += OverflowItem(stringResource(Res.string.share), onShare)
+    items += OverflowItem(stringResource(Res.string.share), "action_share_game", onShare)
     if (game.isEnded && game.uiRounds.size < UiGame.MAX_MCR_ROUNDS) {
-        items += OverflowItem(stringResource(Res.string.resume)) { viewModel.resumeGame() }
+        items += OverflowItem(stringResource(Res.string.resume), "action_resume_game") { viewModel.resumeGame() }
     }
     if (!game.isEnded && game.uiRounds.size > 1) {
-        items += OverflowItem(stringResource(Res.string.end)) { viewModel.endGame { platformActions.requestInAppReview() } }
+        items += OverflowItem(stringResource(Res.string.end), "action_end_game") { viewModel.endGame { platformActions.requestInAppReview() } }
     }
     return items
 }

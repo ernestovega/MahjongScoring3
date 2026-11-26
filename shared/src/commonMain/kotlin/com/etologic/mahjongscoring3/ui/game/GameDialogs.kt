@@ -35,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -402,7 +404,8 @@ private fun PenaltyPageContent(
 ) {
     var points by remember { mutableStateOf("") }
     var isPointsError by remember { mutableStateOf(false) }
-    var isDivided by remember { mutableStateOf(false) }
+    // MS2 layout: android:checked="true"
+    var isDivided by remember { mutableStateOf(true) }
     var isDividedError by remember { mutableStateOf(false) }
 
     SeatMedium(selectedSeat, selectedName, Modifier.fillMaxWidth())
@@ -427,11 +430,11 @@ private fun PenaltyPageContent(
         modifier = Modifier
             .testTag("cbPenaltyDialog")
             .padding(top = MmDimens.StandardMargin)
-            .clickable { isDivided = !isDivided; isDividedError = false },
+            .toggleable(value = isDivided, role = Role.Checkbox) { isDivided = it; isDividedError = false },
     ) {
         Checkbox(
             checked = isDivided,
-            onCheckedChange = { isDivided = it; isDividedError = false },
+            onCheckedChange = null,
             colors = CheckboxDefaults.colors(
                 checkedColor = MmColors.Accent,
                 uncheckedColor = if (isDividedError) MmColors.Red else MmColors.GrayMM,
@@ -530,14 +533,14 @@ fun RankingDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text("${stringResource(Res.string.best_hand)}:", fontSize = 16.sp, textAlign = TextAlign.End, modifier = Modifier.weight(4f))
-                    Text(rankingData.bestHandPlayerPoints, color = MmColors.GrayMM, textAlign = TextAlign.End, modifier = Modifier.weight(2f))
+                    Text(rankingData.bestHandPlayerPoints, color = MmColors.GrayMM, textAlign = TextAlign.End, modifier = Modifier.weight(2f).testTag("tvRankingDialogBestHandPlayerPoints"))
                     Text("-", color = MmColors.GrayMM, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
                     Text(
                         rankingData.bestHandPlayerName,
                         color = MmColors.GrayMM,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(5f),
+                        modifier = Modifier.weight(5f).testTag("tvRankingDialogBestHandPlayerName"),
                     )
                 }
                 Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = MmDimens.HalfMargin))

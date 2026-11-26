@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
@@ -101,15 +102,15 @@ fun NamesDialog(
                         placeholder = gameNameHint,
                         icon = null,
                         singleLine = false,
-                        modifier = Modifier.focusRequester(gameNameFocus),
+                        modifier = Modifier.focusRequester(gameNameFocus).testTag("tietNamesDialogGameName"),
                         bold = true,
                     )
                     Text(stringResource(Res.string.blank_name_warn), modifier = Modifier.padding(top = MmDimens.StandardMargin))
                     Spacer(Modifier.height(MmDimens.StandardAndHalfMargin))
-                    NameField(east, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) east = it }, stringResource(Res.string.player_east_name), icon = Res.drawable.ic_east)
-                    NameField(south, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) south = it }, stringResource(Res.string.player_south_name), icon = Res.drawable.ic_south)
-                    NameField(west, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) west = it }, stringResource(Res.string.player_west_name), icon = Res.drawable.ic_west)
-                    NameField(north, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) north = it }, stringResource(Res.string.player_north_name), icon = Res.drawable.ic_north)
+                    NameField(east, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) east = it }, stringResource(Res.string.player_east_name), icon = Res.drawable.ic_east, modifier = Modifier.testTag("tietNamesDialogEast"))
+                    NameField(south, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) south = it }, stringResource(Res.string.player_south_name), icon = Res.drawable.ic_south, modifier = Modifier.testTag("tietNamesDialogSouth"))
+                    NameField(west, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) west = it }, stringResource(Res.string.player_west_name), icon = Res.drawable.ic_west, modifier = Modifier.testTag("tietNamesDialogWest"))
+                    NameField(north, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) north = it }, stringResource(Res.string.player_north_name), icon = Res.drawable.ic_north, modifier = Modifier.testTag("tietNamesDialogNorth"))
                     Text(stringResource(Res.string.double_quotes_warn), modifier = Modifier.padding(top = MmDimens.StandardMargin))
                 }
                 Row(
@@ -118,12 +119,13 @@ fun NamesDialog(
                         .padding(top = MmDimens.HalfMargin, end = MmDimens.StandardMargin, bottom = MmDimens.HalfMargin),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(onClick = onDismiss, modifier = Modifier.testTag("btNamesDialogCancel")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.GrayMM)
                     }
-                    TextButton(onClick = {
-                        onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text))
-                    }) {
+                    TextButton(
+                        onClick = { onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text)) },
+                        modifier = Modifier.testTag("btNamesDialogSave"),
+                    ) {
                         Text(confirmText.uppercase(), color = MmColors.Accent)
                     }
                 }
