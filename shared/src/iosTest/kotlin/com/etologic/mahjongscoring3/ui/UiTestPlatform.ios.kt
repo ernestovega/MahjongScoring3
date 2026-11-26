@@ -1,6 +1,17 @@
 package com.etologic.mahjongscoring3.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Size
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.test.ComposeUiTest
@@ -32,4 +43,21 @@ actual fun saveScreenshot(name: String, image: ImageBitmap) {
     val bytes = Image.makeFromBitmap(image.asSkiaBitmap()).encodeToData(EncodedImageFormat.PNG)?.bytes ?: return
     val data = bytes.usePinned { NSData.create(bytes = it.addressOf(0), length = bytes.size.toULong()) }
     data.writeToFile("$dir/$name.png", atomically = true)
+}
+
+/** ComposeUIViewController provides these owners in the app; the Skiko test host does not. */
+private class TestOwner : ViewModelStoreOwner, LifecycleOwner {
+    override val viewModelStore = ViewModelStore()
+    private val registry = LifecycleRegistry.createUnsafe(this).apply { currentState = Lifecycle.State.RESUMED }
+    override val lifecycle: Lifecycle get() = registry
+}
+
+@Composable
+actual fun UiTestHost(content: @Composable () -> Unit) {
+    val owner = remember { TestOwner() }
+    DisposableEffect(owner) { onDispose { owner.viewModelStore.clear() } }
+    CompositionLocalProvider(
+        LocalViewModelStoreOwner provides owner,
+        LocalLifecycleOwner provides owner,
+    ) { content() }
 }

@@ -80,7 +80,7 @@ abstract class UiTestBase : UiPlatformTest() {
                     scenario.rounds.forEach { rounds.insertOne(it).getOrThrow() }
                 }
             }
-            setContent { App() }
+            setContent { UiTestHost { App() } }
             waitForIdle()
             block()
         } finally {

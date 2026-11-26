@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -16,3 +17,10 @@ expect fun runAppUiTest(block: ComposeUiTest.() -> Unit)
 
 /** Writes [image] as <screenshots dir>/<name>.png (build/screenshots/android or build/screenshots/ios). */
 expect fun saveScreenshot(name: String, image: ImageBitmap)
+
+/**
+ * Wraps the app content with what the platform test host does not provide on its own
+ * (Android: the Compose resources context; iOS: a ViewModelStoreOwner).
+ */
+@Composable
+expect fun UiTestHost(content: @Composable () -> Unit)
