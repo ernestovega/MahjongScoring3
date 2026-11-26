@@ -52,6 +52,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.etologic.mahjongscoring3.domain.model.NOT_SET_GAME_ID
 import com.etologic.mahjongscoring3.platform.AppLocaleEnvironment
+import com.etologic.mahjongscoring3.platform.LocalPlatformActionsOverride
 import com.etologic.mahjongscoring3.platform.PlatformActions
 import com.etologic.mahjongscoring3.platform.rememberPlatformActions
 import com.etologic.mahjongscoring3.resources.Res
@@ -130,7 +131,7 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val platformActions = rememberPlatformActions()
+    val platformActions = LocalPlatformActionsOverride.current ?: rememberPlatformActions()
     val activeGameId by mainViewModel.activeGameId.collectAsState()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route

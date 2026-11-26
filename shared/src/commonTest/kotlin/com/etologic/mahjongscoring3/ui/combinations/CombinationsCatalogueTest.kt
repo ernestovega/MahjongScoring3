@@ -100,7 +100,10 @@ class CombinationsCatalogueTest {
     @Test
     fun everyLanguageTranslatesTheSameKeysAsEnglish() {
         // Not in MS2: catches a string added in English but forgotten in another language.
-        val english = strings(ENGLISH).keys
+        // Like MS2, strings marked translatable="false" only exist in values/
+        val englishXml = GoldenFiles.readOrNull("../../../commonMain/composeResources/values/strings.xml").orEmpty()
+        val notTranslatable = Regex("""<string name="([^"]+)"[^>]*translatable="false"""").findAll(englishXml).map { it.groupValues[1] }.toSet()
+        val english = strings(ENGLISH).keys - notTranslatable
         languages.filter { it != ENGLISH }.forEach { language ->
             val missing = english - strings(language).keys
             assertThat(missing).isEmpty()

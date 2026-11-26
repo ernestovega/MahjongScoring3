@@ -68,6 +68,7 @@ class UiFlowsTest : UiTestBase() {
 
     @Test
     fun createGame_fromOldGames_opensTheGameAndPersistsIt() = appTest {
+        awaitView("emptyLayoutOldGames")
         view("emptyLayoutOldGames").assertIsDisplayed()
         click("fabOldGames")
         view("tietNamesDialogGameName").performTextReplacement("Liga")
@@ -308,6 +309,8 @@ class UiFlowsTest : UiTestBase() {
         view("btRankingDialogResume").assertIsDisplayed()
         click("btRankingDialogResume")
         awaitData { !storedGame(gameId).isEnded }
+        // MS2 asks for an in-app review when a game ends
+        assertThat(platformActions.calls).contains("requestInAppReview")
     }
 
     @Test
@@ -345,7 +348,8 @@ class UiFlowsTest : UiTestBase() {
         val updated = storedGame(gameId)
         assertThat(updated.gameName).isEqualTo("Renamed game")
         assertThat(updated.nameP1).isEqualTo("Eva")
-        waitForIdle()
+        // The table shows the new name once the game flow emits it
+        waitUntil(timeoutMillis = 5_000) { runCatching { view("tvGameTableGameName").assertTextEquals("Renamed game") }.isSuccess }
         view("tvGameTableGameName").assertTextEquals("Renamed game")
     }
 

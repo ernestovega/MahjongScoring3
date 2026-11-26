@@ -81,6 +81,7 @@ kotlin {
             implementation(libs.androidx.test.ext.junit)
             implementation(libs.androidx.sqlite.framework)
             implementation(libs.androidx.compose.ui.test.junit4)
+            implementation(libs.roborazzi)
         }
     }
 }
@@ -123,6 +124,8 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("user.timezone", "UTC")
     systemProperty("goldens.dir", "$projectDir/src/commonTest/resources/golden")
+    // Roborazzi writes the screenshots only in record mode
+    systemProperty("roborazzi.test.record", "true")
     systemProperty("screenshots.dir", "${layout.buildDirectory.get().asFile}/screenshots/android")
 }
 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {

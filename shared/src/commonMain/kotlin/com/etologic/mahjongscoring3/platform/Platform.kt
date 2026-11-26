@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.etologic.mahjongscoring3.domain.usecases.ExportedFile
 
 /** Things the shared UI needs from the operating system. One implementation per platform. */
@@ -21,6 +22,9 @@ interface PlatformActions {
 
 @Composable
 expect fun rememberPlatformActions(): PlatformActions
+
+/** Lets the UI tests replace the operating system actions (share, review, e-mail...). Null in the app. */
+val LocalPlatformActionsOverride = staticCompositionLocalOf<PlatformActions?> { null }
 
 /** Returns a function that opens the system file picker; [onFilePicked] receives the file text, or null if cancelled. */
 @Composable

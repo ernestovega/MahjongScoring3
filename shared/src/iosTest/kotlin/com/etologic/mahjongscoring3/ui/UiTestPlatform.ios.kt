@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -37,8 +39,14 @@ private const val DENSITY = 420f / 160f
 actual fun runAppUiTest(block: ComposeUiTest.() -> Unit) =
     runSkikoComposeUiTest(size = Size(411 * DENSITY, 891 * DENSITY), density = Density(DENSITY)) { block() }
 
+/** On iOS dialogs and popups are drawn in the same scene, so the first root has the whole screen. */
+@OptIn(ExperimentalTestApi::class)
+actual fun ComposeUiTest.captureScreen(name: String) {
+    savePng(name, onAllNodes(isRoot())[0].captureToImage())
+}
+
 @OptIn(ExperimentalForeignApi::class, kotlinx.cinterop.BetaInteropApi::class)
-actual fun saveScreenshot(name: String, image: ImageBitmap) {
+private fun savePng(name: String, image: ImageBitmap) {
     val dir = getenv("SCREENSHOTS_DIR")?.toKString() ?: return
     val bytes = Image.makeFromBitmap(image.asSkiaBitmap()).encodeToData(EncodedImageFormat.PNG)?.bytes ?: return
     val data = bytes.usePinned { NSData.create(bytes = it.addressOf(0), length = bytes.size.toULong()) }
@@ -61,3 +69,5 @@ actual fun UiTestHost(content: @Composable () -> Unit) {
         LocalLifecycleOwner provides owner,
     ) { content() }
 }
+
+actual fun pumpMainThread() = Unit

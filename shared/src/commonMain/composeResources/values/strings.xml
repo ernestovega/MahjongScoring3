@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="player_name_placeholder">12345678901</string>
-    <string name="_000">-000</string>
+    <string name="player_name_placeholder" translatable="false">12345678901</string>
+    <string name="_000" translatable="false">-000</string>
     <string name="app_name">Mahjong Scoring MCR</string>
     <string name="close_drawer">Close menu</string>
     <string name="open_drawer">Open menu</string>

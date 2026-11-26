@@ -4,10 +4,8 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.performClick
 import com.etologic.mahjongscoring3.data.database.AppDatabase
@@ -30,6 +28,8 @@ import com.etologic.mahjongscoring3.testutil.testDatabaseBuilder
 import com.etologic.mahjongscoring3.testutil.testFilePath
 import com.etologic.mahjongscoring3.testutil.testSqliteDriver
 import com.etologic.mahjongscoring3.ui.main.App
+import com.etologic.mahjongscoring3.platform.LocalPlatformActionsOverride
+import androidx.compose.runtime.CompositionLocalProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
@@ -51,6 +51,9 @@ abstract class UiTestBase : UiPlatformTest() {
     protected lateinit var rounds: RoundsRepository
     protected lateinit var settings: SettingsRepository
 
+    /** Records what the app asked the operating system to do, instead of doing it. */
+    protected val platformActions = FakePlatformActions()
+
     /** Starts the app with the given [seed] and settings, runs [block], and cleans everything up. */
     protected fun appTest(
         vararg seed: GameScenario,
@@ -60,6 +63,7 @@ abstract class UiTestBase : UiPlatformTest() {
         block: ComposeUiTest.() -> Unit,
     ) = runAppUiTest {
         val id = nextId++
+        platformActions.calls.clear()
         val db = buildAppDatabase(testDatabaseBuilder(testFilePath("ui-$id.db")), testSqliteDriver())
         val dataStore = createDataStore { testFilePath("ui-$id.preferences_pb") }
         stopKoin()
@@ -80,7 +84,11 @@ abstract class UiTestBase : UiPlatformTest() {
                     scenario.rounds.forEach { rounds.insertOne(it).getOrThrow() }
                 }
             }
-            setContent { UiTestHost { App() } }
+            setContent {
+                UiTestHost {
+                    CompositionLocalProvider(LocalPlatformActionsOverride provides platformActions) { App() }
+                }
+            }
             waitForIdle()
             block()
         } finally {
@@ -101,7 +109,7 @@ abstract class UiTestBase : UiPlatformTest() {
 
     /** Room and DataStore write on background threads: wait for the condition instead of asserting at once. */
     protected fun ComposeUiTest.awaitData(timeoutMillis: Long = 5_000, condition: () -> Boolean) {
-        waitUntil(timeoutMillis = timeoutMillis) { condition() }
+        waitUntil(timeoutMillis = timeoutMillis) { pumpMainThread(); condition() }
         waitForIdle()
     }
 
@@ -133,7 +141,7 @@ abstract class UiTestBase : UiPlatformTest() {
 
     /** Waits for a view to appear (screen transitions, dialogs after a database write). */
     protected fun ComposeUiTest.awaitView(tag: String, timeoutMillis: Long = 5_000) {
-        waitUntil(timeoutMillis = timeoutMillis) { exists(tag) }
+        waitUntil(timeoutMillis = timeoutMillis) { pumpMainThread(); exists(tag) }
     }
 
     // endregion
@@ -174,17 +182,11 @@ abstract class UiTestBase : UiPlatformTest() {
 
     // region Screenshots
 
-    /**
-     * Captures the screen into build/screenshots/<platform>/<name>.png. When a dialog or menu is showing
-     * it is captured too, as <name>_dialog.png (MS2 Roborazzi captured both in one image).
-     */
+    /** Captures the screen into build/screenshots/<platform>/<name>.png, with MS2 screenshot names. */
     protected fun ComposeUiTest.screenshot(name: String) {
         mainClock.advanceTimeBy(1_000)
         waitForIdle()
-        val roots = onAllNodes(isRoot())
-        val count = roots.fetchSemanticsNodes().size
-        saveScreenshot(name, roots[0].captureToImage())
-        if (count > 1) saveScreenshot("${name}_dialog", roots[count - 1].captureToImage())
+        captureScreen(name)
     }
 
     // endregion

@@ -1,9 +1,6 @@
 package com.etologic.mahjongscoring3.ui
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
@@ -13,7 +10,12 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import android.content.ContentProvider
 import org.robolectric.Robolectric
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
+import com.github.takahirom.roborazzi.RoborazziOptions
+import com.github.takahirom.roborazzi.captureScreenRoboImage
 import java.io.File
+import java.util.concurrent.TimeUnit
+import org.robolectric.shadows.ShadowLooper
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp-normal-long-notround-any-420dpi-keyshidden-nonav")
@@ -36,11 +38,24 @@ private fun installComposeResourcesContext() {
     Robolectric.setupContentProvider(provider)
 }
 
-actual fun saveScreenshot(name: String, image: ImageBitmap) {
+/**
+ * Robolectric never draws a frame for captureToImage(), so the Android screenshots use Roborazzi, as MS2 does.
+ * captureScreenRoboImage() captures every window: the activity, dialogs and popups.
+ */
+@OptIn(ExperimentalTestApi::class, ExperimentalRoborazziApi::class)
+actual fun ComposeUiTest.captureScreen(name: String) {
     val dir = File(System.getProperty("screenshots.dir") ?: "build/screenshots/android").apply { mkdirs() }
-    File(dir, "$name.png").outputStream().use { image.asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it) }
+    captureScreenRoboImage(
+        file = File(dir, "$name.png"),
+        roborazziOptions = RoborazziOptions(recordOptions = RoborazziOptions.RecordOptions(resizeScale = 0.5)),
+    )
 }
 
 /** The Compose resources context is set in [runAppUiTest]. */
 @Composable
 actual fun UiTestHost(content: @Composable () -> Unit) = content()
+
+actual fun pumpMainThread() {
+    Thread.sleep(10)
+    ShadowLooper.idleMainLooper(50, TimeUnit.MILLISECONDS)
+}
