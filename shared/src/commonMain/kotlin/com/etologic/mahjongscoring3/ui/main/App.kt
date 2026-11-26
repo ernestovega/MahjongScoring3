@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.only
@@ -132,6 +130,7 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val platformActions = LocalPlatformActionsOverride.current ?: rememberPlatformActions()
+    val insets = currentAppInsets()
     val activeGameId by mainViewModel.activeGameId.collectAsState()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -148,7 +147,11 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
     CompositionLocalProvider(LocalShowSnackbar provides showSnackbar) {
         Scaffold(
             scaffoldState = scaffoldState,
-            modifier = Modifier.background(MmColors.PrimaryDark).windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)),
+            modifier = Modifier
+                .background(MmColors.PrimaryDark)
+                .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top))
+                // The keyboard lifts the whole content; the bottom navigation then drops its navigation bar padding
+                .windowInsetsPadding(insets.ime.only(WindowInsetsSides.Bottom)),
             drawerBackgroundColor = MmColors.GrayLight,
             drawerContent = {
                 Drawer(
@@ -164,7 +167,7 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
                 )
             },
             bottomBar = {
-                Box(Modifier.background(MmColors.Primary).navigationBarsPadding()) {
+                Box(Modifier.background(MmColors.Primary).windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom)).testTag("bottomNavigationView")) {
                 BottomNavigation(
                     backgroundColor = MmColors.Primary,
                     contentColor = MmColors.White,
