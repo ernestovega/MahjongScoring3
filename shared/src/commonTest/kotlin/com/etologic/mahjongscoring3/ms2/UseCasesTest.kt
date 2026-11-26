@@ -19,6 +19,7 @@ import com.etologic.mahjongscoring3.testutil.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Clock
@@ -321,15 +322,23 @@ class UseCasesTest {
     }
 
     @Test
-    fun aGameWithoutRoundsHidesTheWholeListCurrentBehaviour() = runTest {
-        newGame()
+    fun aGameWithoutRoundsIsSkippedAndTheRestOfTheListKeepsUpdating() = runTest {
+        // Regression (MS2 fix of 2026-11-26): GetAllGamesFlowUseCase used to drop the whole emission when any
+        // game had no rounds, so the list never updated (and first() never returned).
+        val withRounds = newGame()
         games.insertOne(GameScenarios.newGame.game.copy(gameId = 50)).getOrThrow()
-        // GetAllGamesFlowUseCase returns null for the whole emission if any game has no rounds.
-        val emissions = mutableListOf<List<UiGame>>()
-        val job = backgroundScope.launch { getAllGames().collect { emissions += it } }
-        testScheduler.advanceUntilIdle()
-        assertThat(emissions).isEmpty()
-        job.cancel()
+        val first = withTimeoutOrNull(1_000) { getAllGames().first() }
+        assertThat(first?.map { it.gameId }).containsExactly(withRounds)
+        // The list keeps updating while the game without rounds is still there.
+        val another = newGame()
+        val second = withTimeoutOrNull(1_000) { getAllGames().first() }
+        assertThat(second?.map { it.gameId }?.sorted()).containsExactly(withRounds, another)
+    }
+
+    @Test
+    fun onlyGamesWithoutRoundsGiveAnEmptyList() = runTest {
+        games.insertOne(GameScenarios.newGame.game.copy(gameId = 50)).getOrThrow()
+        assertThat(withTimeoutOrNull(1_000) { getAllGames().first() }).isEmpty()
     }
 
 
