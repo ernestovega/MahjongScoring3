@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui.game
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -655,18 +656,23 @@ fun DiceDialog(game: UiGame, playDiceSound: () -> Unit, onDismiss: () -> Unit) {
             contentColor = MmColors.GrayMM,
             modifier = Modifier.fillMaxWidth().padding(MmDimens.StandardMargin),
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // MS2 kept the second throw invisible but taking its space, which left a big blank area before
+            // the first roll. Here it takes no space until it appears, and the dialog grows to show it.
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.animateContentSize()) {
                 DiceThrowerName(firstThrower, tag = "tvDiceDialogFirst")
                 DicePair(dice[0], dice[1], isVisible = true, tags = "ivDice1" to "ivDice2") { roll(0) }
-                DiceThrowerName(if (rollingPair != 0) secondThrower else "", isVisible = isSecondThrowVisible, tag = "tvDiceDialogSecond")
-                DicePair(dice[2], dice[3], isVisible = isSecondThrowVisible, tags = "ivDice3" to "ivDice4") { roll(1) }
+                if (isSecondThrowVisible) {
+                    // MS2: the second name has no top margin, and the second pair has 16dp more at the bottom
+                    DiceThrowerName(if (rollingPair != 0) secondThrower else "", tag = "tvDiceDialogSecond", topPadding = 0.dp)
+                    DicePair(dice[2], dice[3], isVisible = true, tags = "ivDice3" to "ivDice4", extraBottom = MmDimens.StandardMargin) { roll(1) }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun DiceThrowerName(name: String, tag: String, isVisible: Boolean = true) {
+private fun DiceThrowerName(name: String, tag: String, isVisible: Boolean = true, topPadding: Dp = MmDimens.TripleMargin) {
     Text(
         text = if (isVisible) name else "",
         fontSize = 16.sp,
@@ -675,14 +681,21 @@ private fun DiceThrowerName(name: String, tag: String, isVisible: Boolean = true
         modifier = Modifier
             .testTag(tag)
             .fillMaxWidth()
-            .padding(start = MmDimens.TripleMargin, top = MmDimens.TripleMargin),
+            .padding(start = MmDimens.TripleMargin, top = topPadding),
     )
 }
 
 @Composable
-private fun DicePair(value1: Int, value2: Int, isVisible: Boolean, tags: Pair<String, String>, onClick: () -> Unit) {
+private fun DicePair(
+    value1: Int,
+    value2: Int,
+    isVisible: Boolean,
+    tags: Pair<String, String>,
+    extraBottom: Dp = 0.dp,
+    onClick: () -> Unit,
+) {
     Row(
-        modifier = Modifier.padding(
+        modifier = Modifier.padding(bottom = extraBottom).padding(
             start = MmDimens.TripleMargin,
             top = MmDimens.StandardMargin,
             end = MmDimens.TripleMargin,
