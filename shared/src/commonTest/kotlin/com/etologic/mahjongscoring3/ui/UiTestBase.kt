@@ -129,12 +129,18 @@ abstract class UiTestBase : UiPlatformTest() {
     protected fun ComposeUiTest.exists(tag: String): Boolean =
         onAllNodesWithTag(tag, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
 
+    /** Waits for the view first: under Robolectric the data (and so the view) can arrive after the screen. */
     protected fun ComposeUiTest.click(tag: String) {
+        awaitView(tag)
         view(tag).performClick()
         waitForIdle()
     }
 
     protected fun ComposeUiTest.click(tag: String, insideOf: String) {
+        waitUntil(timeoutMillis = 5_000) {
+            pumpMainThread()
+            onAllNodes(hasTestTag(tag) and hasAnyAncestor(hasTestTag(insideOf)), useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
+        }
         view(tag, insideOf).performClick()
         waitForIdle()
     }

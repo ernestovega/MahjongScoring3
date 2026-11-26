@@ -130,7 +130,10 @@ tasks.withType<Test>().configureEach {
 }
 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
     environment("SIMCTL_CHILD_GOLDENS_DIR", "$projectDir/src/commonTest/resources/golden")
-    environment("SIMCTL_CHILD_TZ", "UTC")
-    environment("SIMCTL_CHILD_SCREENSHOTS_DIR", "${layout.buildDirectory.get().asFile}/screenshots/ios")
-    doFirst { layout.buildDirectory.dir("screenshots/ios").get().asFile.mkdirs() }
+    // "UTC" makes iOS report the zone as "GMT"; Etc/UTC keeps the UTC id, like user.timezone=UTC on the JVM
+    environment("SIMCTL_CHILD_TZ", "Etc/UTC")
+    val screenshotsDir = layout.buildDirectory.dir("screenshots/ios").get().asFile
+    environment("SIMCTL_CHILD_SCREENSHOTS_DIR", screenshotsDir.absolutePath)
+    // Only a local File in doFirst: "layout" there captures the Project, which the configuration cache rejects
+    doFirst { screenshotsDir.mkdirs() }
 }

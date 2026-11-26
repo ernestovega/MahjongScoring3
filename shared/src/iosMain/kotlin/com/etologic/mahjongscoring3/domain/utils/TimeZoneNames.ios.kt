@@ -7,6 +7,7 @@ import platform.Foundation.NSTimeZone
 import platform.Foundation.NSTimeZoneNameStyle
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.localeWithLocaleIdentifier
+import platform.Foundation.localizedName
 import platform.Foundation.timeZoneWithName
 
 private val UTC_IDS = setOf("Z", "UTC", "UCT", "Etc/UTC", "Etc/UCT", "Universal", "Etc/Universal", "Zulu", "Etc/Zulu")

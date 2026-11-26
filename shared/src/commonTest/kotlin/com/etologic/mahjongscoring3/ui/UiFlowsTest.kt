@@ -1,6 +1,7 @@
 package com.etologic.mahjongscoring3.ui
 
 import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -42,12 +43,18 @@ class UiFlowsTest : UiTestBase() {
 
     // region Helpers
 
-    private fun ComposeUiTest.seat(seat: String) = view("tvTableSeatBySeatName", insideOf = seat)
+    private fun ComposeUiTest.seat(seat: String): SemanticsNodeInteraction {
+        awaitView(seat) // the seats appear when the game is loaded, after the tabs
+        return view("tvTableSeatBySeatName", insideOf = seat)
+    }
 
-    private fun ComposeUiTest.seatPoints(seat: String) = view("tvTableSeatBySeatPoints", insideOf = seat)
+    private fun ComposeUiTest.seatPoints(seat: String): SemanticsNodeInteraction {
+        awaitView(seat)
+        return view("tvTableSeatBySeatPoints", insideOf = seat)
+    }
 
     private fun ComposeUiTest.clickSeat(seat: String) {
-        view(seat).performClick()
+        click(seat)
         awaitView("btHandActionsDialogHu")
     }
 
