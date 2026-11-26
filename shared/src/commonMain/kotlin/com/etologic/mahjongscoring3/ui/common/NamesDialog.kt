@@ -1,5 +1,11 @@
 package com.etologic.mahjongscoring3.ui.common
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -106,15 +110,16 @@ fun NamesDialog(
                         placeholder = gameNameHint,
                         icon = null,
                         singleLine = false,
-                        modifier = Modifier.focusRequester(gameNameFocus).testTag("tietNamesDialogGameName"),
+                        tag = "tietNamesDialogGameName",
+                        focusRequester = gameNameFocus,
                         bold = true,
                     )
                     Text(stringResource(Res.string.blank_name_warn), modifier = Modifier.padding(top = MmDimens.StandardMargin))
                     Spacer(Modifier.height(MmDimens.StandardAndHalfMargin))
-                    NameField(east, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) east = it }, stringResource(Res.string.player_east_name), icon = Res.drawable.ic_east, modifier = Modifier.testTag("tietNamesDialogEast"))
-                    NameField(south, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) south = it }, stringResource(Res.string.player_south_name), icon = Res.drawable.ic_south, modifier = Modifier.testTag("tietNamesDialogSouth"))
-                    NameField(west, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) west = it }, stringResource(Res.string.player_west_name), icon = Res.drawable.ic_west, modifier = Modifier.testTag("tietNamesDialogWest"))
-                    NameField(north, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) north = it }, stringResource(Res.string.player_north_name), icon = Res.drawable.ic_north, modifier = Modifier.testTag("tietNamesDialogNorth"))
+                    NameField(east, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) east = it }, stringResource(Res.string.player_east_name), icon = Res.drawable.ic_east, tag = "tietNamesDialogEast")
+                    NameField(south, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) south = it }, stringResource(Res.string.player_south_name), icon = Res.drawable.ic_south, tag = "tietNamesDialogSouth")
+                    NameField(west, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) west = it }, stringResource(Res.string.player_west_name), icon = Res.drawable.ic_west, tag = "tietNamesDialogWest")
+                    NameField(north, { if (it.text.length <= MAX_PLAYER_NAME_LENGTH) north = it }, stringResource(Res.string.player_north_name), icon = Res.drawable.ic_north, tag = "tietNamesDialogNorth")
                     Text(stringResource(Res.string.double_quotes_warn), modifier = Modifier.padding(top = MmDimens.StandardMargin))
                 }
                 Row(
@@ -147,44 +152,70 @@ private fun NameField(
     placeholder: String? = null,
     icon: DrawableResource?,
     singleLine: Boolean = true,
+    tag: String,
+    focusRequester: FocusRequester? = null,
     modifier: Modifier = Modifier,
     bold: Boolean = false,
 ) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        // MS2 EditTexts use selectAllOnFocus
-        modifier = modifier.fillMaxWidth().onFocusChanged { state ->
-            if (state.isFocused) onValueChange(value.copy(selection = TextRange(0, value.text.length)))
-        },
-        // MS2 TextInputLayout: the hint takes the EditText typeface and gravity (game name: bold italic, centered)
-        label = {
-            Text(
-                label,
-                fontWeight = if (bold) FontWeight.Bold else null,
-                fontStyle = if (bold) FontStyle.Italic else null,
-                textAlign = if (bold) TextAlign.Center else TextAlign.Start,
-                modifier = if (bold) Modifier.fillMaxWidth() else Modifier,
-            )
-        },
-        placeholder = placeholder?.let { { Text(it) } },
-        leadingIcon = icon?.let { { Image(painterResource(it), contentDescription = null, modifier = Modifier.size(24.dp)) } },
-        singleLine = singleLine,
-        maxLines = if (singleLine) 1 else 2,
-        textStyle = androidx.compose.material.LocalTextStyle.current.copy(
-            fontSize = 18.sp, // MS2 EditText default text size
+    // MS2 TextInputLayout + TextInputEditText (230dp wide, 4dp background insets): small label on top,
+    // drawableStart icon with 16dp padding, 18sp text, underline 3dp under the text.
+    // Measured on the MS2 screenshots: label, 6dp, text line, 3dp, underline, 6dp (56dp per field).
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val align = if (bold) TextAlign.Center else TextAlign.Start
+    val textStart = if (icon != null) 24.dp + MmDimens.StandardMargin else 0.dp
+    Column(modifier.fillMaxWidth().padding(horizontal = MmDimens.QuarterMargin)) {
+        Text(
+            label,
+            color = if (isFocused) MmColors.Gray else Color.Black.copy(alpha = 0.6f),
+            fontSize = 12.sp,
             fontWeight = if (bold) FontWeight.Bold else null,
             fontStyle = if (bold) FontStyle.Italic else null,
-            textAlign = if (bold) TextAlign.Center else TextAlign.Start,
-        ),
-        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = MmColors.GrayLight,
-            focusedIndicatorColor = MmColors.Accent,
-            cursorColor = MmColors.Accent,
-            focusedLabelColor = MmColors.Gray,
-            // MS2 hintTextColor (gray) applies only while focused; otherwise the Material default
-            unfocusedLabelColor = Color.Black.copy(alpha = 0.6f),
-        ),
-    )
+            textAlign = align,
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth().padding(start = textStart),
+        )
+        Spacer(Modifier.height(6.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                Image(painterResource(icon), contentDescription = null, modifier = Modifier.size(24.dp))
+                Spacer(Modifier.width(MmDimens.StandardMargin))
+            }
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                // MS2 EditTexts use selectAllOnFocus
+                modifier = Modifier.weight(1f).testTag(tag).onFocusChanged { state ->
+                    if (state.isFocused) onValueChange(value.copy(selection = TextRange(0, value.text.length)))
+                }.let { if (focusRequester != null) it.focusRequester(focusRequester) else it },
+                singleLine = singleLine,
+                maxLines = if (singleLine) 1 else 2,
+                textStyle = androidx.compose.material.LocalTextStyle.current.copy(
+                    color = Color.Black.copy(alpha = 0.87f),
+                    fontSize = 18.sp, // MS2 EditText default text size
+                    fontWeight = if (bold) FontWeight.Bold else null,
+                    fontStyle = if (bold) FontStyle.Italic else null,
+                    textAlign = align,
+                ),
+                cursorBrush = SolidColor(MmColors.Accent),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                interactionSource = interactionSource,
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (value.text.isEmpty() && placeholder != null) {
+                            Text(placeholder, color = Color.Black.copy(alpha = 0.38f), fontSize = 18.sp, textAlign = align, modifier = Modifier.fillMaxWidth())
+                        }
+                        innerTextField()
+                    }
+                },
+            )
+        }
+        Spacer(Modifier.height(3.dp))
+        Box(
+            Modifier.fillMaxWidth()
+                .height(if (isFocused) 2.dp else 1.dp)
+                .background(if (isFocused) MmColors.Accent else Color.Black.copy(alpha = 0.42f))
+        )
+        Spacer(Modifier.height(if (isFocused) 5.dp else 6.dp))
+    }
 }
