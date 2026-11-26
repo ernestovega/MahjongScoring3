@@ -338,12 +338,13 @@ private fun HuPageContent(
     var points by remember { mutableStateOf("") }
     var isPointsError by remember { mutableStateOf(false) }
 
-    Text(stringResource(Res.string.winner_), color = MmColors.GrayMM, modifier = Modifier.fillMaxWidth())
+    Text(stringResource(Res.string.winner_), color = MmColors.GrayMM, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     SeatMedium(selectedSeat, names.getOrElse(selectedSeat.code) { "" })
     Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(top = MmDimens.HalfMargin))
     Text(
         text = stringResource(Res.string.discarder_),
         color = MmColors.GrayMM,
+        textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin),
     )
     DiscarderSelector(
@@ -356,6 +357,7 @@ private fun HuPageContent(
     Text(
         text = stringResource(Res.string.points_),
         color = MmColors.GrayMM,
+        textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth().padding(top = MmDimens.HalfMargin),
     )
     NumPad(
@@ -413,6 +415,7 @@ private fun PenaltyPageContent(
     Text(
         text = stringResource(Res.string.points_),
         color = MmColors.GrayMM,
+        textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth().padding(top = MmDimens.HalfMargin),
     )
     NumPad(
@@ -478,7 +481,7 @@ private fun DialogButtons(onClose: () -> Unit, confirmText: String, onConfirm: (
             Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
         }
         TextButton(onClick = onConfirm, modifier = Modifier.testTag(confirmTag)) {
-            Text(confirmText.uppercase(), color = MmColors.GrayMM)
+            Text(confirmText.uppercase(), color = MmColors.Accent)
         }
     }
 }
@@ -522,9 +525,9 @@ fun RankingDialog(
                                 Text(stringResource(position), color = MmColors.GrayMM, fontSize = 16.sp)
                             }
                         }
-                        RankingCell(player.name, 6f, tag = "tvRankingDialogPlayer${index + 1}Name", TextAlign.Start, bold = index == 0)
-                        RankingCell(player.points, 2f, tag = "tvRankingDialogPlayer${index + 1}Points", TextAlign.Center, bold = index == 0)
-                        RankingCell(formatScore(player.score), 3f, tag = "tvRankingDialogPlayer${index + 1}Score", TextAlign.End, bold = index == 0)
+                        RankingCell(player.name, 6f, tag = "tvRankingDialogPlayer${index + 1}Name", TextAlign.Start, bold = false)
+                        RankingCell(player.points, 2f, tag = "tvRankingDialogPlayer${index + 1}Points", TextAlign.Center, bold = false)
+                        RankingCell(formatScore(player.score), 3f, tag = "tvRankingDialogPlayer${index + 1}Score", TextAlign.End, bold = false)
                     }
                 }
                 Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(vertical = MmDimens.HalfMargin))

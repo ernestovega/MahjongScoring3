@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -239,7 +240,7 @@ private fun GameListItem(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(round.roundNumber.toString(), color = MmColors.GrayMM, textAlign = TextAlign.Center, maxLines = 1,
-                    modifier = Modifier.width(16.dp).testTag("tvGameListItemRoundNumber"))
+                    modifier = Modifier.width(with(LocalDensity.current) { 16.sp.toDp() }).testTag("tvGameListItemRoundNumber"))
                 Spacer(Modifier.width(MmDimens.HalfMargin))
                 Row(Modifier.width(MmDimens.DoubleAndHalfMargin), verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {

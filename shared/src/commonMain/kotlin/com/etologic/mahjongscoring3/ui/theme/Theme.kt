@@ -1,6 +1,7 @@
 package com.etologic.mahjongscoring3.ui.theme
 
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Typography
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -55,10 +56,26 @@ private val MmLightColors = lightColors(
     onSurface = MmColors.GrayMM,
 )
 
+/**
+ * Android TextView defaults used by MS2 layouts: 14sp and no letter spacing (Material's defaults are
+ * 16sp body text with 0.15-0.5sp letter spacing, which made every MS3 text wider than in MS2).
+ */
+private val MmTypography = Typography().let { t ->
+    t.copy(
+        h6 = t.h6.copy(letterSpacing = 0.sp),
+        subtitle1 = t.subtitle1.copy(letterSpacing = 0.sp),
+        subtitle2 = t.subtitle2.copy(letterSpacing = 0.sp),
+        body1 = t.body1.copy(fontSize = 14.sp, letterSpacing = 0.sp),
+        body2 = t.body2.copy(letterSpacing = 0.sp),
+        caption = t.caption.copy(letterSpacing = 0.sp),
+    )
+}
+
 @Composable
 fun MahjongScoringTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colors = MmLightColors,
+        typography = MmTypography,
         content = content,
     )
 }
