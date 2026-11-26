@@ -227,7 +227,7 @@ fun NumPad(
                 Icon(painterResource(Res.drawable.ic_backspace_white_24dp), contentDescription = stringResource(Res.string.backspace), tint = Color.White)
             }
             NumPadButton(tag = "btCustomNumPad0", onClick = { add("0") }) { Text("0", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
-            Spacer(Modifier.width(64.dp + 8.dp))
+            Spacer(Modifier.width(64.dp))
         }
     }
 }
@@ -238,7 +238,8 @@ private fun NumPadButton(tag: String, onClick: () -> Unit, content: @Composable 
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(backgroundColor = MmColors.Primary, contentColor = Color.White),
-        modifier = Modifier.padding(4.dp).width(64.dp).height(48.dp).testTag(tag),
+        // MS2 ButtonNumPad: a 64x48dp Button whose background has 4dp/6dp insets
+        modifier = Modifier.width(64.dp).height(48.dp).padding(horizontal = 4.dp, vertical = 6.dp).testTag(tag),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
         content = content,
     )

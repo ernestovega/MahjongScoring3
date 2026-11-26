@@ -304,12 +304,14 @@ private fun HandActionButton(
                 contentDescription = null,
                 modifier = Modifier
                     .padding(top = if (isBig) MmDimens.HalfAndQuarterMargin else 0.dp, bottom = MmDimens.QuarterMargin)
-                    .size(if (isBig) 48.dp else 24.dp),
+                    .size(24.dp), // MS2: wrap_content of a 24dp vector
             )
             Text(
-                text = stringResource(text),
+                text = stringResource(text).uppercase(), // MS2: textAllCaps
                 color = Color.White,
                 fontSize = fontSize.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = if (isBig) MmDimens.HalfAndQuarterMargin else 0.dp),
             )

@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -81,10 +82,10 @@ fun NamesDialog(
     onDismiss: () -> Unit,
 ) {
     var gameName by remember { mutableStateOf(TextFieldValue(initial.gameName)) }
-    var east by remember { mutableStateOf(TextFieldValue(initial.nameP1, TextRange(0, initial.nameP1.length))) }
-    var south by remember { mutableStateOf(TextFieldValue(initial.nameP2, TextRange(0, initial.nameP2.length))) }
-    var west by remember { mutableStateOf(TextFieldValue(initial.nameP3, TextRange(0, initial.nameP3.length))) }
-    var north by remember { mutableStateOf(TextFieldValue(initial.nameP4, TextRange(0, initial.nameP4.length))) }
+    var east by remember { mutableStateOf(TextFieldValue(initial.nameP1, TextRange(initial.nameP1.length))) }
+    var south by remember { mutableStateOf(TextFieldValue(initial.nameP2, TextRange(initial.nameP2.length))) }
+    var west by remember { mutableStateOf(TextFieldValue(initial.nameP3, TextRange(initial.nameP3.length))) }
+    var north by remember { mutableStateOf(TextFieldValue(initial.nameP4, TextRange(initial.nameP4.length))) }
     val gameNameFocus = remember { FocusRequester() }
 
     Dialog(onDismissRequest = onDismiss) {
@@ -149,7 +150,10 @@ private fun NameField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
+        // MS2 EditTexts use selectAllOnFocus
+        modifier = modifier.fillMaxWidth().onFocusChanged { state ->
+            if (state.isFocused) onValueChange(value.copy(selection = TextRange(0, value.text.length)))
+        },
         label = { Text(label) },
         placeholder = placeholder?.let { { Text(it) } },
         leadingIcon = icon?.let { { Image(painterResource(it), contentDescription = null, modifier = Modifier.size(24.dp)) } },

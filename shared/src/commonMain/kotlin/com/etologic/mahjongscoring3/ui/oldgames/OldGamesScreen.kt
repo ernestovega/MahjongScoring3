@@ -44,7 +44,6 @@ import com.etologic.mahjongscoring3.domain.model.ShareGameOptions
 import com.etologic.mahjongscoring3.domain.model.UiGame
 import com.etologic.mahjongscoring3.domain.utils.prettifyOneLine
 import com.etologic.mahjongscoring3.domain.utils.prettifyTwoLines
-import com.etologic.mahjongscoring3.domain.utils.toGameNameFormat
 import com.etologic.mahjongscoring3.domain.utils.toStringSigned
 import com.etologic.mahjongscoring3.platform.LocalAppLocale
 import com.etologic.mahjongscoring3.platform.PlatformActions
@@ -107,7 +106,6 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.Clock
 
 @Composable
 fun OldGamesScreen(
@@ -206,7 +204,7 @@ fun OldGamesScreen(
                 nameP3 = stringResource(Res.string.player_three),
                 nameP4 = stringResource(Res.string.player_four),
             ),
-            gameNameHint = remember { Clock.System.now().toEpochMilliseconds().toGameNameFormat() },
+            gameNameHint = null, // MS2 only had a design-time (tools:hint) date
             confirmText = stringResource(Res.string.start),
             onConfirm = { names ->
                 viewModel.createGame(names.withDefaultPlayerNames(defaultNames)) { gameId ->
