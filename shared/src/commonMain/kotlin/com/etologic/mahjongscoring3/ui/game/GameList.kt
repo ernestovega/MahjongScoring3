@@ -65,6 +65,7 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 /** Port of MS2 "game_list_fragment". */
 @Composable
@@ -250,7 +251,7 @@ private fun GameListItem(
                 .fillMaxWidth()
                 .testTag("llGameListItemContainer")
                 .background(background.value)
-                .combinedClickable(onClick = { showMenu = true }, onLongClick = { showMenu = true })
+                .combinedClickable(onClick = rememberSecureClick { showMenu = true }, onLongClick = { showMenu = true })
                 .padding(horizontal = MmDimens.StandardMargin, vertical = MmDimens.HalfMargin),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {

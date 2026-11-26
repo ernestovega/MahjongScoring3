@@ -69,6 +69,7 @@ import com.etologic.mahjongscoring3.ui.theme.MmColors
 import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 internal data class ResolvedCombination(
     val combination: Combination,
@@ -197,7 +198,7 @@ private fun CombinationItem(
             .fillMaxWidth()
             .padding(horizontal = MmDimens.HalfMargin, vertical = MmDimens.QuarterMargin)
             .defaultMinSize(minHeight = 48.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = rememberSecureClick(action = onClick)),
         backgroundColor = MmColors.GrayLight,
         shape = RoundedCornerShape(MmDimens.CardCornerRadius),
     ) {

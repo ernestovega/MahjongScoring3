@@ -1,6 +1,9 @@
 package com.etologic.mahjongscoring3.ui
 
+import androidx.compose.runtime.CompositionLocalProvider
+import com.etologic.mahjongscoring3.ui.common.LocalSecureClickClock
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
@@ -53,7 +56,8 @@ actual fun ComposeUiTest.captureScreen(name: String) {
 
 /** The Compose resources context is set in [runAppUiTest]. */
 @Composable
-actual fun UiTestHost(content: @Composable () -> Unit) = content()
+actual fun UiTestHost(content: @Composable () -> Unit) =
+    CompositionLocalProvider(LocalSecureClickClock provides remember { noDebounceClock() }, content = content)
 
 actual fun pumpMainThread() {
     Thread.sleep(10)

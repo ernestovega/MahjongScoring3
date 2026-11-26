@@ -34,3 +34,13 @@ expect fun UiTestHost(content: @Composable () -> Unit)
  * the looper 50ms ahead (MS2 UiTestBase.settle() did the same). iOS: nothing.
  */
 expect fun pumpMainThread()
+
+/**
+ * The app flows tap like a fast user; MS2's Espresso tests never hit its 600ms anti double click either.
+ * Every read moves this clock a full debounce ahead, so the guard never drops a test tap.
+ * [com.etologic.mahjongscoring3.ui.common.SecureClickTest] tests the guard itself.
+ */
+fun noDebounceClock(): () -> Long {
+    var time = 0L
+    return { time += com.etologic.mahjongscoring3.ui.common.SECURE_CLICK_DEBOUNCE_MS; time }
+}

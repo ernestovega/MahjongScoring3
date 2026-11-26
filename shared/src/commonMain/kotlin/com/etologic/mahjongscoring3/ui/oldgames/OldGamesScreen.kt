@@ -106,6 +106,7 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 @Composable
 fun OldGamesScreen(
@@ -185,7 +186,7 @@ fun OldGamesScreen(
                     }
             }
             FloatingActionButton(
-                onClick = { showSetupDialog = true },
+                onClick = rememberSecureClick { showSetupDialog = true },
                 backgroundColor = MmColors.Accent,
                 contentColor = MmColors.White,
                 modifier = Modifier.align(Alignment.BottomEnd).padding(MmDimens.StandardMargin).testTag("fabOldGames"),
@@ -318,7 +319,7 @@ private fun OldGameItem(
     val totals = uiGame.ongoingRound
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin).testTag("cvOldGameItem").clickable(onClick = onClick),
+        modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin).testTag("cvOldGameItem").clickable(onClick = rememberSecureClick(action = onClick)),
         backgroundColor = MmColors.GrayLight,
         contentColor = MmColors.GrayMM,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(MmDimens.CardCornerRadius),
@@ -339,10 +340,10 @@ private fun OldGameItem(
                         .weight(1f)
                         .padding(start = MmDimens.StandardMargin, top = MmDimens.HalfMargin, bottom = MmDimens.HalfMargin),
                 )
-                IconButton(onClick = onDeleteClick, modifier = Modifier.testTag("btOldGameItemDelete")) {
+                IconButton(onClick = rememberSecureClick(action = onDeleteClick), modifier = Modifier.testTag("btOldGameItemDelete")) {
                     Icon(painterResource(Res.drawable.ic_bin), contentDescription = stringResource(Res.string.delete), tint = MmColors.White)
                 }
-                IconButton(onClick = onShareClick, modifier = Modifier.padding(end = MmDimens.HalfMargin).testTag("btOldGameItemShare")) {
+                IconButton(onClick = rememberSecureClick(action = onShareClick), modifier = Modifier.padding(end = MmDimens.HalfMargin).testTag("btOldGameItemShare")) {
                     Icon(painterResource(Res.drawable.ic_share), contentDescription = stringResource(Res.string.share), tint = MmColors.White)
                 }
             }

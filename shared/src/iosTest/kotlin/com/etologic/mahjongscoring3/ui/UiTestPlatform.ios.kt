@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui
 
+import com.etologic.mahjongscoring3.ui.common.LocalSecureClickClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -67,6 +68,7 @@ actual fun UiTestHost(content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalViewModelStoreOwner provides owner,
         LocalLifecycleOwner provides owner,
+        LocalSecureClickClock provides remember { noDebounceClock() },
     ) { content() }
 }
 

@@ -123,11 +123,11 @@ fun NamesDialog(
                         .padding(top = MmDimens.HalfMargin, end = MmDimens.StandardMargin, bottom = MmDimens.HalfMargin),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss, modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogCancel")) {
+                    TextButton(onClick = rememberSecureClick(action = onDismiss), modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogCancel")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.GrayMM)
                     }
                     TextButton(
-                        onClick = { onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text)) },
+                        onClick = rememberSecureClick { onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text)) },
                         modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogSave"),
                     ) {
                         Text(confirmText.uppercase(), color = MmColors.Accent)

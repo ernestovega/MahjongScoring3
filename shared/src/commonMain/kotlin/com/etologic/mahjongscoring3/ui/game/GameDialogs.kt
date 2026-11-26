@@ -105,6 +105,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 // HAND ACTIONS (MS2 HandActionsDialogFragment with its pages: actions, hu and penalty)
 
@@ -138,7 +139,7 @@ fun HandActionsDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MmColors.BlackTransparent)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onDismiss),
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = rememberSecureClick(onDismiss)),
             contentAlignment = Alignment.Center,
         ) {
             Card(
@@ -294,7 +295,7 @@ private fun HandActionButton(
     ) {
         Column(
             modifier = Modifier
-                .clickable(onClick = onClick)
+                .clickable(onClick = rememberSecureClick(onClick))
                 .padding(
                     horizontal = MmDimens.StandardAndHalfMargin,
                     vertical = if (isBig) MmDimens.StandardAndHalfMargin else MmDimens.HalfMargin,
@@ -481,10 +482,10 @@ private fun DialogButtons(onClose: () -> Unit, confirmText: String, onConfirm: (
         modifier = Modifier.fillMaxWidth().padding(top = MmDimens.StandardMargin),
         horizontalArrangement = Arrangement.End,
     ) {
-        TextButton(onClick = onClose, modifier = Modifier.testTag(closeTag)) {
+        TextButton(onClick = rememberSecureClick(onClose), modifier = Modifier.testTag(closeTag)) {
             Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
         }
-        TextButton(onClick = onConfirm, modifier = Modifier.testTag(confirmTag)) {
+        TextButton(onClick = rememberSecureClick(onConfirm), modifier = Modifier.testTag(confirmTag)) {
             Text(confirmText.uppercase(), color = MmColors.Accent)
         }
     }
@@ -565,16 +566,16 @@ fun RankingDialog(
                     horizontalArrangement = Arrangement.End,
                 ) {
                     if (rankingData.numRounds < MAX_MCR_ROUNDS) {
-                        TextButton(onClick = { onResume(); onDismiss() }, modifier = Modifier.testTag("btRankingDialogResume")) {
+                        TextButton(onClick = rememberSecureClick { onResume(); onDismiss() }, modifier = Modifier.testTag("btRankingDialogResume")) {
                             Text(stringResource(Res.string.resume).uppercase(), color = MmColors.Accent)
                         }
                         Spacer(Modifier.weight(1f))
                     }
-                    TextButton(onClick = onShare, modifier = Modifier.testTag("btRankingDialogShare")) {
+                    TextButton(onClick = rememberSecureClick(action = onShare), modifier = Modifier.testTag("btRankingDialogShare")) {
                         Text(stringResource(Res.string.share).uppercase(), color = MmColors.Accent)
                     }
                     Spacer(Modifier.width(MmDimens.StandardMargin))
-                    TextButton(onClick = onDismiss, modifier = Modifier.testTag("btRankingDialogClose")) {
+                    TextButton(onClick = rememberSecureClick(action = onDismiss), modifier = Modifier.testTag("btRankingDialogClose")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
                     }
                 }
@@ -701,7 +702,7 @@ private fun Die(value: Int, isVisible: Boolean, onClick: () -> Unit, modifier: M
             Image(
                 painter = painterResource(if (value == 0) Res.drawable.dice3droll else diceFaces[value - 1]),
                 contentDescription = stringResource(if (value == 0) Res.string.zero else diceDescriptions[value - 1]),
-                modifier = Modifier.size(96.dp).clickable(onClick = onClick),
+                modifier = Modifier.size(96.dp).clickable(onClick = rememberSecureClick(action = onClick)),
             )
         } else {
             Spacer(Modifier.size(96.dp))

@@ -55,6 +55,7 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 /** MS2 seat states: NORMAL (grayMM), SELECTED (accent), DISABLED (gray, game ended). */
 enum class SeatState(val color: Color) {
@@ -263,7 +264,7 @@ fun DiscarderSelector(
                     .testTag("iDiscarderSelectorPlayer${index + 1}Container")
                     .clip(RoundedCornerShape(MmDimens.HalfMargin))
                     .background(if (isSelected) MmColors.Gray else Color.Transparent)
-                    .clickable { onSelect(if (isSelected) TableWinds.NONE else wind) }
+                    .clickable(onClick = rememberSecureClick { onSelect(if (isSelected) TableWinds.NONE else wind) })
                     .padding(MmDimens.HalfMargin),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

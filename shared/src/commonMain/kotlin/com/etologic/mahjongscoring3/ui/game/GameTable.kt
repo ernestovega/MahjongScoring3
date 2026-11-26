@@ -59,6 +59,7 @@ import com.etologic.mahjongscoring3.ui.theme.MmColors
 import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import com.etologic.mahjongscoring3.ui.common.rememberSecureClick
 
 private enum class Corner { TOP_START, TOP_END, BOTTOM_START, BOTTOM_END }
 
@@ -134,7 +135,7 @@ fun GameTable(
                 RoundNumberLabel(game, corner)
             }
             FloatingActionButton(
-                onClick = if (game.isEnded) onRankingClick else onDiceClick,
+                onClick = rememberSecureClick(action = if (game.isEnded) onRankingClick else onDiceClick),
                 backgroundColor = MmColors.Accent,
                 contentColor = MmColors.White,
                 modifier = Modifier
@@ -328,7 +329,7 @@ private fun SeatBySeat(
         modifier = modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = onClick,
+            onClick = rememberSecureClick(action = onClick),
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -400,7 +401,8 @@ private fun SeatsByRanking(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                    ) { onSeatClick(seat) },
+                        onClick = rememberSecureClick { onSeatClick(seat) },
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
