@@ -15,6 +15,7 @@ actual fun testDatabaseBuilder(path: String): RoomDatabase.Builder<AppDatabase> 
 
 actual fun testSqliteDriver(): SQLiteDriver = BundledSQLiteDriver()
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual fun testFilePath(name: String): String {
     val path = NSTemporaryDirectory().trimEnd('/') + "/ms3-tests-$name"
     listOf("", "-wal", "-shm", "-journal").forEach { NSFileManager.defaultManager.removeItemAtPath(path + it, null) }

@@ -1,5 +1,7 @@
 package com.etologic.mahjongscoring3.ms2
 
+import com.etologic.mahjongscoring3.resources.Res
+import com.etologic.mahjongscoring3.resources.dragon_pung
 import com.etologic.mahjongscoring3.domain.FakeGamesRepository
 import com.etologic.mahjongscoring3.domain.FakeRoundsRepository
 import com.etologic.mahjongscoring3.domain.model.GameId
@@ -337,7 +339,7 @@ class ViewModelsTest {
 
     private fun resolved(vararg items: Triple<Int, String, String?>) = items.mapIndexed { index, (points, name, description) ->
         ResolvedCombination(
-            Combination(index + 1, points, com.etologic.mahjongscoring3.resources.Res.string.dragon_pung),
+            Combination(index + 1, points, Res.string.dragon_pung),
             name,
             description,
         )

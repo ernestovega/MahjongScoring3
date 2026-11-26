@@ -3,7 +3,6 @@ package com.etologic.mahjongscoring3.domain.utils
 import kotlinx.datetime.TimeZone
 import platform.Foundation.NSDate
 import platform.Foundation.NSTimeZone
-import platform.Foundation.abbreviationForDate
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.timeZoneWithName
 

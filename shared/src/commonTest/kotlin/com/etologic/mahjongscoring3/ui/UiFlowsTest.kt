@@ -175,7 +175,7 @@ class UiFlowsTest : UiTestBase() {
         assertThat(stored[0].handPoints).isEqualTo(24)
         assertThat(stored[1].isOngoing()).isTrue()
         // The list page is shown
-        waitUntil(5_000) { runCatching { view("tabGameLIST").assertIsSelected() }.isSuccess }
+        waitUntil(timeoutMillis = 5_000) { runCatching { view("tabGameLIST").assertIsSelected() }.isSuccess }
         view(hasText("Totals")).assertIsDisplayed()
     }
 
@@ -377,7 +377,7 @@ class UiFlowsTest : UiTestBase() {
         openGame(GameScenarios.penalties)
         view("btTableSeatsShowDiffs").assertIsDisplayed()
         openMenuItem("action_disable_diffs_calcs")
-        waitUntil(5_000) { !exists("btTableSeatsShowDiffs") }
+        waitUntil(timeoutMillis = 5_000) { !exists("btTableSeatsShowDiffs") }
         openMenuItem("action_enable_diffs_calcs")
         awaitView("btTableSeatsShowDiffs")
         view("btTableSeatsShowDiffs").assertIsDisplayed()

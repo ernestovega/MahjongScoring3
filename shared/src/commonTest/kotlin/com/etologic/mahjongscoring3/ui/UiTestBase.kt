@@ -101,7 +101,7 @@ abstract class UiTestBase : UiPlatformTest() {
 
     /** Room and DataStore write on background threads: wait for the condition instead of asserting at once. */
     protected fun ComposeUiTest.awaitData(timeoutMillis: Long = 5_000, condition: () -> Boolean) {
-        waitUntil(timeoutMillis) { condition() }
+        waitUntil(timeoutMillis = timeoutMillis) { condition() }
         waitForIdle()
     }
 
@@ -133,7 +133,7 @@ abstract class UiTestBase : UiPlatformTest() {
 
     /** Waits for a view to appear (screen transitions, dialogs after a database write). */
     protected fun ComposeUiTest.awaitView(tag: String, timeoutMillis: Long = 5_000) {
-        waitUntil(timeoutMillis) { exists(tag) }
+        waitUntil(timeoutMillis = timeoutMillis) { exists(tag) }
     }
 
     // endregion
