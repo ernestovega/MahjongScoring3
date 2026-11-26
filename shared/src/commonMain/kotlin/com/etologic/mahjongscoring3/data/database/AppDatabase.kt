@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
 import kotlinx.coroutines.Dispatchers
@@ -49,9 +50,12 @@ object Migration1to2 : Migration(1, 2) {
     }
 }
 
-fun buildAppDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
+fun buildAppDatabase(
+    builder: RoomDatabase.Builder<AppDatabase>,
+    driver: SQLiteDriver = BundledSQLiteDriver(),
+): AppDatabase =
     builder
         .addMigrations(Migration1to2)
-        .setDriver(BundledSQLiteDriver())
+        .setDriver(driver)
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()

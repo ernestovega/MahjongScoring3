@@ -38,6 +38,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -69,11 +70,19 @@ import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-private data class ResolvedCombination(
+internal data class ResolvedCombination(
     val combination: Combination,
     val name: String,
     val description: String?,
 )
+
+/** Same filter as MS2 CombinationsViewModel: by localized name, description or points, ignoring case. */
+internal fun filterCombinations(combinations: List<ResolvedCombination>, filter: String): List<ResolvedCombination> =
+    combinations.filter {
+        it.name.contains(filter, ignoreCase = true) ||
+            it.description?.contains(filter, ignoreCase = true) == true ||
+            it.combination.points.toString().contains(filter, ignoreCase = true)
+    }
 
 @Composable
 fun CombinationsScreen(onOpenDrawer: () -> Unit) {
@@ -90,11 +99,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
             description = combination.description?.let { stringResource(it) },
         )
     }
-    val filtered = resolved.filter {
-        it.name.contains(filter, ignoreCase = true) ||
-            it.description?.contains(filter, ignoreCase = true) == true ||
-            it.combination.points.toString().contains(filter, ignoreCase = true)
-    }
+    val filtered = filterCombinations(resolved, filter)
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
@@ -135,7 +140,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
                         trailingIcon = if (filter.isNotEmpty()) {
                             { IconButton(onClick = { filter = "" }) { Icon(Icons.Filled.Close, null, tint = MmColors.White) } }
                         } else null,
-                        modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                        modifier = Modifier.fillMaxWidth().focusRequester(focusRequester).testTag("etCombinationsSearch"),
                     )
                     LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
                 } else {
@@ -144,7 +149,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
             },
             actions = {
                 if (!isSearching) {
-                    IconButton(onClick = { isSearching = true }) {
+                    IconButton(onClick = { isSearching = true }, modifier = Modifier.testTag("action_search")) {
                         Icon(painterResource(Res.drawable.ic_search), contentDescription = stringResource(Res.string.search), tint = MmColors.White)
                     }
                 }

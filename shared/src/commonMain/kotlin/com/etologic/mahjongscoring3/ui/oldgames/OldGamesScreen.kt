@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -137,11 +138,11 @@ fun OldGamesScreen(
             actions = {
                 OverflowMenu(
                     listOf(
-                        OverflowItem(stringResource(Res.string.language)) { showLanguageDialog = true },
-                        OverflowItem(stringResource(Res.string.export_games)) {
+                        OverflowItem(stringResource(Res.string.language), "action_language") { showLanguageDialog = true },
+                        OverflowItem(stringResource(Res.string.export_games), "action_export_games") {
                             viewModel.exportGames { platformActions.shareFile(it, shareFilesUsing) }
                         },
-                        OverflowItem(stringResource(Res.string.import_games)) { pickFile() },
+                        OverflowItem(stringResource(Res.string.import_games), "action_import_games") { pickFile() },
                     )
                 )
             },
@@ -153,6 +154,7 @@ fun OldGamesScreen(
                     if (state.oldGamesList.isEmpty()) {
                         EmptyState(
                             message = stringResource(Res.string.there_arent_games_yet_start_one),
+                            modifier = Modifier.testTag("emptyLayoutOldGames"),
                             footer = {
                                 Image(
                                     painter = painterResource(Res.drawable.arrow),
@@ -187,7 +189,7 @@ fun OldGamesScreen(
                 onClick = { showSetupDialog = true },
                 backgroundColor = MmColors.Accent,
                 contentColor = MmColors.White,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(MmDimens.StandardMargin),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(MmDimens.StandardMargin).testTag("fabOldGames"),
             ) {
                 Icon(painterResource(Res.drawable.ic_add), contentDescription = stringResource(Res.string.start_new_game))
             }
@@ -317,7 +319,7 @@ private fun OldGameItem(
     val totals = uiGame.ongoingRound
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin).clickable(onClick = onClick),
+        modifier = Modifier.fillMaxWidth().padding(MmDimens.HalfMargin).testTag("cvOldGameItem").clickable(onClick = onClick),
         backgroundColor = MmColors.GrayLight,
         contentColor = MmColors.GrayMM,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(MmDimens.CardCornerRadius),
@@ -338,10 +340,10 @@ private fun OldGameItem(
                         .weight(1f)
                         .padding(start = MmDimens.StandardMargin, top = MmDimens.HalfMargin, bottom = MmDimens.HalfMargin),
                 )
-                IconButton(onClick = onDeleteClick) {
+                IconButton(onClick = onDeleteClick, modifier = Modifier.testTag("btOldGameItemDelete")) {
                     Icon(painterResource(Res.drawable.ic_bin), contentDescription = stringResource(Res.string.delete), tint = MmColors.White)
                 }
-                IconButton(onClick = onShareClick, modifier = Modifier.padding(end = MmDimens.HalfMargin)) {
+                IconButton(onClick = onShareClick, modifier = Modifier.padding(end = MmDimens.HalfMargin).testTag("btOldGameItemShare")) {
                     Icon(painterResource(Res.drawable.ic_share), contentDescription = stringResource(Res.string.share), tint = MmColors.White)
                 }
             }

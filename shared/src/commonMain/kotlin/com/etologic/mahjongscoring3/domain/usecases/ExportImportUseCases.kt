@@ -38,7 +38,6 @@ data class ExportedFile(
     val content: String,
 )
 
-private val json = Json { ignoreUnknownKeys = true }
 
 private fun UiGame.exportFileName(extension: String): String =
     gameName.ifEmpty { startDate.toFileNameFormat() }
@@ -209,7 +208,8 @@ class ImportGamesFromJsonUseCase(
     suspend operator fun invoke(jsonText: String): Result<List<GameId>> =
         runCatching {
             val portableGames = try {
-                json.decodeFromString(ListSerializer(PortableGame.serializer()), jsonText)
+                // Strict, as Mahjong Scoring 2: unknown keys make the file invalid
+                Json.decodeFromString(ListSerializer(PortableGame.serializer()), jsonText)
             } catch (e: Exception) {
                 throw JsonGamesNotValidException(e)
             }

@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -231,13 +232,14 @@ private fun GameListItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("llGameListItemContainer")
                 .background(background.value)
                 .combinedClickable(onClick = { showMenu = true }, onLongClick = { showMenu = true })
                 .padding(horizontal = MmDimens.StandardMargin, vertical = MmDimens.HalfMargin),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(round.roundNumber.toString(), color = MmColors.GrayMM, textAlign = TextAlign.Center, maxLines = 1,
-                    modifier = Modifier.width(16.dp))
+                    modifier = Modifier.width(16.dp).testTag("tvGameListItemRoundNumber"))
                 Spacer(Modifier.width(MmDimens.HalfMargin))
                 Row(Modifier.width(MmDimens.DoubleAndHalfMargin), verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
@@ -283,7 +285,7 @@ private fun GameListItem(
             }
         }
         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-            DropdownMenuItem(onClick = { showMenu = false; onDeleteClick() }) {
+            DropdownMenuItem(onClick = { showMenu = false; onDeleteClick() }, modifier = Modifier.testTag("action_delete_round")) {
                 Text(stringResource(Res.string.delete), color = MmColors.GrayMM)
             }
         }

@@ -37,6 +37,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -180,31 +181,39 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
                 modifier = Modifier.padding(padding).background(MmColors.GrayLight),
             ) {
                 composable(Routes.OLD_GAMES) {
-                    PressBackTwiceToExit(platformActions)
-                    OldGamesScreen(
-                        viewModel = koinViewModel(),
-                        platformActions = platformActions,
-                        currentLanguage = currentLanguage,
-                        onOpenDrawer = openDrawer,
-                        onChangeLanguage = mainViewModel::changeLanguage,
-                        onOpenGame = { gameId ->
-                            mainViewModel.updateActiveGameId(gameId)
-                            navController.navigateTo(Routes.GAME)
-                        },
-                    )
+                    Box(Modifier.fillMaxSize().testTag("oldGamesFragment")) {
+                        PressBackTwiceToExit(platformActions)
+                        OldGamesScreen(
+                            viewModel = koinViewModel(),
+                            platformActions = platformActions,
+                            currentLanguage = currentLanguage,
+                            onOpenDrawer = openDrawer,
+                            onChangeLanguage = mainViewModel::changeLanguage,
+                            onOpenGame = { gameId ->
+                                mainViewModel.updateActiveGameId(gameId)
+                                navController.navigateTo(Routes.GAME)
+                            },
+                        )
+                    }
                 }
                 composable(Routes.GAME) {
-                    GameScreen(
-                        gameId = activeGameId,
-                        platformActions = platformActions,
-                        onOpenDrawer = openDrawer,
-                    )
+                    Box(Modifier.fillMaxSize().testTag("gameFragment")) {
+                        GameScreen(
+                            gameId = activeGameId,
+                            platformActions = platformActions,
+                            onOpenDrawer = openDrawer,
+                        )
+                    }
                 }
                 composable(Routes.COMBINATIONS) {
-                    CombinationsScreen(onOpenDrawer = openDrawer)
+                    Box(Modifier.fillMaxSize().testTag("combinationsFragment")) {
+                        CombinationsScreen(onOpenDrawer = openDrawer)
+                    }
                 }
                 composable(Routes.DIFFS_CALCULATOR) {
-                    DiffsCalculatorScreen(onBack = { navController.navigateUp() })
+                    Box(Modifier.fillMaxSize().testTag("diffsCalculatorFragment")) {
+                        DiffsCalculatorScreen(onBack = { navController.navigateUp() })
+                    }
                 }
             }
         }
@@ -252,6 +261,7 @@ private fun androidx.compose.foundation.layout.RowScope.BottomItem(
     navController: NavHostController,
 ) {
     BottomNavigationItem(
+        modifier = Modifier.testTag("bottomNavigation_" + route),
         selected = currentRoute == route,
         onClick = { navController.navigateTo(route) },
         icon = { Icon(icon, contentDescription = null) },
@@ -299,10 +309,10 @@ private fun Drawer(
                 modifier = Modifier.align(Alignment.BottomEnd).padding(MmDimens.HalfMargin),
             )
         }
-        DrawerItem(painterResource(Res.drawable.ic_history_black_24px), stringResource(Res.string.old_games), currentRoute == Routes.OLD_GAMES) { onNavigate(Routes.OLD_GAMES) }
-        DrawerItem(painterResource(Res.drawable.ic_play_arrow_white_24px), stringResource(Res.string.game), currentRoute == Routes.GAME, enabled = isGameEnabled) { onNavigate(Routes.GAME) }
-        DrawerItem(painterResource(Res.drawable.ic_format_list_numbered_black_24dp), stringResource(Res.string.combinations), currentRoute == Routes.COMBINATIONS) { onNavigate(Routes.COMBINATIONS) }
-        DrawerItem(painterResource(Res.drawable.ic_calc), stringResource(Res.string.diffsCalculator), currentRoute == Routes.DIFFS_CALCULATOR) { onNavigate(Routes.DIFFS_CALCULATOR) }
+        DrawerItem(painterResource(Res.drawable.ic_history_black_24px), stringResource(Res.string.old_games), tag = "navigationView_" + Routes.OLD_GAMES, selected = currentRoute == Routes.OLD_GAMES) { onNavigate(Routes.OLD_GAMES) }
+        DrawerItem(painterResource(Res.drawable.ic_play_arrow_white_24px), stringResource(Res.string.game), tag = "navigationView_" + Routes.GAME, selected = currentRoute == Routes.GAME, enabled = isGameEnabled) { onNavigate(Routes.GAME) }
+        DrawerItem(painterResource(Res.drawable.ic_format_list_numbered_black_24dp), stringResource(Res.string.combinations), tag = "navigationView_" + Routes.COMBINATIONS, selected = currentRoute == Routes.COMBINATIONS) { onNavigate(Routes.COMBINATIONS) }
+        DrawerItem(painterResource(Res.drawable.ic_calc), stringResource(Res.string.diffsCalculator), tag = "navigationView_" + Routes.DIFFS_CALCULATOR, selected = currentRoute == Routes.DIFFS_CALCULATOR) { onNavigate(Routes.DIFFS_CALCULATOR) }
         DrawerItem(painterResource(Res.drawable.ic_import_contacts_black_24px), stringResource(Res.string.green_book_en)) { open(GREEN_BOOK_ENGLISH_URL) }
         DrawerItem(painterResource(Res.drawable.ic_import_contacts_black_24px), stringResource(Res.string.green_book_es)) { open(GREEN_BOOK_SPANISH_URL) }
         DrawerItem(painterResource(Res.drawable.mm_logo_256), stringResource(Res.string.mahjong_madrid_web)) { open(MAHJONG_MADRID_URL) }
@@ -316,6 +326,7 @@ private fun Drawer(
 private fun DrawerItem(
     icon: Painter,
     title: String,
+    tag: String? = null,
     selected: Boolean = false,
     enabled: Boolean = true,
     tint: Boolean = true,
@@ -325,6 +336,7 @@ private fun DrawerItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .then(tag?.let { Modifier.testTag(it) } ?: Modifier)
             .height(48.dp)
             .background(if (selected) MmColors.Gray.copy(alpha = 0.3f) else Color.Transparent)
             .clickable(enabled = enabled, onClick = onClick)

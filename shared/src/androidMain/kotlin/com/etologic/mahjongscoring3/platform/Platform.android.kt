@@ -86,10 +86,13 @@ private class AndroidPlatformActions(private val context: Context) : PlatformAct
 
     override fun requestInAppReview() {
         val activity = context.findActivity() ?: return
-        val manager = ReviewManagerFactory.create(activity)
-        manager.requestReviewFlow().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                manager.launchReviewFlow(activity, task.result)
+        // Never let the review prompt break the app (e.g. no Play Store on the device)
+        runCatching {
+            val manager = ReviewManagerFactory.create(activity)
+            manager.requestReviewFlow().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    manager.launchReviewFlow(activity, task.result)
+                }
             }
         }
     }

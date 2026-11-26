@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -206,7 +207,7 @@ fun NumPad(
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
-                modifier = Modifier.padding(horizontal = MmDimens.HalfMargin),
+                modifier = Modifier.padding(horizontal = MmDimens.HalfMargin).testTag("tvCustomNumPadPoints"),
             )
             if (isError) {
                 Text("!", color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
@@ -218,14 +219,14 @@ fun NumPad(
         }
         listOf(listOf("7", "8", "9"), listOf("4", "5", "6"), listOf("1", "2", "3")).forEach { row ->
             Row {
-                row.forEach { digit -> NumPadButton(onClick = { add(digit) }) { Text(digit, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold) } }
+                row.forEach { digit -> NumPadButton(tag = "btCustomNumPad$digit", onClick = { add(digit) }) { Text(digit, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold) } }
             }
         }
         Row {
-            NumPadButton(onClick = { if (value.isNotEmpty()) onValueChange(value.dropLast(1)) }) {
+            NumPadButton(tag = "btCustomNumPadBackspace", onClick = { if (value.isNotEmpty()) onValueChange(value.dropLast(1)) }) {
                 Icon(painterResource(Res.drawable.ic_backspace_white_24dp), contentDescription = stringResource(Res.string.backspace), tint = Color.White)
             }
-            NumPadButton(onClick = { add("0") }) { Text("0", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+            NumPadButton(tag = "btCustomNumPad0", onClick = { add("0") }) { Text("0", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
             Spacer(Modifier.width(64.dp + 8.dp))
         }
     }
@@ -233,11 +234,11 @@ fun NumPad(
 
 /** MS2 "ButtonNumPad" style: 64x48dp green buttons. */
 @Composable
-private fun NumPadButton(onClick: () -> Unit, content: @Composable RowScope.() -> Unit) {
+private fun NumPadButton(tag: String, onClick: () -> Unit, content: @Composable RowScope.() -> Unit) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(backgroundColor = MmColors.Primary, contentColor = Color.White),
-        modifier = Modifier.padding(4.dp).width(64.dp).height(48.dp),
+        modifier = Modifier.padding(4.dp).width(64.dp).height(48.dp).testTag(tag),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
         content = content,
     )
@@ -252,12 +253,13 @@ fun DiscarderSelector(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier.fillMaxWidth()) {
-        seats.forEach { (wind, name) ->
+        seats.forEachIndexed { index, (wind, name) ->
             val isSelected = wind == selected
             val color = if (isSelected) MmColors.Accent else MmColors.GrayMM
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .testTag("iDiscarderSelectorPlayer${index + 1}Container")
                     .clip(RoundedCornerShape(MmDimens.HalfMargin))
                     .background(if (isSelected) MmColors.Gray else Color.Transparent)
                     .clickable { onSelect(if (isSelected) TableWinds.NONE else wind) }

@@ -62,6 +62,8 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -70,6 +72,15 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.review.ktx)
+        }
+        // Data tests run on the JVM with Robolectric, like Mahjong Scoring 2 data tests
+        androidUnitTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.robolectric)
+            implementation(libs.androidx.test.core)
+            implementation(libs.androidx.test.ext.junit)
+            implementation(libs.androidx.sqlite.framework)
+            implementation(libs.androidx.compose.ui.test.junit4)
         }
     }
 }
@@ -84,6 +95,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 compose.resources {
@@ -97,6 +111,8 @@ room {
 }
 
 dependencies {
+    // ComponentActivity used by the Compose UI tests on Robolectric
+    add("debugImplementation", libs.androidx.compose.ui.test.manifest)
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
@@ -107,8 +123,11 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("user.timezone", "UTC")
     systemProperty("goldens.dir", "$projectDir/src/commonTest/resources/golden")
+    systemProperty("screenshots.dir", "${layout.buildDirectory.get().asFile}/screenshots/android")
 }
 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
     environment("SIMCTL_CHILD_GOLDENS_DIR", "$projectDir/src/commonTest/resources/golden")
     environment("SIMCTL_CHILD_TZ", "UTC")
+    environment("SIMCTL_CHILD_SCREENSHOTS_DIR", "${layout.buildDirectory.get().asFile}/screenshots/ios")
+    doFirst { layout.buildDirectory.dir("screenshots/ios").get().asFile.mkdirs() }
 }

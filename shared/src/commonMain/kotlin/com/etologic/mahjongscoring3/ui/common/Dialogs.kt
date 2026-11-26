@@ -13,6 +13,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,13 +44,13 @@ fun MmAlertDialog(
         title = title?.let { { Text(it, fontWeight = FontWeight.Bold, fontSize = 20.sp) } },
         text = message?.let { { Text(it, fontSize = 16.sp) } },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
+            TextButton(onClick = onConfirm, modifier = Modifier.testTag("btAlertDialogPositive")) {
                 Text(confirmText.uppercase(), color = MmColors.Accent)
             }
         },
         dismissButton = dismissText?.let {
             {
-                TextButton(onClick = onDismiss) {
+                TextButton(onClick = onDismiss, modifier = Modifier.testTag("btAlertDialogNegative")) {
                     Text(it.uppercase(), color = MmColors.Accent)
                 }
             }

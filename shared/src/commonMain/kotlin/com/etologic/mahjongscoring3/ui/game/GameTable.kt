@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -103,7 +104,7 @@ fun GameTable(
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth().padding(MmDimens.StandardMargin),
+                modifier = Modifier.fillMaxWidth().padding(MmDimens.StandardMargin).testTag("tvGameTableGameName"),
             )
         }
         Box(Modifier.fillMaxSize()) {
@@ -139,7 +140,8 @@ fun GameTable(
                 modifier = Modifier
                     .align(fabCorner.alignment())
                     .padding(MmDimens.StandardMargin)
-                    .size(MmDimens.QuadrupleMargin),
+                    .size(MmDimens.QuadrupleMargin)
+                    .testTag("fabGameTable"),
             ) {
                 Icon(
                     painter = painterResource(if (game.isEnded) Res.drawable.ic_trophy_white else Res.drawable.ic_dice),
@@ -199,6 +201,8 @@ private fun BoxScope.RoundNumberLabel(game: UiGame, corner: Corner) {
 private fun DiffsButton(isVisible: Boolean, onToggleDiffs: (Boolean) -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
+            // MS2 hides the button with INVISIBLE: here the tag exists only while it is visible
+            .then(if (isVisible) Modifier.testTag("btTableSeatsShowDiffs") else Modifier)
             .size(MmDimens.TripleMargin)
             .then(
                 if (isVisible) {
@@ -267,7 +271,10 @@ private fun SeatsBySeat(
             isEnded = game.isEnded,
             seatDiffs = seatsDiffs.getOrNull(index)?.takeIf { showDiffs },
             onClick = { onSeatClick(seat) },
-            modifier = Modifier.graphicsLayer(rotationZ = rotation).then(paddingModifier),
+            modifier = Modifier
+                .testTag("iGameTableSeat" + seat.name.lowercase().replaceFirstChar { it.uppercase() })
+                .graphicsLayer(rotationZ = rotation)
+                .then(paddingModifier),
         )
     }
 
@@ -279,7 +286,7 @@ private fun SeatsBySeat(
             SeatAt(TableWinds.WEST)
             SeatAt(TableWinds.NORTH)
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().testTag("iTableSeatsBySeat"),
     ) { measurables, constraints ->
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val placeables = measurables.map { it.measure(loose) }
@@ -333,6 +340,7 @@ private fun SeatBySeat(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             textAlign = TextAlign.Center,
+            modifier = Modifier.testTag("tvTableSeatBySeatPoints"),
         )
         PenaltyPoints(penalty, isEnded, Modifier.offset(y = (-8).dp))
         Text(
@@ -343,7 +351,7 @@ private fun SeatBySeat(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(164.dp),
+            modifier = Modifier.width(164.dp).testTag("tvTableSeatBySeatName"),
         )
         seatDiffs?.let { DiffsSmallTable(it) }
     }
@@ -377,7 +385,7 @@ private fun SeatsByRanking(
     val positions = listOf(Res.string._1st, Res.string._2nd, Res.string._3rd, Res.string._4th)
 
     Column(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().testTag("iTableSeatsByRanking").verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
     ) {
