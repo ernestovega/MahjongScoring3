@@ -44,3 +44,7 @@ fun noDebounceClock(): () -> Long {
     var time = 0L
     return { time += com.etologic.mahjongscoring3.ui.common.SECURE_CLICK_DEBOUNCE_MS; time }
 }
+
+/** The system back action (Android back button or gesture). iOS has no back key: Escape closes dialogs there. */
+@OptIn(ExperimentalTestApi::class)
+expect fun ComposeUiTest.pressBack()

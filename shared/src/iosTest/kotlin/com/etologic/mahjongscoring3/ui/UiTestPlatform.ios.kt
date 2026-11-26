@@ -3,7 +3,6 @@ package com.etologic.mahjongscoring3.ui
 import com.etologic.mahjongscoring3.ui.common.LocalSecureClickClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.Lifecycle
@@ -19,6 +18,8 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -37,8 +38,15 @@ actual abstract class UiPlatformTest actual constructor()
 private const val DENSITY = 420f / 160f
 
 @OptIn(ExperimentalTestApi::class)
-actual fun runAppUiTest(block: ComposeUiTest.() -> Unit) =
-    runSkikoComposeUiTest(size = Size(411 * DENSITY, 891 * DENSITY), density = Density(DENSITY)) { block() }
+actual fun runAppUiTest(block: ComposeUiTest.() -> Unit) {
+    val owner = TestOwner()
+    currentOwner = owner
+    try {
+        runSkikoComposeUiTest(size = Size(411 * DENSITY, 891 * DENSITY), density = Density(DENSITY)) { block() }
+    } finally {
+        owner.viewModelStore.clear()
+    }
+}
 
 /** On iOS dialogs and popups are drawn in the same scene, so the first root has the whole screen. */
 @OptIn(ExperimentalTestApi::class)
@@ -61,10 +69,15 @@ private class TestOwner : ViewModelStoreOwner, LifecycleOwner {
     override val lifecycle: Lifecycle get() = registry
 }
 
+/**
+ * The owner of the running test. It is created outside the composition (in [runAppUiTest]), like an
+ * activity: a StateRestorationTester save and restore rebuilds the content but keeps the ViewModels.
+ */
+private var currentOwner = TestOwner()
+
 @Composable
 actual fun UiTestHost(content: @Composable () -> Unit) {
-    val owner = remember { TestOwner() }
-    DisposableEffect(owner) { onDispose { owner.viewModelStore.clear() } }
+    val owner = currentOwner
     CompositionLocalProvider(
         LocalViewModelStoreOwner provides owner,
         LocalLifecycleOwner provides owner,
@@ -73,3 +86,11 @@ actual fun UiTestHost(content: @Composable () -> Unit) {
 }
 
 actual fun pumpMainThread() = Unit
+
+@OptIn(ExperimentalTestApi::class, androidx.compose.ui.test.ExperimentalTestApi::class)
+actual fun ComposeUiTest.pressBack() {
+    val roots = onAllNodes(isRoot())
+    val top = roots.fetchSemanticsNodes().size - 1
+    roots[top].performKeyInput { pressKey(androidx.compose.ui.input.key.Key.Escape) }
+    waitForIdle()
+}

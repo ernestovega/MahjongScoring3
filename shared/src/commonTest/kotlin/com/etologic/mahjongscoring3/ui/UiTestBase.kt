@@ -60,6 +60,7 @@ abstract class UiTestBase : UiPlatformTest() {
         seatsArrangement: SeatsArrangement? = null,
         isDiffsFeatureEnabled: Boolean? = null,
         language: String = "en",
+        restorable: Boolean = false,
         block: ComposeUiTest.() -> Unit,
     ) = runAppUiTest {
         val id = nextId++
@@ -84,10 +85,18 @@ abstract class UiTestBase : UiPlatformTest() {
                     scenario.rounds.forEach { rounds.insertOne(it).getOrThrow() }
                 }
             }
-            setContent {
+            val content: @androidx.compose.runtime.Composable () -> Unit = {
                 UiTestHost {
                     CompositionLocalProvider(LocalPlatformActionsOverride provides platformActions) { App() }
                 }
+            }
+            if (restorable) {
+                // The content can be rebuilt from its saved state, like an activity recreation (see [recreate])
+                val restorer = StateRestorer().also { stateRestorer = it }
+                setContent { restorer.Content(content) }
+            } else {
+                stateRestorer = null
+                setContent(content)
             }
             waitForIdle()
             block()
@@ -95,6 +104,16 @@ abstract class UiTestBase : UiPlatformTest() {
             stopKoin()
             db.close()
         }
+    }
+
+    private var stateRestorer: StateRestorer? = null
+
+    /**
+     * Saves the state of the content, disposes it and builds it again from the saved state, like an
+     * activity recreation (rotation, "Don't keep activities"). The ViewModels stay. Needs appTest(restorable = true).
+     */
+    protected fun ComposeUiTest.recreate() {
+        with(checkNotNull(stateRestorer) { "recreate() needs appTest(restorable = true)" }) { saveAndRestore() }
     }
 
     // region Data

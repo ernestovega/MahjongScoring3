@@ -63,3 +63,9 @@ actual fun pumpMainThread() {
     Thread.sleep(10)
     ShadowLooper.idleMainLooper(50, TimeUnit.MILLISECONDS)
 }
+
+@OptIn(ExperimentalTestApi::class)
+actual fun ComposeUiTest.pressBack() {
+    androidx.test.espresso.Espresso.pressBack()
+    waitForIdle()
+}
