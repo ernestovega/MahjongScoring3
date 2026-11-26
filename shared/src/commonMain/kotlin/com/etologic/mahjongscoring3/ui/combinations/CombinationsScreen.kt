@@ -65,6 +65,7 @@ import com.etologic.mahjongscoring3.ui.common.ArrowHeight
 import com.etologic.mahjongscoring3.ui.common.ArrowWidth
 import com.etologic.mahjongscoring3.ui.common.EmptyBoxHeight
 import com.etologic.mahjongscoring3.ui.common.EmptyBoxWidth
+import com.etologic.mahjongscoring3.ui.common.LocalActionBarMetrics
 import com.etologic.mahjongscoring3.ui.theme.MmColors
 import com.etologic.mahjongscoring3.ui.theme.MmDimens
 import org.jetbrains.compose.resources.painterResource
@@ -104,7 +105,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
-            modifier = Modifier.testTag("appBarLayout"),
+            modifier = Modifier.testTag("appBarLayout").height(LocalActionBarMetrics.current.height),
             backgroundColor = MmColors.Primary,
             contentColor = MmColors.White,
             elevation = 4.dp,
@@ -146,7 +147,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
                     )
                     LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
                 } else {
-                    Text(stringResource(Res.string.combinations), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(stringResource(Res.string.combinations), maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = LocalActionBarMetrics.current.titleSize)
                 }
             },
             actions = {

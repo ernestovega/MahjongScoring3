@@ -1,6 +1,12 @@
 package com.etologic.mahjongscoring3.ui.main
 
 import androidx.compose.foundation.Image
+import com.etologic.mahjongscoring3.ui.common.actionBarMetrics
+import com.etologic.mahjongscoring3.ui.common.LocalActionBarMetrics
+import androidx.compose.ui.draw.shadow
+import androidx.compose.material.BottomNavigationDefaults
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -99,6 +105,10 @@ private const val MAHJONG_MADRID_EMAIL_ADDRESS = "mahjongmadrid@gmail.com"
 private const val APP_SUPPORT_EMAIL_ADDRESS = "ernestovega85@gmail.com"
 private const val LAST_BACK_PRESSED_MIN_TIME: Long = 2000
 
+/** MS2 theme window background (Theme.AppCompat.Light, background_material_light). */
+private val WINDOW_BACKGROUND = Color(0xFFFAFAFA)
+private val BOTTOM_NAVIGATION_ITEM_MAX_WIDTH = 168.dp
+
 object Routes {
     const val OLD_GAMES = "oldGames"
     const val GAME = "game"
@@ -144,14 +154,22 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
     val openDrawer: () -> Unit = { scope.launch { scaffoldState.drawerState.open() } }
     val closeDrawer: () -> Unit = { scope.launch { scaffoldState.drawerState.close() } }
 
-    CompositionLocalProvider(LocalShowSnackbar provides showSnackbar) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+    CompositionLocalProvider(
+        LocalShowSnackbar provides showSnackbar,
+        LocalActionBarMetrics provides actionBarMetrics(maxWidth, maxHeight),
+    ) {
         Scaffold(
             scaffoldState = scaffoldState,
             modifier = Modifier
-                .background(MmColors.PrimaryDark)
-                .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top))
+                // MS2 pads the content on the sides, so landscape bars and notches show the window background,
+                // and only the app bar grows by the status bar height, painted dark green
+                .background(WINDOW_BACKGROUND)
+                .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Horizontal))
                 // The keyboard lifts the whole content; the bottom navigation then drops its navigation bar padding
-                .windowInsetsPadding(insets.ime.only(WindowInsetsSides.Bottom)),
+                .windowInsetsPadding(insets.ime.only(WindowInsetsSides.Bottom))
+                .background(MmColors.PrimaryDark)
+                .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Top)),
             drawerBackgroundColor = MmColors.GrayLight,
             drawerContent = {
                 Drawer(
@@ -168,10 +186,17 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
             },
             bottomBar = {
                 // The tag is first so its bounds include the navigation bar padding, like MS2 bottomNavigationView
-                Box(Modifier.testTag("bottomNavigationView").background(MmColors.Primary).windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom))) {
+                Box(
+                    Modifier.testTag("bottomNavigationView").shadow(BottomNavigationDefaults.Elevation).background(MmColors.Primary)
+                        .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom)),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                // MS2 BottomNavigationView items are at most 168dp wide and centered (tablets and landscape)
                 BottomNavigation(
+                    modifier = Modifier.widthIn(max = BOTTOM_NAVIGATION_ITEM_MAX_WIDTH * 3),
                     backgroundColor = MmColors.Primary,
                     contentColor = MmColors.White,
+                    elevation = 0.dp,
                 ) {
                     BottomItem(Routes.OLD_GAMES, painterResource(Res.drawable.ic_history_black_24px), stringResource(Res.string.old_games), currentRoute, true, navController)
                     BottomItem(Routes.GAME, painterResource(Res.drawable.ic_play_arrow_white_24px), stringResource(Res.string.game), currentRoute, activeGameId != NOT_SET_GAME_ID, navController)
@@ -222,6 +247,7 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
                 }
             }
         }
+    }
     }
 }
 
