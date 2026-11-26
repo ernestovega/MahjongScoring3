@@ -18,7 +18,7 @@ fun String.sanitizeForFileName(
     replacement: String = "_",
     maxComponentLength: Int = 255,
 ): String {
-    val name = trim()
+    val name = toNfc().trim()
 
     val lastDot = name.lastIndexOf('.')
     val hasExtension = lastDot > 0 && lastDot < name.length - 1
