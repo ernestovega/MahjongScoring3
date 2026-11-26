@@ -65,6 +65,11 @@ class Subject<T>(val actual: T) {
     fun isIn(collection: Iterable<*>) = assertTrue(actual in collection, "Expected <$actual> in $collection")
     fun containsKey(key: Any?) = assertTrue((actual as Map<*, *>).containsKey(key), "Expected key <$key> in $actual")
     fun matches(regex: String) = assertTrue(Regex(regex).matches(actual as CharSequence), "Expected <$actual> to match <$regex>")
+    @Suppress("UNCHECKED_CAST")
+    fun isInOrder() {
+        val list = items() as List<Comparable<Any>>
+        assertTrue(list.zipWithNext().all { (a, b) -> a <= b }, "Expected $actual to be in order")
+    }
     fun hasLength(length: Int) = assertEquals(length, (actual as CharSequence).length)
 }
 

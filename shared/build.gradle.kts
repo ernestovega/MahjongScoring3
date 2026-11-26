@@ -71,6 +71,14 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.review.ktx)
         }
+        // Data tests run on the JVM with Robolectric, like Mahjong Scoring 2 data tests
+        androidUnitTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.robolectric)
+            implementation(libs.androidx.test.core)
+            implementation(libs.androidx.test.ext.junit)
+            implementation(libs.androidx.sqlite.framework)
+        }
     }
 }
 
@@ -83,6 +91,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
     }
 }
 
