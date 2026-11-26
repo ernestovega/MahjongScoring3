@@ -106,6 +106,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
             modifier = Modifier.testTag("appBarLayout").height(LocalActionBarMetrics.current.height),
+            windowInsets = LocalActionBarMetrics.current.sideInsets,
             backgroundColor = MmColors.Primary,
             contentColor = MmColors.White,
             elevation = 4.dp,

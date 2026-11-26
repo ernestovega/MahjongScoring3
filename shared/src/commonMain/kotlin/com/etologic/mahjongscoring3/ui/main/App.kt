@@ -187,7 +187,7 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
             bottomBar = {
                 // The tag is first so its bounds include the navigation bar padding, like MS2 bottomNavigationView
                 Box(
-                    Modifier.testTag("bottomNavigationView").shadow(BottomNavigationDefaults.Elevation).background(MmColors.Primary)
+                    Modifier.testTag("bottomNavigationView").fillMaxWidth().shadow(BottomNavigationDefaults.Elevation).background(MmColors.Primary)
                         .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom)),
                     contentAlignment = Alignment.TopCenter,
                 ) {

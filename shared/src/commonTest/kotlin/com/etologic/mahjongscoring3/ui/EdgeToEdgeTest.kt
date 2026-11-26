@@ -11,6 +11,10 @@ import androidx.compose.ui.unit.height
 import com.etologic.mahjongscoring3.testutil.GameScenarios
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 
 /**
  * Port of MS2 EdgeToEdgeTest. Apps targeting Android 15+ are always drawn edge-to-edge, so the app applies the
@@ -154,5 +158,23 @@ class EdgeToEdgeTest : UiTestBase() {
         openGame(GameScenarios.penalties)
         sendLandscapeNotch()
         screenshot("edge_to_edge_landscape_notch_game_table")
+    }
+
+    /**
+     * Change from MS2: its landscape phone table only shows the wind icon of the West and East players.
+     * MS3 shows the four players, inside the table (below the tabs and above the bottom navigation).
+     */
+    @Test
+    fun landscapePhoneTableShowsTheFourPlayers() = appTest(GameScenarios.penalties, screen = TestScreen.PHONE_LANDSCAPE) {
+        openGame(GameScenarios.penalties)
+        sendLandscapeNotch()
+        val table = view("iTableSeatsBySeat").getBoundsInRoot()
+        listOf("Ana", "Bruno", "Carla", "David").forEach { name ->
+            val node = view(hasTestTag("tvTableSeatBySeatName") and hasText(name))
+            node.assertIsDisplayed()
+            val bounds = node.getBoundsInRoot()
+            assertTrue(bounds.height > 20.dp, "$name has room for its text: $bounds")
+            assertTrue(bounds.top >= table.top - 1.dp && bounds.bottom <= table.bottom + 1.dp, "$name is inside the table: $bounds, $table")
+        }
     }
 }
