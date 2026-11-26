@@ -139,7 +139,7 @@ fun HandActionsDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MmColors.BlackTransparent)
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = rememberSecureClick(onDismiss)),
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = rememberSecureClick(action = onDismiss)),
             contentAlignment = Alignment.Center,
         ) {
             Card(
@@ -295,7 +295,7 @@ private fun HandActionButton(
     ) {
         Column(
             modifier = Modifier
-                .clickable(onClick = rememberSecureClick(onClick))
+                .clickable(onClick = rememberSecureClick(action = onClick))
                 .padding(
                     horizontal = MmDimens.StandardAndHalfMargin,
                     vertical = if (isBig) MmDimens.StandardAndHalfMargin else MmDimens.HalfMargin,
@@ -482,10 +482,10 @@ private fun DialogButtons(onClose: () -> Unit, confirmText: String, onConfirm: (
         modifier = Modifier.fillMaxWidth().padding(top = MmDimens.StandardMargin),
         horizontalArrangement = Arrangement.End,
     ) {
-        TextButton(onClick = rememberSecureClick(onClose), modifier = Modifier.testTag(closeTag)) {
+        TextButton(onClick = rememberSecureClick(action = onClose), modifier = Modifier.testTag(closeTag)) {
             Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
         }
-        TextButton(onClick = rememberSecureClick(onConfirm), modifier = Modifier.testTag(confirmTag)) {
+        TextButton(onClick = rememberSecureClick(action = onConfirm), modifier = Modifier.testTag(confirmTag)) {
             Text(confirmText.uppercase(), color = MmColors.Accent)
         }
     }
