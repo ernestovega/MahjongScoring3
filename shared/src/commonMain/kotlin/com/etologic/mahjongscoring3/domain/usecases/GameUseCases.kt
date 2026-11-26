@@ -29,18 +29,14 @@ class GetAllGamesFlowUseCase(
             roundsRepository.getAllFlow(),
         ) { gameRecords, roundRecords ->
             val roundsByGame = roundRecords.groupBy { it.gameId }
-            gameRecords.map { gameRecord ->
-                val gameRounds = roundsByGame[gameRecord.gameId]
+            // Same as MS2 (fixed 2026-11-26): a game without rounds (for example, one just created whose first
+            // round is not saved yet) is skipped instead of hiding the whole list.
+            gameRecords.mapNotNull { gameRecord ->
+                roundsByGame[gameRecord.gameId]
                     ?.sortedBy { it.roundId }
-                    .orEmpty()
-                if (gameRounds.isEmpty()) {
-                    // Rounds still not written (game being created or deleted): wait for a consistent state
-                    return@combine null
-                } else {
-                    gameRecord.toUiGame(gameRounds)
-                }
+                    ?.let { gameRounds -> gameRecord.toUiGame(gameRounds) }
             }
-        }.filterNotNull()
+        }
 }
 
 class GetOneGameFlowUseCase(
