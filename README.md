@@ -21,3 +21,7 @@ The Android app keeps MS2's `applicationId` (`com.mahjongscoring.activities`), s
 ## UI tests
 
 Composables carry `Modifier.testTag(...)` with the same ids as MS2 views (for example `btHandActionsDialogHu`, `fabGameTable`), so MS2's UI tests can be ported to Compose UI tests that run on Android and iOS.
+
+- **Screen sizes:** `appTest(screen = TestScreen.TABLET_LANDSCAPE)` runs a test on another screen (`PHONE`, `PHONE_LANDSCAPE`, `TABLET_LANDSCAPE`, `TABLET_PORTRAIT`). Android uses MS2's Robolectric qualifiers. iOS sizes its test window the same.
+- **Rotation:** `rotate(screen) { ... }` emulates a rotation with an activity recreation (needs `appTest(restorable = true)`). Android resizes its windows. iOS moves the saved content to a new test window of the new size.
+- **Edge-to-edge:** `sendInsets(systemBars, displayCutout, ime)` gives the app fake insets through `LocalAppInsetsOverride`, like MS2 `EdgeToEdgeTest`.

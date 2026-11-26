@@ -10,12 +10,18 @@ import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
  * The window insets the app layout applies (MS2 MainActivity.applyWindowInsets, Android 15/16 edge-to-edge):
- * - [bars]: system bars and display cutouts. Top pads the app bar (painted dark green), bottom pads the bottom
- *   navigation, and the sides pad everything (landscape bars and notches).
+ * - [bars]: [systemBars] and [displayCutout] together. Top pads the app bar (painted dark green), bottom pads the
+ *   bottom navigation, and the sides pad everything (landscape bars and notches).
  * - [ime]: the keyboard. While it covers the navigation bar it lifts the whole content above it, and the bottom
  *   navigation loses its navigation bar padding.
  */
-data class AppInsets(val bars: WindowInsets, val ime: WindowInsets)
+data class AppInsets(
+    val systemBars: WindowInsets,
+    val displayCutout: WindowInsets = WindowInsets(0, 0, 0, 0),
+    val ime: WindowInsets = WindowInsets(0, 0, 0, 0),
+) {
+    val bars: WindowInsets get() = systemBars.union(displayCutout)
+}
 
 /** Lets tests send fake insets, like MS2 EdgeToEdgeTest does with WindowInsetsCompat. */
 val LocalAppInsetsOverride = staticCompositionLocalOf<AppInsets?> { null }
@@ -23,6 +29,7 @@ val LocalAppInsetsOverride = staticCompositionLocalOf<AppInsets?> { null }
 @Composable
 internal fun currentAppInsets(): AppInsets =
     LocalAppInsetsOverride.current ?: AppInsets(
-        bars = WindowInsets.systemBars.union(WindowInsets.displayCutout),
+        systemBars = WindowInsets.systemBars,
+        displayCutout = WindowInsets.displayCutout,
         ime = WindowInsets.ime,
     )

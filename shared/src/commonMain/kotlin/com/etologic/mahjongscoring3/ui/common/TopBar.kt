@@ -44,6 +44,7 @@ fun MmTopBar(
             }
         },
         actions = actions,
+        modifier = Modifier.testTag("appBarLayout"),
         backgroundColor = MmColors.Primary,
         contentColor = MmColors.White,
         elevation = 4.dp,

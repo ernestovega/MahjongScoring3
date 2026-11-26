@@ -13,6 +13,11 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import android.content.ContentProvider
 import org.robolectric.Robolectric
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.shadows.ShadowDisplayManager
+import org.robolectric.shadows.ShadowViewRootImpl
+import org.robolectric.shadow.api.Shadow
+import android.view.Display
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureScreenRoboImage
@@ -25,10 +30,25 @@ import org.robolectric.shadows.ShadowLooper
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 actual abstract class UiPlatformTest actual constructor()
 
+/** [UiPlatformTest] sets the [TestScreen.PHONE] qualifiers; other screens replace them before the activity starts. */
 @OptIn(ExperimentalTestApi::class)
-actual fun runAppUiTest(block: ComposeUiTest.() -> Unit) {
+actual fun runAppUiTest(screen: TestScreen, block: ComposeUiTest.() -> Unit) {
+    if (screen != TestScreen.PHONE) RuntimeEnvironment.setQualifiers(screen.androidQualifiers)
     installComposeResourcesContext()
     runComposeUiTest { block() }
+}
+
+/**
+ * MS2 LargeScreenTest used RuntimeEnvironment.setQualifiers, but on an open activity that also recreates it,
+ * and the recreated activity has no test content. So only the display changes here, and the open windows are
+ * laid out again; UiTestBase.rotate() then emulates the recreation, as on iOS.
+ */
+@OptIn(ExperimentalTestApi::class)
+actual fun ComposeUiTest.withScreen(screen: TestScreen, block: ComposeUiTest.() -> Unit) {
+    ShadowDisplayManager.changeDisplay(Display.DEFAULT_DISPLAY, screen.androidQualifiers)
+    resizeWindows()
+    waitForIdle()
+    block()
 }
 
 /**
@@ -68,4 +88,16 @@ actual fun pumpMainThread() {
 actual fun ComposeUiTest.pressBack() {
     androidx.test.espresso.Espresso.pressBack()
     waitForIdle()
+}
+
+/** Sends the new display size to every open window (the activity, dialogs and popups) and lays them out again. */
+private fun resizeWindows() {
+    ShadowLooper.idleMainLooper()
+    val global = Class.forName("android.view.WindowManagerGlobal")
+    val instance = global.getMethod("getInstance").invoke(null)
+    val roots = global.getDeclaredField("mRoots").apply { isAccessible = true }.get(instance) as List<*>
+    roots.toList().forEach { viewRoot ->
+        Shadow.extract<ShadowViewRootImpl>(viewRoot).callDispatchResized()
+    }
+    ShadowLooper.idleMainLooper()
 }

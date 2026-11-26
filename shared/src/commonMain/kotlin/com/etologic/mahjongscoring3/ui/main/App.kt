@@ -167,7 +167,8 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
                 )
             },
             bottomBar = {
-                Box(Modifier.background(MmColors.Primary).windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom)).testTag("bottomNavigationView")) {
+                // The tag is first so its bounds include the navigation bar padding, like MS2 bottomNavigationView
+                Box(Modifier.testTag("bottomNavigationView").background(MmColors.Primary).windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom))) {
                 BottomNavigation(
                     backgroundColor = MmColors.Primary,
                     contentColor = MmColors.White,

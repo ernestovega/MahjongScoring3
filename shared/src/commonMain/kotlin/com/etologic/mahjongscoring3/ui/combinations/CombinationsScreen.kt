@@ -104,6 +104,7 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
+            modifier = Modifier.testTag("appBarLayout"),
             backgroundColor = MmColors.Primary,
             contentColor = MmColors.White,
             elevation = 4.dp,

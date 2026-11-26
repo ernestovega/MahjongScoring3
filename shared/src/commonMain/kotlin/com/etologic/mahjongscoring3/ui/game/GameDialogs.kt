@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -128,7 +129,8 @@ fun HandActionsDialog(
     onCancelPenalties: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var page by remember { mutableStateOf(HandActionsPage.ACTIONS) }
+    // Saveable: a rotation (Android 16 large screens) recreates the activity, and MS2 keeps the open page
+    var page by rememberSaveable { mutableStateOf(HandActionsPage.ACTIONS) }
     val names = remember(game) { game.getPlayersNamesByCurrentSeat() }
     val selectedName = names.getOrElse(selectedSeat.code) { "" }
 
@@ -340,9 +342,9 @@ private fun HuPageContent(
             if (selectedSeat in listOf(EAST, SOUTH, WEST)) NORTH else WEST,
         )
     }
-    var discarder by remember { mutableStateOf(NONE) }
-    var points by remember { mutableStateOf("") }
-    var isPointsError by remember { mutableStateOf(false) }
+    var discarder by rememberSaveable { mutableStateOf(NONE) }
+    var points by rememberSaveable { mutableStateOf("") }
+    var isPointsError by rememberSaveable { mutableStateOf(false) }
 
     Text(stringResource(Res.string.winner_), color = MmColors.GrayMM, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     SeatMedium(selectedSeat, names.getOrElse(selectedSeat.code) { "" })
@@ -410,11 +412,11 @@ private fun PenaltyPageContent(
     onPenalty: (PenaltyData) -> Unit,
     onClose: () -> Unit,
 ) {
-    var points by remember { mutableStateOf("") }
-    var isPointsError by remember { mutableStateOf(false) }
+    var points by rememberSaveable { mutableStateOf("") }
+    var isPointsError by rememberSaveable { mutableStateOf(false) }
     // MS2 layout: android:checked="true"
-    var isDivided by remember { mutableStateOf(true) }
-    var isDividedError by remember { mutableStateOf(false) }
+    var isDivided by rememberSaveable { mutableStateOf(true) }
+    var isDividedError by rememberSaveable { mutableStateOf(false) }
 
     SeatMedium(selectedSeat, selectedName, Modifier.fillMaxWidth())
     Divider(color = MmColors.Gray, thickness = 1.dp, modifier = Modifier.padding(top = MmDimens.HalfMargin))
