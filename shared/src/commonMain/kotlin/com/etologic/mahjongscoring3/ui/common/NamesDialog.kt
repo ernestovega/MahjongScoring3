@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui.common
 
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -88,11 +89,12 @@ fun NamesDialog(
     onConfirm: (GameNames) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var gameName by remember { mutableStateOf(TextFieldValue(initial.gameName)) }
-    var east by remember { mutableStateOf(TextFieldValue(initial.nameP1, TextRange(initial.nameP1.length))) }
-    var south by remember { mutableStateOf(TextFieldValue(initial.nameP2, TextRange(initial.nameP2.length))) }
-    var west by remember { mutableStateOf(TextFieldValue(initial.nameP3, TextRange(initial.nameP3.length))) }
-    var north by remember { mutableStateOf(TextFieldValue(initial.nameP4, TextRange(initial.nameP4.length))) }
+    // Saveable: what the user typed survives an activity recreation, like the MS2 EditTexts
+    var gameName by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.gameName)) }
+    var east by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.nameP1, TextRange(initial.nameP1.length))) }
+    var south by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.nameP2, TextRange(initial.nameP2.length))) }
+    var west by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.nameP3, TextRange(initial.nameP3.length))) }
+    var north by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.nameP4, TextRange(initial.nameP4.length))) }
     val gameNameFocus = remember { FocusRequester() }
 
     Dialog(onDismissRequest = onDismiss) {

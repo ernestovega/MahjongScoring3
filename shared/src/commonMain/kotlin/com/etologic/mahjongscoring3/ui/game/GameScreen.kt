@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui.game
 
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -98,7 +99,8 @@ fun GameScreen(
 
     var showRanking by remember { mutableStateOf(false) }
     var showDice by remember { mutableStateOf(false) }
-    var showEditNames by remember { mutableStateOf(false) }
+    // Saveable: like the MS2 dialog fragment, the dialog stays open after an activity recreation
+    var showEditNames by rememberSaveable { mutableStateOf(false) }
     var showShare by remember { mutableStateOf(false) }
     var roundToDelete by remember { mutableStateOf<RoundId?>(null) }
 

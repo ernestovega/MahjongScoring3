@@ -1,5 +1,6 @@
 package com.etologic.mahjongscoring3.ui.oldgames
 
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -120,7 +121,8 @@ fun OldGamesScreen(
     val uiState by viewModel.uiState.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    var showSetupDialog by remember { mutableStateOf(false) }
+    // Saveable: like the MS2 dialog fragment, the dialog stays open after an activity recreation
+    var showSetupDialog by rememberSaveable { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var gameToDelete by remember { mutableStateOf<GameId?>(null) }
     var gameToShare by remember { mutableStateOf<GameId?>(null) }
