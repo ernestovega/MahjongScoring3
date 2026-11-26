@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
+import androidx.compose.ui.unit.width
 import com.etologic.mahjongscoring3.testutil.GameScenarios
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,6 +16,8 @@ import kotlin.test.assertTrue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.hasAnyAncestor
+import com.etologic.mahjongscoring3.domain.model.SeatsArrangement
 
 /**
  * Port of MS2 EdgeToEdgeTest. Apps targeting Android 15+ are always drawn edge-to-edge, so the app applies the
@@ -161,20 +164,42 @@ class EdgeToEdgeTest : UiTestBase() {
     }
 
     /**
-     * Change from MS2: its landscape phone table only shows the wind icon of the West and East players.
-     * MS3 shows the four players, inside the table (below the tabs and above the bottom navigation).
+     * Change from MS2: its landscape phone table only shows the wind icon of the West and East players, and
+     * its ranking table needs scrolling. MS3 shows the four players inside the table (below the tabs and above
+     * the bottom navigation) with every seats arrangement.
      */
     @Test
-    fun landscapePhoneTableShowsTheFourPlayers() = appTest(GameScenarios.penalties, screen = TestScreen.PHONE_LANDSCAPE) {
-        openGame(GameScenarios.penalties)
-        sendLandscapeNotch()
-        val table = view("iTableSeatsBySeat").getBoundsInRoot()
-        listOf("Ana", "Bruno", "Carla", "David").forEach { name ->
-            val node = view(hasTestTag("tvTableSeatBySeatName") and hasText(name))
-            node.assertIsDisplayed()
-            val bounds = node.getBoundsInRoot()
-            assertTrue(bounds.height > 20.dp, "$name has room for its text: $bounds")
-            assertTrue(bounds.top >= table.top - 1.dp && bounds.bottom <= table.bottom + 1.dp, "$name is inside the table: $bounds, $table")
+    fun landscapePhoneTableShowsTheFourPlayers_bySeat() = assertFourPlayersInLandscape(null)
+
+    @Test
+    fun landscapePhoneTableShowsTheFourPlayers_out() = assertFourPlayersInLandscape(SeatsArrangement.OUT)
+
+    @Test
+    fun landscapePhoneTableShowsTheFourPlayers_ranking() = assertFourPlayersInLandscape(SeatsArrangement.RANKING)
+
+    private fun assertFourPlayersInLandscape(arrangement: SeatsArrangement?) =
+        appTest(GameScenarios.penalties, seatsArrangement = arrangement, screen = TestScreen.PHONE_LANDSCAPE) {
+            openGame(GameScenarios.penalties)
+            sendLandscapeNotch()
+            val tableTag = if (arrangement == SeatsArrangement.RANKING) "iTableSeatsByRanking" else "iTableSeatsBySeat"
+            val table = view(tableTag).getBoundsInRoot()
+            val names = listOf("Ana", "Bruno", "Carla", "David").map { name ->
+                val node = view(hasText(name) and hasAnyAncestor(hasTestTag(tableTag)))
+                node.assertIsDisplayed()
+                val bounds = node.getBoundsInRoot()
+                assertTrue(bounds.height > 20.dp && bounds.width > 20.dp, "$name has room for its text: $bounds")
+                assertTrue(
+                    bounds.top >= table.top - 1.dp && bounds.bottom <= table.bottom + 1.dp &&
+                        bounds.left >= table.left - 1.dp && bounds.right <= table.right + 1.dp,
+                    "$name is inside the table: $bounds, $table",
+                )
+                bounds
+            }
+            names.forEachIndexed { i, a ->
+                names.drop(i + 1).forEach { b ->
+                    val overlaps = a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom
+                    assertTrue(!overlaps, "Names overlap: $a, $b")
+                }
+            }
         }
-    }
 }

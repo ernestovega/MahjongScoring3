@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -297,7 +298,8 @@ private fun androidx.compose.foundation.layout.RowScope.BottomItem(
         onClick = { navController.navigateTo(route) },
         icon = { Icon(icon, contentDescription = null) },
         // MS2 BottomNavigationView: active label 14sp, inactive 12sp
-        label = { Text(label, maxLines = 1, fontSize = if (currentRoute == route) 14.sp else 12.sp, fontWeight = if (currentRoute == route) FontWeight.Bold else FontWeight.Normal) },
+        // MS2 labels end 6dp above the bottom of the bar; the Compose BottomNavigation puts them higher (measured)
+        label = { Text(label, maxLines = 1, fontSize = if (currentRoute == route) 14.sp else 12.sp, fontWeight = if (currentRoute == route) FontWeight.Bold else FontWeight.Normal, modifier = Modifier.offset(y = 3.dp)) },
         enabled = enabled,
         alwaysShowLabel = true,
         selectedContentColor = if (enabled) MmColors.White else MmColors.Gray,

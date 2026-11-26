@@ -260,11 +260,12 @@ private fun SeatsBySeat(
     fun SeatAt(seat: TableWinds) {
         val index = seat.code
         val (rotation, paddingModifier) = when (arrangement) {
+            // On short tables North and South rows are not turned: turned, they would be taller than the table
             SeatsArrangement.OUT -> when (seat) {
-                TableWinds.EAST -> 0f to Modifier.padding(top = margin)
-                TableWinds.SOUTH -> -90f to Modifier.padding(bottom = margin)
-                TableWinds.WEST -> 180f to Modifier.padding(top = margin)
-                else -> 90f to Modifier.padding(bottom = margin)
+                TableWinds.EAST -> 0f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin)
+                TableWinds.SOUTH -> if (isRow) 0f to Modifier.padding(horizontal = margin) else -90f to Modifier.padding(bottom = margin)
+                TableWinds.WEST -> 180f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin)
+                else -> if (isRow) 0f to Modifier.padding(horizontal = margin) else 90f to Modifier.padding(bottom = margin)
             }
             else -> when (seat) {
                 TableWinds.EAST -> 0f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin * 3)
@@ -460,59 +461,85 @@ private fun SeatsByRanking(
     val penaltiesByCurrentSeat = game.getPlayersPenaltiesByCurrentSeat()
     val positions = listOf(Res.string._1st, Res.string._2nd, Res.string._3rd, Res.string._4th)
 
-    Column(
-        modifier = Modifier.fillMaxSize().testTag("iTableSeatsByRanking").verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-    ) {
-        rankingData.sortedPlayersRankings.forEachIndexed { index, playerRanking ->
-            val seat = TableWinds.from(namesByCurrentSeat.indexOf(playerRanking.name)) ?: return@forEachIndexed
-            if (seat == TableWinds.NONE) return@forEachIndexed
-            val state = states[seat.code]
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = if (index == 0) 0.dp else MmDimens.StandardMargin)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = rememberSecureClick { onSeatClick(seat) },
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(positions[index]),
-                        color = MmColors.GrayMM,
-                        fontSize = MmDimens.TablePlayerPenaltyPoints,
-                        modifier = Modifier.padding(start = MmDimens.StandardMargin),
-                    )
-                    WindIcon(seat, state.color, modifier = Modifier.padding(start = MmDimens.StandardMargin), size = 32.dp)
-                    Text(
-                        text = playerRanking.score.toString(),
-                        color = state.color,
-                        fontSize = MmDimens.TablePlayerPoints,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        modifier = Modifier.padding(start = MmDimens.StandardMargin),
-                    )
-                    PenaltyPoints(penaltiesByCurrentSeat[seat.code], game.isEnded, Modifier.offset(y = (-8).dp))
-                    Text(
-                        text = playerRanking.name,
-                        color = state.color,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = MmDimens.StandardMargin),
-                    )
-                }
-                if (showDiffs) {
-                    seatsDiffs.getOrNull(seat.code)?.let { DiffsSmallTable(it) }
-                }
+    @Composable
+    fun RankingSeat(index: Int, isFirstInColumn: Boolean, modifier: Modifier = Modifier) {
+        val playerRanking = rankingData.sortedPlayersRankings[index]
+        val seat = TableWinds.from(namesByCurrentSeat.indexOf(playerRanking.name)) ?: return
+        if (seat == TableWinds.NONE) return
+        val state = states[seat.code]
+        Column(
+            modifier = modifier
+                .padding(top = if (isFirstInColumn) 0.dp else MmDimens.StandardMargin)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = rememberSecureClick { onSeatClick(seat) },
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(positions[index]),
+                    color = MmColors.GrayMM,
+                    fontSize = MmDimens.TablePlayerPenaltyPoints,
+                    modifier = Modifier.padding(start = MmDimens.StandardMargin),
+                )
+                WindIcon(seat, state.color, modifier = Modifier.padding(start = MmDimens.StandardMargin), size = 32.dp)
+                Text(
+                    text = playerRanking.score.toString(),
+                    color = state.color,
+                    fontSize = MmDimens.TablePlayerPoints,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    modifier = Modifier.padding(start = MmDimens.StandardMargin),
+                )
+                PenaltyPoints(penaltiesByCurrentSeat[seat.code], game.isEnded, Modifier.offset(y = (-8).dp))
+                Text(
+                    text = playerRanking.name,
+                    color = state.color,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = MmDimens.StandardMargin),
+                )
+            }
+            if (showDiffs) {
+                seatsDiffs.getOrNull(seat.code)?.let { DiffsSmallTable(it) }
             }
         }
-        DiffsButton(isDiffsButtonVisible, onToggleDiffs, Modifier.padding(top = MmDimens.DoubleMargin))
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        if (maxHeight < COMPACT_TABLE_MAX_HEIGHT) {
+            // Change from MS2: on short tables (phones in landscape) the four rows do not fit one below the other,
+            // so 1st and 3rd go on the left of the diffs button and 2nd and 4th on its right.
+            val count = rankingData.sortedPlayersRankings.size
+            Row(
+                modifier = Modifier.fillMaxSize().testTag("iTableSeatsByRanking"),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(horizontalAlignment = Alignment.End) {
+                    (0 until count step 2).forEach { RankingSeat(it, isFirstInColumn = it == 0) }
+                }
+                DiffsButton(isDiffsButtonVisible, onToggleDiffs, Modifier.padding(horizontal = MmDimens.StandardMargin))
+                Column(horizontalAlignment = Alignment.Start) {
+                    (1 until count step 2).forEach { RankingSeat(it, isFirstInColumn = it == 1) }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize().testTag("iTableSeatsByRanking").verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+            ) {
+                rankingData.sortedPlayersRankings.indices.forEach {
+                    RankingSeat(it, isFirstInColumn = it == 0, Modifier.fillMaxWidth())
+                }
+                DiffsButton(isDiffsButtonVisible, onToggleDiffs, Modifier.padding(top = MmDimens.DoubleMargin))
+            }
+        }
     }
 }
 
