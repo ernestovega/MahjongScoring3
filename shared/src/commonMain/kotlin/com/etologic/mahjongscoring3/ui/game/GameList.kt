@@ -102,12 +102,10 @@ fun GameList(
             Text(stringResource(Res.string.number_symbol), color = Color.White, textAlign = TextAlign.Center, maxLines = 1,
                 modifier = Modifier.width(16.dp).padding(end = 0.dp))
             Spacer(Modifier.width(MmDimens.HalfMargin))
-            Text(stringResource(Res.string.pts), color = Color.White, textAlign = TextAlign.Center, maxLines = 2,
-                modifier = Modifier.width(MmDimens.DoubleMargin))
+            TwoLinesHeaderCell(stringResource(Res.string.pts), bold = false, modifier = Modifier.width(MmDimens.DoubleMargin))
             Spacer(Modifier.width(MmDimens.HalfMargin))
             game.playersNames.forEachIndexed { index, name ->
-                Text(name, color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2,
-                    overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+                TwoLinesHeaderCell(name, bold = true, modifier = Modifier.weight(1f))
                 if (index < 3) Spacer(Modifier.width(MmDimens.HalfMargin))
             }
         }
@@ -146,6 +144,23 @@ fun GameList(
                     textAlign = TextAlign.Center, maxLines = 1, modifier = Modifier.width(MmDimens.QuadrupleMargin))
             },
             values = listOf(ongoing.totalPointsP1, ongoing.totalPointsP2, ongoing.totalPointsP3, ongoing.totalPointsP4).map { it.toStringSigned() },
+        )
+    }
+}
+
+/** MS2 header TextViews use android:lines="2": always two lines tall, text centered. */
+@Composable
+private fun TwoLinesHeaderCell(text: String, bold: Boolean, modifier: Modifier) {
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Text("", minLines = 2, maxLines = 2)
+        Text(
+            text,
+            color = Color.White,
+            fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -257,8 +272,10 @@ private fun GameListItem(
                         round.winnerInitialSeat -> MmColors.Primary
                         else -> MmColors.GrayMM
                     }
-                    Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically,
+                    // MS2: points centered in the cell, whistle to their end aligned to the top
+                    Row(Modifier.weight(1f), verticalAlignment = Alignment.Top,
                         horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
+                        if (penalties[index] < 0) Spacer(Modifier.width(MmDimens.StandardMargin))
                         Text(points[index].formatSigned(), color = color, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                         if (penalties[index] < 0) {
                             Image(painterResource(Res.drawable.ic_whistle), null, colorFilter = ColorFilter.tint(MmColors.PurplePenalty),
@@ -270,7 +287,8 @@ private fun GameListItem(
             }
             if (round.areTherePenalties()) {
                 Row {
-                    Spacer(Modifier.width(MmDimens.StandardMargin + MmDimens.HalfMargin + MmDimens.DoubleMargin))
+                    // MS2: an empty 14sp TextView keeps this row one 14sp line tall
+                    Text("", maxLines = 1, modifier = Modifier.width(MmDimens.StandardMargin + MmDimens.HalfMargin + MmDimens.DoubleMargin))
                     listOf(round.penaltyP1, round.penaltyP2, round.penaltyP3, round.penaltyP4).forEach { penalty ->
                         TotalsCell(penalty.toStringSigned(), if (penalty < 0) MmColors.Red else MmColors.Primary, 12.sp, TextAlign.End,
                             Modifier.padding(end = MmDimens.HalfAndQuarterMargin))
