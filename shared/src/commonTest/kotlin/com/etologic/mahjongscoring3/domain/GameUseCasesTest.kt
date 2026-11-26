@@ -128,6 +128,7 @@ class GameUseCasesTest {
         assertEquals(NONE, rounds.first().discarderInitialSeat)
         assertEquals(8, rounds.first().handPoints)
         assertNull(rounds.last().winnerInitialSeat)
+        assertNull(rounds.last().discarderInitialSeat)
     }
 
     @Test
@@ -140,6 +141,7 @@ class GameUseCasesTest {
         assertEquals(SOUTH, rounds.first().discarderInitialSeat)
         assertEquals(9, rounds.first().handPoints)
         assertNull(rounds.last().winnerInitialSeat)
+        assertNull(rounds.last().discarderInitialSeat)
     }
 
     @Test
@@ -166,6 +168,7 @@ class GameUseCasesTest {
         assertEquals(1, rounds.size)
         assertEquals(2L, rounds.first().roundId)
         assertNull(rounds.first().winnerInitialSeat)
+        assertNull(rounds.first().discarderInitialSeat)
     }
 
     @Test
@@ -189,6 +192,7 @@ class GameUseCasesTest {
         assertEquals(15, rounds.size)
         assertEquals(15L, rounds.last().roundId)
         assertNotNull(rounds.last().winnerInitialSeat)
+        assertNotNull(rounds.last().discarderInitialSeat)
         assertNotNull(firstGame().endDate)
     }
 
@@ -199,6 +203,7 @@ class GameUseCasesTest {
 
         val r = rounds(game.gameId).first()
         assertNull(r.winnerInitialSeat)
+        assertNull(r.discarderInitialSeat)
         assertEquals(listOf(-30, 10, 10, 10), listOf(r.penaltyP1, r.penaltyP2, r.penaltyP3, r.penaltyP4))
     }
 
@@ -208,6 +213,8 @@ class GameUseCasesTest {
         setPenaltyUseCase(uiGame(game).uiRounds.first(), PenaltyData(30, false, EAST)).getOrThrow()
 
         val r = rounds(game.gameId).first()
+        assertNull(r.winnerInitialSeat)
+        assertNull(r.discarderInitialSeat)
         assertEquals(listOf(-30, 0, 0, 0), listOf(r.penaltyP1, r.penaltyP2, r.penaltyP3, r.penaltyP4))
     }
 
@@ -219,6 +226,7 @@ class GameUseCasesTest {
 
         val r = rounds(game.gameId).first()
         assertNull(r.winnerInitialSeat)
+        assertNull(r.discarderInitialSeat)
         assertEquals(listOf(0, 0, 0, 0), listOf(r.penaltyP1, r.penaltyP2, r.penaltyP3, r.penaltyP4))
     }
 
