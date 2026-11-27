@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -258,7 +259,8 @@ private fun GameListItem(
                 Text(round.roundNumber.toString(), color = MmColors.GrayMM, textAlign = TextAlign.Center, maxLines = 1,
                     modifier = Modifier.width(with(LocalDensity.current) { 16.sp.toDp() }).testTag("tvGameListItemRoundNumber"))
                 Spacer(Modifier.width(MmDimens.HalfMargin))
-                Row(Modifier.width(MmDimens.DoubleAndHalfMargin), verticalAlignment = Alignment.CenterVertically,
+                // MS2 40dp cell. It grows only when the points do not fit: "9999" is wider than 40dp with the iOS font
+                Row(Modifier.widthIn(min = MmDimens.DoubleAndHalfMargin), verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
                     Text(round.handPoints.toString(), color = MmColors.GrayMM, fontSize = 16.sp, maxLines = 1)
                     if (round.isBestHand) {

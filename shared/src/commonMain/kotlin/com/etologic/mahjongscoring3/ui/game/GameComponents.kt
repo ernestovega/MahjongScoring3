@@ -1,5 +1,7 @@
 package com.etologic.mahjongscoring3.ui.game
 
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -125,6 +127,15 @@ private fun DiffsSmallRow(title: String, diff: PointsDiff) {
     }
 }
 
+/**
+ * True inside content that is only measured, never shown (the full table seats, to know if they fit): its texts
+ * then give no semantics, so tests and accessibility services only find the shown ones.
+ */
+internal val LocalIsMeasureProbe = staticCompositionLocalOf { false }
+
+@Composable
+internal fun Modifier.withoutSemanticsInProbe(): Modifier = if (LocalIsMeasureProbe.current) clearAndSetSemantics {} else this
+
 /** MS2 "diffsGameCell" style. */
 @Composable
 private fun DiffsSmallCell(text: String) {
@@ -134,7 +145,7 @@ private fun DiffsSmallCell(text: String) {
         fontSize = 10.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        modifier = Modifier.width(MmDimens.StandardAndHalfMargin),
+        modifier = Modifier.withoutSemanticsInProbe().width(MmDimens.StandardAndHalfMargin),
     )
 }
 

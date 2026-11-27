@@ -21,7 +21,21 @@ enum class TestScreen(val widthDp: Int, val heightDp: Int, val dpi: Int, val and
     /** 10" tablet: Android 16 ignores the portrait lock on screens with a smallest width of 600dp or more. */
     TABLET_LANDSCAPE(1280, 800, 160, "w1280dp-h800dp-xlarge-long-notround-land-mdpi-keyshidden-nonav"),
     TABLET_PORTRAIT(800, 1280, 160, "w800dp-h1280dp-xlarge-long-notround-port-mdpi-keyshidden-nonav"),
+    /** Unfolded foldable in landscape (Pixel Fold class inner screen: 2208x1840px at 420dpi). */
+    FOLDABLE_LANDSCAPE(841, 701, 420, "w841dp-h701dp-large-notlong-notround-land-420dpi-keyshidden-nonav"),
+    /** 7" tablet in landscape: the smallest screen where Android 16 ignores the portrait lock (600dp high). */
+    SMALL_TABLET_LANDSCAPE(960, 600, 240, "w960dp-h600dp-large-notlong-notround-land-hdpi-keyshidden-nonav"),
+    /** iPad mini in landscape (1133x744pt at 2x). iPadOS 26 windows can take any size and orientation. */
+    IPAD_MINI_LANDSCAPE(1133, 744, 320, "w1133dp-h744dp-xlarge-notlong-notround-land-xhdpi-keyshidden-nonav"),
 }
+
+/** The landscape screens where the app really turns: Android 16 large screens and iPads. */
+val LANDSCAPE_LARGE_SCREENS = listOf(
+    TestScreen.SMALL_TABLET_LANDSCAPE,
+    TestScreen.FOLDABLE_LANDSCAPE,
+    TestScreen.TABLET_LANDSCAPE,
+    TestScreen.IPAD_MINI_LANDSCAPE,
+)
 
 /** Runs a Compose UI test on [screen] (by default a 411x891dp, 420dpi phone, like the MS2 UI tests). */
 @OptIn(ExperimentalTestApi::class)

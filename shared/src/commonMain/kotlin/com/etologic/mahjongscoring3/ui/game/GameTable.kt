@@ -35,6 +35,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -250,14 +254,12 @@ private fun SeatsBySeat(
     val penalties = game.getPlayersPenaltiesByCurrentSeat()
     val margin = MmDimens.StandardMargin
 
-    BoxWithConstraints(Modifier.fillMaxSize()) {
-    // Change from MS2: on short tables (phones in landscape) MS2 squeezes the West and East seats until only
-    // their wind icon shows. Here every seat turns into one row (icon, points, penalty, name): North and South
-    // beside the diffs button, West above it and East below it, so all four players stay visible.
-    val isRow = maxHeight < COMPACT_TABLE_MAX_HEIGHT
-
+    // Change from MS2: on short tables (phones in landscape, 7" tablets in landscape) MS2 squeezes the West and East
+    // seats until only their wind icon shows, or cuts their name. Here, when a full seat does not fit on its side of
+    // the diffs button, every seat turns into one row (icon, points, penalty, name): North and South beside the diffs
+    // button, West above it and East below it, so all four players stay visible.
     @Composable
-    fun SeatAt(seat: TableWinds) {
+    fun SeatAt(seat: TableWinds, isRow: Boolean, extraModifier: Modifier) {
         val index = seat.code
         val (rotation, paddingModifier) = when (arrangement) {
             // On short tables North and South rows are not turned: turned, they would be taller than the table
@@ -283,55 +285,66 @@ private fun SeatsBySeat(
             seatDiffs = seatsDiffs.getOrNull(index)?.takeIf { showDiffs },
             isRow = isRow,
             onClick = { onSeatClick(seat) },
-            modifier = Modifier
+            modifier = extraModifier
                 .testTag("iGameTableSeat" + seat.name.lowercase().replaceFirstChar { it.uppercase() })
                 .graphicsLayer(rotationZ = rotation)
                 .then(paddingModifier),
         )
     }
 
-    Layout(
-        content = {
-            DiffsButton(isDiffsButtonVisible, onToggleDiffs)
-            SeatAt(TableWinds.EAST)
-            SeatAt(TableWinds.SOUTH)
-            SeatAt(TableWinds.WEST)
-            SeatAt(TableWinds.NORTH)
-        },
-        modifier = Modifier.fillMaxSize().testTag("iTableSeatsBySeat"),
-    ) { measurables, constraints ->
+    /** [isProbe]: only measured, to know if the full seats fit; never shown, so without semantics. */
+    @Composable
+    fun Seats(isRow: Boolean, isProbe: Boolean = false) {
+        val extraModifier = if (isProbe) Modifier.clearAndSetSemantics {} else Modifier
+        CompositionLocalProvider(LocalIsMeasureProbe provides isProbe) {
+            DiffsButton(isDiffsButtonVisible, onToggleDiffs, extraModifier)
+            SeatAt(TableWinds.EAST, isRow, extraModifier)
+            SeatAt(TableWinds.SOUTH, isRow, extraModifier)
+            SeatAt(TableWinds.WEST, isRow, extraModifier)
+            SeatAt(TableWinds.NORTH, isRow, extraModifier)
+        }
+    }
+
+    SubcomposeLayout(Modifier.fillMaxSize().testTag("iTableSeatsBySeat")) { constraints ->
         // MS2 RelativeLayout: each seat only gets the space on its side of the diffs button (layout_above,
-        // layout_below, layout_toRightOf, layout_toLeftOf). On short tables (landscape phones) the West and
-        // East seats are squeezed like in MS2: the wind icon shrinks to fit and the rest gets no height.
+        // layout_below, layout_toRightOf, layout_toLeftOf).
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val width = constraints.maxWidth
         val height = constraints.maxHeight
-        val button = measurables[0].measure(loose)
+        val fullSeats = subcompose("probe") { Seats(isRow = false, isProbe = true) }
+        val button = fullSeats[0].measure(loose)
         val cx = width / 2
         val cy = height / 2
         val buttonLeft = cx - button.width / 2
         val buttonTop = cy - button.height / 2
         val buttonRight = buttonLeft + button.width
         val buttonBottom = buttonTop + button.height
-        val east = measurables[1].measure(loose.copy(maxHeight = (height - buttonBottom).coerceAtLeast(0)))
-        val south = measurables[2].measure(loose.copy(maxWidth = (width - buttonRight).coerceAtLeast(0)))
-        val west = measurables[3].measure(loose.copy(maxHeight = buttonTop.coerceAtLeast(0)))
-        val north = measurables[4].measure(loose.copy(maxWidth = buttonLeft.coerceAtLeast(0)))
+        // Turned seats (OUT arrangement) take their width as height on the screen
+        fun Measurable.screenHeight(isTurned: Boolean) = if (isTurned) maxIntrinsicWidth(height) else maxIntrinsicHeight(width)
+        val isOut = arrangement == SeatsArrangement.OUT
+        val fullSeatsFit = fullSeats[1].maxIntrinsicHeight(width) <= height - buttonBottom &&
+            fullSeats[3].maxIntrinsicHeight(width) <= buttonTop &&
+            fullSeats[2].screenHeight(isOut) <= height && fullSeats[4].screenHeight(isOut) <= height
+        // One slot for both layouts: a second slot would stay in the tree (and in the semantics) when not used
+        val seats = subcompose("seats") { Seats(isRow = !fullSeatsFit) }
+        val east = seats[1].measure(loose.copy(maxHeight = (height - buttonBottom).coerceAtLeast(0)))
+        val south = seats[2].measure(loose.copy(maxWidth = (width - buttonRight).coerceAtLeast(0)))
+        val west = seats[3].measure(loose.copy(maxHeight = buttonTop.coerceAtLeast(0)))
+        val north = seats[4].measure(loose.copy(maxWidth = buttonLeft.coerceAtLeast(0)))
+        val shownButton = seats[0].measure(loose)
         layout(width, height) {
-            button.place(buttonLeft, buttonTop)
+            shownButton.place(buttonLeft, buttonTop)
             east.place(cx - east.width / 2, buttonTop + button.height) // below the button
             west.place(cx - west.width / 2, buttonTop - west.height) // above the button
             south.place(buttonLeft + button.width, cy - south.height / 2) // right of the button
             north.place(buttonLeft - north.width, cy - north.height / 2) // left of the button
         }
     }
-    }
 }
 
 /**
- * Below this table height the full West and East seats (about 86dp each, plus 48dp of margin) do not fit above
- * and below the 48dp diffs button, so they turn into rows. Phones in landscape have about 175dp; portrait
- * phones and tablets have more than 500dp.
+ * Below this table height the four ranking rows do not fit one below the other, so they go in two columns.
+ * Phones in landscape have about 175dp; portrait phones and tablets have more than 500dp.
  */
 private val COMPACT_TABLE_MAX_HEIGHT = 320.dp
 
@@ -369,7 +382,7 @@ private fun SeatBySeat(
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             textAlign = TextAlign.Center,
-            modifier = Modifier.testTag("tvTableSeatBySeatPoints"),
+            modifier = Modifier.withoutSemanticsInProbe().testTag("tvTableSeatBySeatPoints"),
         )
         PenaltyPoints(penalty, isEnded, Modifier.offset(y = (-8).dp))
         Text(
@@ -380,13 +393,13 @@ private fun SeatBySeat(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(164.dp).testTag("tvTableSeatBySeatName"),
+            modifier = Modifier.withoutSemanticsInProbe().width(164.dp).testTag("tvTableSeatBySeatName"),
         )
         seatDiffs?.let { DiffsSmallTable(it) }
     }
 }
 
-/** A seat in one row, for short tables (see [COMPACT_TABLE_MAX_HEIGHT]). Same texts and test tags as [SeatBySeat]. */
+/** A seat in one row, for short tables (when the full seats do not fit). Same texts and test tags as [SeatBySeat]. */
 @Composable
 private fun SeatBySeatRow(
     wind: TableWinds,
@@ -416,7 +429,7 @@ private fun SeatBySeatRow(
                 fontSize = MmDimens.TablePlayerPoints,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                modifier = Modifier.testTag("tvTableSeatBySeatPoints"),
+                modifier = Modifier.withoutSemanticsInProbe().testTag("tvTableSeatBySeatPoints"),
             )
             PenaltyPoints(penalty, isEnded, Modifier.padding(start = MmDimens.HalfMargin))
             Spacer(Modifier.width(MmDimens.StandardMargin))
@@ -427,10 +440,11 @@ private fun SeatBySeatRow(
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.widthIn(max = 164.dp).testTag("tvTableSeatBySeatName"),
+                modifier = Modifier.withoutSemanticsInProbe().widthIn(max = 164.dp).testTag("tvTableSeatBySeatName"),
             )
+            // Beside the name, not below it: the row keeps its height, so it never covers the seat below
+            seatDiffs?.let { DiffsSmallTable(it, Modifier.padding(start = MmDimens.StandardMargin)) }
         }
-        seatDiffs?.let { DiffsSmallTable(it) }
     }
 }
 
@@ -441,7 +455,7 @@ private fun PenaltyPoints(penalty: Int, isEnded: Boolean, modifier: Modifier = M
             text = penalty.formatSigned(),
             color = if (penalty < 0) MmColors.Red else MmColors.Primary,
             fontSize = MmDimens.TablePlayerPenaltyPoints,
-            modifier = modifier,
+            modifier = Modifier.withoutSemanticsInProbe().then(modifier),
         )
     }
 }

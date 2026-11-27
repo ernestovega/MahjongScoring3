@@ -5,7 +5,7 @@ import com.etologic.mahjongscoring3.ui.common.actionBarMetrics
 import com.etologic.mahjongscoring3.ui.common.LocalActionBarMetrics
 import androidx.compose.ui.draw.shadow
 import androidx.compose.material.BottomNavigationDefaults
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.layout.layout
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -192,9 +192,16 @@ private fun MainScaffold(mainViewModel: MainViewModel, currentLanguage: String?)
                         .windowInsetsPadding(insets.bars.only(WindowInsetsSides.Bottom)),
                     contentAlignment = Alignment.TopCenter,
                 ) {
-                // MS2 BottomNavigationView items are at most 168dp wide and centered (tablets and landscape)
+                // MS2 BottomNavigationView items are at most 168dp wide and centered (tablets and landscape).
+                // Its menu view then gives each item one of the pixels left over, so they are 168dp + 1px wide.
                 BottomNavigation(
-                    modifier = Modifier.widthIn(max = BOTTOM_NAVIGATION_ITEM_MAX_WIDTH * 3),
+                    modifier = Modifier.layout { measurable, constraints ->
+                        val itemCount = 3
+                        val itemsMaxWidth = BOTTOM_NAVIGATION_ITEM_MAX_WIDTH.roundToPx() * itemCount
+                        val leftOver = (constraints.maxWidth - itemsMaxWidth).coerceIn(0, itemCount)
+                        val placeable = measurable.measure(constraints.copy(maxWidth = minOf(constraints.maxWidth, itemsMaxWidth + leftOver)))
+                        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+                    },
                     backgroundColor = MmColors.Primary,
                     contentColor = MmColors.White,
                     elevation = 0.dp,
@@ -328,7 +335,7 @@ private fun Drawer(
         platformActions.openUrl(url)
     }
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+    Column(Modifier.fillMaxSize().testTag("navigationView").verticalScroll(rememberScrollState())) {
         Box(Modifier.fillMaxWidth().height(MmDimens.DrawerHeaderHeight)) {
             Image(
                 painter = painterResource(Res.drawable.bg_drawer_header),
