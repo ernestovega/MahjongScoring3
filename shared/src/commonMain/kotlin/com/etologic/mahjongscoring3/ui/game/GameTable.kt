@@ -255,23 +255,33 @@ private fun SeatsBySeat(
     val margin = MmDimens.StandardMargin
 
     // Change from MS2: on short tables (phones in landscape, 7" tablets in landscape) MS2 squeezes the West and East
-    // seats until only their wind icon shows, or cuts their name. Here, when a full seat does not fit on its side of
-    // the diffs button, every seat turns into one row (icon, points, penalty, name): North and South beside the diffs
-    // button, West above it and East below it, so all four players stay visible.
+    // seats until only their wind icon shows, or cuts their name. Here the seats stay vertical (icon, points, penalty,
+    // name) whenever they fit: first with the MS2 margins, then with smaller ones ([SeatsLayout.TIGHT]). Only when
+    // they do not fit, every seat turns into one row: North and South beside the diffs button, West above it and East
+    // below it, so all four players stay visible.
+    val fullMargin = if (arrangement == SeatsArrangement.OUT) margin else margin * 3
+    val tightMargin = MmDimens.HalfMargin
+
     @Composable
-    fun SeatAt(seat: TableWinds, isRow: Boolean, extraModifier: Modifier) {
+    fun SeatAt(seat: TableWinds, layout: SeatsLayout, extraModifier: Modifier) {
         val index = seat.code
+        val isRow = layout == SeatsLayout.ROW
+        // Space between the West and East seats and the diffs button
+        val gap = when (layout) {
+            SeatsLayout.FULL -> fullMargin
+            else -> tightMargin
+        }
         val (rotation, paddingModifier) = when (arrangement) {
             // On short tables North and South rows are not turned: turned, they would be taller than the table
             SeatsArrangement.OUT -> when (seat) {
-                TableWinds.EAST -> 0f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin)
+                TableWinds.EAST -> 0f to Modifier.padding(top = gap)
                 TableWinds.SOUTH -> if (isRow) 0f to Modifier.padding(horizontal = margin) else -90f to Modifier.padding(bottom = margin)
-                TableWinds.WEST -> 180f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin)
+                TableWinds.WEST -> 180f to Modifier.padding(top = gap)
                 else -> if (isRow) 0f to Modifier.padding(horizontal = margin) else 90f to Modifier.padding(bottom = margin)
             }
             else -> when (seat) {
-                TableWinds.EAST -> 0f to Modifier.padding(top = if (isRow) MmDimens.HalfMargin else margin * 3)
-                TableWinds.WEST -> 0f to Modifier.padding(bottom = if (isRow) MmDimens.HalfMargin else margin * 3)
+                TableWinds.EAST -> 0f to Modifier.padding(top = gap)
+                TableWinds.WEST -> 0f to Modifier.padding(bottom = gap)
                 else -> 0f to if (isRow) Modifier.padding(horizontal = margin) else Modifier
             }
         }
@@ -292,16 +302,16 @@ private fun SeatsBySeat(
         )
     }
 
-    /** [isProbe]: only measured, to know if the full seats fit; never shown, so without semantics. */
+    /** [isProbe]: only measured, to know if the vertical seats fit; never shown, so without semantics. */
     @Composable
-    fun Seats(isRow: Boolean, isProbe: Boolean = false) {
+    fun Seats(layout: SeatsLayout, isProbe: Boolean = false) {
         val extraModifier = if (isProbe) Modifier.clearAndSetSemantics {} else Modifier
         CompositionLocalProvider(LocalIsMeasureProbe provides isProbe) {
             DiffsButton(isDiffsButtonVisible, onToggleDiffs, extraModifier)
-            SeatAt(TableWinds.EAST, isRow, extraModifier)
-            SeatAt(TableWinds.SOUTH, isRow, extraModifier)
-            SeatAt(TableWinds.WEST, isRow, extraModifier)
-            SeatAt(TableWinds.NORTH, isRow, extraModifier)
+            SeatAt(TableWinds.EAST, layout, extraModifier)
+            SeatAt(TableWinds.SOUTH, layout, extraModifier)
+            SeatAt(TableWinds.WEST, layout, extraModifier)
+            SeatAt(TableWinds.NORTH, layout, extraModifier)
         }
     }
 
@@ -311,8 +321,8 @@ private fun SeatsBySeat(
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val width = constraints.maxWidth
         val height = constraints.maxHeight
-        val fullSeats = subcompose("probe") { Seats(isRow = false, isProbe = true) }
-        val button = fullSeats[0].measure(loose)
+        val tightSeats = subcompose("probe") { Seats(SeatsLayout.TIGHT, isProbe = true) }
+        val button = tightSeats[0].measure(loose)
         val cx = width / 2
         val cy = height / 2
         val buttonLeft = cx - button.width / 2
@@ -322,11 +332,17 @@ private fun SeatsBySeat(
         // Turned seats (OUT arrangement) take their width as height on the screen
         fun Measurable.screenHeight(isTurned: Boolean) = if (isTurned) maxIntrinsicWidth(height) else maxIntrinsicHeight(width)
         val isOut = arrangement == SeatsArrangement.OUT
-        val fullSeatsFit = fullSeats[1].maxIntrinsicHeight(width) <= height - buttonBottom &&
-            fullSeats[3].maxIntrinsicHeight(width) <= buttonTop &&
-            fullSeats[2].screenHeight(isOut) <= height && fullSeats[4].screenHeight(isOut) <= height
-        // One slot for both layouts: a second slot would stay in the tree (and in the semantics) when not used
-        val seats = subcompose("seats") { Seats(isRow = !fullSeatsFit) }
+        val eastHeight = tightSeats[1].maxIntrinsicHeight(width)
+        val westHeight = tightSeats[3].maxIntrinsicHeight(width)
+        val sidesFit = tightSeats[2].screenHeight(isOut) <= height && tightSeats[4].screenHeight(isOut) <= height
+        fun fits(gap: Int) = sidesFit && eastHeight + gap <= height - buttonBottom && westHeight + gap <= buttonTop
+        val seatsLayout = when {
+            fits((fullMargin - tightMargin).roundToPx()) -> SeatsLayout.FULL
+            fits(0) -> SeatsLayout.TIGHT
+            else -> SeatsLayout.ROW
+        }
+        // One slot for every layout: a second slot would stay in the tree (and in the semantics) when not used
+        val seats = subcompose("seats") { Seats(seatsLayout) }
         val east = seats[1].measure(loose.copy(maxHeight = (height - buttonBottom).coerceAtLeast(0)))
         val south = seats[2].measure(loose.copy(maxWidth = (width - buttonRight).coerceAtLeast(0)))
         val west = seats[3].measure(loose.copy(maxHeight = buttonTop.coerceAtLeast(0)))
@@ -340,6 +356,16 @@ private fun SeatsBySeat(
             north.place(buttonLeft - north.width, cy - north.height / 2) // left of the button
         }
     }
+}
+
+/** How the by-seat table shows its seats, from the MS2 one to the most compact one. */
+private enum class SeatsLayout {
+    /** Vertical seats with the MS2 margins. */
+    FULL,
+    /** Vertical seats closer to the diffs button, when the MS2 margins do not leave room for them. */
+    TIGHT,
+    /** One row for each seat, when vertical seats do not fit (phones in landscape). */
+    ROW,
 }
 
 /**
