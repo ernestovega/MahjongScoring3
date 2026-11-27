@@ -36,6 +36,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.layout.IntrinsicMeasureScope
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -294,6 +300,14 @@ private fun SeatsBySeat(
             isEnded = game.isEnded,
             seatDiffs = seatsDiffs.getOrNull(index)?.takeIf { showDiffs },
             isRow = isRow,
+            // Tight seats: the diffs of West and East go beside them (at the end far from the diffs button), so the
+            // table keeps its vertical seats while the diffs show
+            diffsBeside = when {
+                layout != SeatsLayout.TIGHT || arrangement == SeatsArrangement.OUT -> null
+                seat == TableWinds.WEST -> Alignment.Top
+                seat == TableWinds.EAST -> Alignment.Bottom
+                else -> null
+            },
             onClick = { onSeatClick(seat) },
             modifier = extraModifier
                 .testTag("iGameTableSeat" + seat.name.lowercase().replaceFirstChar { it.uppercase() })
@@ -321,7 +335,8 @@ private fun SeatsBySeat(
         val loose = constraints.copy(minWidth = 0, minHeight = 0)
         val width = constraints.maxWidth
         val height = constraints.maxHeight
-        val tightSeats = subcompose("probe") { Seats(SeatsLayout.TIGHT, isProbe = true) }
+        val fullSeats = subcompose("fullProbe") { Seats(SeatsLayout.FULL, isProbe = true) }
+        val tightSeats = subcompose("tightProbe") { Seats(SeatsLayout.TIGHT, isProbe = true) }
         val button = tightSeats[0].measure(loose)
         val cx = width / 2
         val cy = height / 2
@@ -332,13 +347,13 @@ private fun SeatsBySeat(
         // Turned seats (OUT arrangement) take their width as height on the screen
         fun Measurable.screenHeight(isTurned: Boolean) = if (isTurned) maxIntrinsicWidth(height) else maxIntrinsicHeight(width)
         val isOut = arrangement == SeatsArrangement.OUT
-        val eastHeight = tightSeats[1].maxIntrinsicHeight(width)
-        val westHeight = tightSeats[3].maxIntrinsicHeight(width)
-        val sidesFit = tightSeats[2].screenHeight(isOut) <= height && tightSeats[4].screenHeight(isOut) <= height
-        fun fits(gap: Int) = sidesFit && eastHeight + gap <= height - buttonBottom && westHeight + gap <= buttonTop
+        // The probes include the paddings: the West and East seats must fit above and below the diffs button
+        fun List<Measurable>.fit() = this[1].maxIntrinsicHeight(width) <= height - buttonBottom &&
+            this[3].maxIntrinsicHeight(width) <= buttonTop &&
+            this[2].screenHeight(isOut) <= height && this[4].screenHeight(isOut) <= height
         val seatsLayout = when {
-            fits((fullMargin - tightMargin).roundToPx()) -> SeatsLayout.FULL
-            fits(0) -> SeatsLayout.TIGHT
+            fullSeats.fit() -> SeatsLayout.FULL
+            tightSeats.fit() -> SeatsLayout.TIGHT
             else -> SeatsLayout.ROW
         }
         // One slot for every layout: a second slot would stay in the tree (and in the semantics) when not used
@@ -387,17 +402,75 @@ private fun SeatBySeat(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isRow: Boolean = false,
+    diffsBeside: Alignment.Vertical? = null,
 ) {
     if (isRow) {
         SeatBySeatRow(wind, points, penalty, name, state, isEnded, seatDiffs, onClick, modifier)
         return
     }
+    val clickableModifier = modifier.clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = rememberSecureClick(action = onClick),
+    )
+    if (seatDiffs != null && diffsBeside != null) {
+        // The seat stays in the center (the same width on both sides) and the diffs go to its end
+        Layout(
+            content = {
+                SeatBySeatColumn(wind, points, penalty, name, state, isEnded, seatDiffs = null)
+                DiffsSmallTable(seatDiffs)
+            },
+            modifier = clickableModifier,
+            measurePolicy = SeatWithDiffsBesideMeasurePolicy(diffsBeside),
+        )
+    } else {
+        SeatBySeatColumn(wind, points, penalty, name, state, isEnded, seatDiffs, clickableModifier)
+    }
+}
+
+/** A seat (first child) in the center and its diffs (second child) at its end, aligned by [diffsAlignment]. */
+private class SeatWithDiffsBesideMeasurePolicy(private val diffsAlignment: Alignment.Vertical) : MeasurePolicy {
+    override fun MeasureScope.measure(measurables: List<Measurable>, constraints: Constraints): MeasureResult {
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val gap = MmDimens.HalfMargin.roundToPx()
+        val diffs = measurables[1].measure(loose)
+        val side = diffs.width + gap
+        val column = measurables[0].measure(loose.copy(maxWidth = (loose.maxWidth - 2 * side).coerceAtLeast(0)))
+        val height = maxOf(column.height, diffs.height)
+        return layout(column.width + 2 * side, height) {
+            column.place(side, 0)
+            diffs.place(side + column.width + gap, diffsAlignment.align(diffs.height, height))
+        }
+    }
+
+    // The diffs are beside the seat: the height is the tallest of both
+    override fun IntrinsicMeasureScope.maxIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int =
+        maxOf(measurables[0].maxIntrinsicHeight(width), measurables[1].maxIntrinsicHeight(width))
+
+    override fun IntrinsicMeasureScope.minIntrinsicHeight(measurables: List<IntrinsicMeasurable>, width: Int): Int =
+        maxOf(measurables[0].minIntrinsicHeight(width), measurables[1].minIntrinsicHeight(width))
+
+    override fun IntrinsicMeasureScope.maxIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int =
+        measurables[0].maxIntrinsicWidth(height) + 2 * (measurables[1].maxIntrinsicWidth(height) + MmDimens.HalfMargin.roundToPx())
+
+    override fun IntrinsicMeasureScope.minIntrinsicWidth(measurables: List<IntrinsicMeasurable>, height: Int): Int =
+        measurables[0].minIntrinsicWidth(height) + 2 * (measurables[1].minIntrinsicWidth(height) + MmDimens.HalfMargin.roundToPx())
+}
+
+/** Wind icon, points, penalty and name, one below the other (MS2 "custom_table_seat_by_seat"). */
+@Composable
+private fun SeatBySeatColumn(
+    wind: TableWinds,
+    points: Int,
+    penalty: Int,
+    name: String,
+    state: SeatState,
+    isEnded: Boolean,
+    seatDiffs: SeatDiffs?,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = modifier.clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = rememberSecureClick(action = onClick),
-        ),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         WindIcon(wind, state.color)

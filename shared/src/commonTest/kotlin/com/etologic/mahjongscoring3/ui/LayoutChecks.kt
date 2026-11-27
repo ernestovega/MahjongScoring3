@@ -10,6 +10,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import kotlin.math.max
 import kotlin.math.min
 
@@ -124,16 +125,23 @@ private fun SemanticsNode.textLayout(): TextLayoutResult? {
 
 /**
  * Where the glyphs of the text are drawn, in root coordinates: from the cap height of the first line to the
- * descenders of the last one. Horizontally, the bounds of the node (the layout of the semantics can be wider).
+ * descenders of the last one, and as wide as the widest line, placed by the text alignment.
  */
 private fun SemanticsNode.inkBounds(nodeBounds: Rect): Rect? {
     val layout = textLayout() ?: return null
     if (layout.lineCount == 0) return null
     val em = with(layout.layoutInput.density) { layout.layoutInput.style.fontSize.toPx() }
+    // The text is as wide as its widest line, placed in the node by its alignment
+    val textWidth = minOf(nodeBounds.width, (0 until layout.lineCount).maxOf { layout.getLineRight(it) - layout.getLineLeft(it) })
+    val left = when (layout.layoutInput.style.textAlign) {
+        TextAlign.Center -> nodeBounds.left + (nodeBounds.width - textWidth) / 2
+        TextAlign.End, TextAlign.Right -> nodeBounds.right - textWidth
+        else -> nodeBounds.left
+    }
     return Rect(
-        left = nodeBounds.left,
+        left = left,
         top = nodeBounds.top + layout.getLineBaseline(0) - 0.72f * em,
-        right = nodeBounds.right,
+        right = left + textWidth,
         bottom = nodeBounds.top + layout.getLineBaseline(layout.lineCount - 1) + 0.2f * em,
     )
 }
