@@ -151,7 +151,31 @@ class UiFlowsTest : UiTestBase() {
         click("bottomNavigation_game")
         awaitView("gameFragment")
         view("gameFragment").assertIsDisplayed()
-        // Going back to Old games once Game has been visited is broken in MS2: see KnownIssuesTest.
+        click("bottomNavigation_oldGames")
+        awaitView("oldGamesFragment")
+        view("oldGamesFragment").assertIsDisplayed()
+    }
+
+    @Test
+    fun bottomNavigation_fromGameToOldGames() = appTest(GameScenarios.penalties) {
+        openGame(GameScenarios.penalties)
+        click("bottomNavigation_oldGames")
+        awaitView("oldGamesFragment")
+        view("oldGamesFragment").assertIsDisplayed()
+    }
+
+    @Test
+    fun bottomNavigation_fromCombinationsToOldGames_afterVisitingGame() = appTest(GameScenarios.penalties) {
+        openGame(GameScenarios.penalties)
+        click("bottomNavigation_combinations")
+        awaitView("combinationsFragment")
+        click("bottomNavigation_oldGames")
+        awaitView("oldGamesFragment")
+        view("oldGamesFragment").assertIsDisplayed()
+        // And the game tab still opens the active game.
+        click("bottomNavigation_game")
+        awaitView("gameFragment")
+        view("tvGameTableGameName").assertTextEquals("penalties")
     }
 
     @Test

@@ -2,6 +2,11 @@ package com.etologic.mahjongscoring3.ui.theme
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import kotlin.math.floor
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -91,9 +96,35 @@ internal expect val mmPlatformTextStyle: PlatformTextStyle?
 
 @Composable
 fun MahjongScoringTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colors = MmLightColors,
-        typography = MmTypography,
-        content = content,
-    )
+    CompositionLocalProvider(LocalDensity provides ms2TextDensity(LocalDensity.current)) {
+        MaterialTheme(
+            colors = MmLightColors,
+            typography = MmTypography,
+            content = content,
+        )
+    }
 }
+
+/**
+ * MS2 TextViews round their text size to whole pixels: 14sp is 36.75px on a 420dpi phone and MS2 draws it at 37px,
+ * so each line is 51px tall instead of 49px. Compose keeps the fraction, and its text layout only keeps the density
+ * and the font scale of [LocalDensity], so the font scale is adjusted: 14sp, the size of most MS2 texts, gives the same
+ * whole number of pixels as in MS2, and the other sizes come within a fraction of a pixel. Screens where 14sp is a
+ * whole number of pixels (mdpi, xhdpi, xxhdpi) do not change.
+ */
+@Composable
+fun ms2TextDensity(density: Density): Density = remember(density) {
+    val px = MS2_TEXT_SIZE_SP * density.density * density.fontScale
+    val roundedPx = floor(px + 0.5f)
+    if (px <= 0f || roundedPx == px) density else Density(density.density, density.fontScale * roundedPx / px)
+}
+
+private const val MS2_TEXT_SIZE_SP = 14f
+
+/**
+ * Dialogs and popups get the density of their own window, without the [ms2TextDensity] of the app: their content
+ * provides it again.
+ */
+@Composable
+fun Ms2TextDensity(content: @Composable () -> Unit) =
+    CompositionLocalProvider(LocalDensity provides ms2TextDensity(LocalDensity.current), content = content)

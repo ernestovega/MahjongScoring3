@@ -16,14 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +43,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.etologic.mahjongscoring3.resources.Res
 import com.etologic.mahjongscoring3.resources.blank_name_warn
 import com.etologic.mahjongscoring3.resources.close
@@ -97,7 +94,7 @@ fun NamesDialog(
     var north by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue(initial.nameP4, TextRange(initial.nameP4.length))) }
     val gameNameFocus = remember { FocusRequester() }
 
-    Dialog(onDismissRequest = onDismiss) {
+    MmDialog(onDismissRequest = onDismiss) {
         Surface(shape = RoundedCornerShape(MmDimens.CardCornerRadius), color = MmColors.GrayLight, contentColor = MmColors.GrayMM) {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Column(
@@ -130,12 +127,12 @@ fun NamesDialog(
                         .padding(top = MmDimens.HalfMargin, end = MmDimens.StandardMargin, bottom = MmDimens.HalfMargin),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = rememberSecureClick(action = onDismiss), modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogCancel")) {
+                    Ms2DialogButton(onClick = rememberSecureClick(action = onDismiss), modifier = Modifier.testTag("btNamesDialogCancel")) {
                         Text(stringResource(Res.string.close).uppercase(), color = MmColors.GrayMM)
                     }
-                    TextButton(
+                    Ms2DialogButton(
                         onClick = rememberSecureClick { onConfirm(GameNames(gameName.text, east.text, south.text, west.text, north.text)) },
-                        modifier = Modifier.widthIn(min = 88.dp).testTag("btNamesDialogSave"),
+                        modifier = Modifier.testTag("btNamesDialogSave"),
                     ) {
                         Text(confirmText.uppercase(), color = MmColors.Accent)
                     }

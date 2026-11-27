@@ -67,10 +67,11 @@ fun DiffsCalculatorScreen(onBack: () -> Unit) {
             onNavigationClick = onBack,
         )
         Row(
-            modifier = Modifier.fillMaxWidth().background(MmColors.Primary),
+            // MS2: the first cell has a 16dp start margin, outside of its weight: the 4 cells share the rest equally
+            modifier = Modifier.fillMaxWidth().background(MmColors.Primary).padding(start = MmDimens.StandardMargin),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            DiffsCell(stringResource(Res.string.diff), MmColors.White, bold = true, maxLines = 2, modifier = Modifier.padding(start = MmDimens.StandardMargin))
+            DiffsCell(stringResource(Res.string.diff), MmColors.White, bold = true, maxLines = 2)
             DiffsCell(stringResource(Res.string.self_pick), MmColors.White, bold = true)
             DiffsCell(stringResource(Res.string.direct), MmColors.White, bold = true)
             DiffsCell(stringResource(Res.string.indirect), MmColors.White, bold = true)
@@ -85,8 +86,9 @@ fun DiffsCalculatorScreen(onBack: () -> Unit) {
                     Modifier
                         .fillMaxWidth()
                         .background(if (index % 2 == 0) MmColors.White else MmColors.GrayLight)
+                        .padding(start = MmDimens.StandardMargin)
                 ) {
-                    DiffsCell(diff.pointsNeeded.toString(), MmColors.GrayMM, bold = true, modifier = Modifier.padding(start = MmDimens.StandardMargin))
+                    DiffsCell(diff.pointsNeeded.toString(), MmColors.GrayMM, bold = true)
                     DiffsCell(diff.selfPick.toString(), MmColors.GrayMM, bold = false)
                     DiffsCell(diff.directHu.toString(), MmColors.GrayMM, bold = false)
                     DiffsCell(diff.indirectHu.toString(), MmColors.GrayMM, bold = false)

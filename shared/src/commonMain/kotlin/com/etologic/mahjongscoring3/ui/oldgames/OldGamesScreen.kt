@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
@@ -405,8 +406,9 @@ private fun OldGameSeat(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(points.toStringSigned(), textAlign = TextAlign.Center)
             if (isWinner) {
-                Spacer(Modifier.width(4.dp))
-                Image(painterResource(Res.drawable.ic_trophy_golden), contentDescription = null, modifier = Modifier.size(18.dp))
+                // MS2: the trophy is a compound drawable at its 24dp intrinsic size, 8px (not dp) after the points
+                Spacer(Modifier.width(with(LocalDensity.current) { 8.toDp() }))
+                Image(painterResource(Res.drawable.ic_trophy_golden), contentDescription = null, modifier = Modifier.size(24.dp))
             }
         }
     }
