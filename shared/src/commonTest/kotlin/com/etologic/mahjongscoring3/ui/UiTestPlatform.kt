@@ -29,8 +29,12 @@ enum class TestScreen(val widthDp: Int, val heightDp: Int, val dpi: Int, val and
     IPAD_MINI_LANDSCAPE(1133, 744, 320, "w1133dp-h744dp-xlarge-notlong-notround-land-xhdpi-keyshidden-nonav"),
 }
 
-/** The landscape screens where the app really turns: Android 16 large screens and iPads. */
+/**
+ * The landscape screens: Android 16 large screens and iPads, where the app really turns, and a phone in landscape
+ * (the portrait lock keeps phones in portrait, but it is the shortest screen, so the hardest one to fit).
+ */
 val LANDSCAPE_LARGE_SCREENS = listOf(
+    TestScreen.PHONE_LANDSCAPE,
     TestScreen.SMALL_TABLET_LANDSCAPE,
     TestScreen.FOLDABLE_LANDSCAPE,
     TestScreen.TABLET_LANDSCAPE,

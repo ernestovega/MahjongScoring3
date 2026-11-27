@@ -2,6 +2,10 @@ package com.etologic.mahjongscoring3.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,10 +35,15 @@ fun EmptyState(
     centerVertically: Boolean = false,
     footer: @Composable () -> Unit = {},
 ) {
-    Column(
+    // Change from MS2: on short screens (phones in landscape) the whole block gets smaller until it fits, instead of
+    // going under the bottom navigation
+    Box(
         modifier = modifier.fillMaxSize().background(MmColors.GrayLight),
+        contentAlignment = if (centerVertically) Alignment.Center else Alignment.TopCenter,
+    ) {
+    Column(
+        modifier = Modifier.scaleDownToFitHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = if (centerVertically) androidx.compose.foundation.layout.Arrangement.Center else androidx.compose.foundation.layout.Arrangement.Top,
     ) {
         Image(
             painter = painterResource(Res.drawable.img_empty_box),
@@ -54,6 +63,21 @@ fun EmptyState(
             modifier = Modifier.padding(start = MmDimens.DoubleMargin, top = MmDimens.StandardMargin, end = MmDimens.DoubleMargin),
         )
         footer()
+    }
+    }
+}
+
+/** Measures the content at its full height and, when it is taller than the space, draws it smaller from its top. */
+private fun Modifier.scaleDownToFitHeight(): Modifier = layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity))
+    val maxHeight = if (constraints.hasBoundedHeight) constraints.maxHeight else placeable.height
+    val scale = if (placeable.height > maxHeight && placeable.height > 0) maxHeight.toFloat() / placeable.height else 1f
+    layout(placeable.width, minOf(placeable.height, maxHeight)) {
+        placeable.placeWithLayer(0, 0) {
+            scaleX = scale
+            scaleY = scale
+            transformOrigin = TransformOrigin(0.5f, 0f)
+        }
     }
 }
 

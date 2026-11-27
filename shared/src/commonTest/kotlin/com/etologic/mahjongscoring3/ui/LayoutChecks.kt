@@ -9,6 +9,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
 import kotlin.math.max
@@ -48,7 +49,13 @@ fun ComposeUiTest.layoutProblems(
 
         val texts = mutableListOf<Pair<SemanticsNode, Rect>>()
         root.descendants().forEach { node ->
-            val unclipped = Rect(node.positionInRoot, node.size.let { androidx.compose.ui.geometry.Size(it.width.toFloat(), it.height.toFloat()) })
+            // Without the clips of the parents, but with their scales and rotations (graphics layers)
+            val coordinates = node.layoutInfo.coordinates
+            val unclipped = if (coordinates.isAttached) {
+                coordinates.findRootCoordinates().localBoundingBoxOf(coordinates, clipBounds = false)
+            } else {
+                Rect(node.positionInRoot, androidx.compose.ui.geometry.Size(node.size.width.toFloat(), node.size.height.toFloat()))
+            }
             if (unclipped.width <= 0f || unclipped.height <= 0f) return@forEach
             // Views placed out of the window on purpose (a closed drawer) are not seen
             val windowArea = Rect(0f, 0f, window.width, window.height)

@@ -5,6 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,8 +24,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -129,22 +130,28 @@ fun CombinationsScreen(onOpenDrawer: () -> Unit) {
             title = {
                 if (isSearching) {
                     val focusRequester = remember { FocusRequester() }
-                    TextField(
+                    // A text field without the 56dp of the Material TextField: the app bar is 48dp high on landscape
+                    // phones (like MS2), and the text stays centered in it, like the MS2 SearchView
+                    BasicTextField(
                         value = filter,
                         onValueChange = { filter = it },
                         singleLine = true,
-                        placeholder = { Text(stringResource(Res.string.combination_name), color = MmColors.WhiteTransparent) },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = MmColors.White,
-                            backgroundColor = Color.Transparent,
-                            cursorColor = MmColors.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        trailingIcon = if (filter.isNotEmpty()) {
-                            { IconButton(onClick = { filter = "" }) { Icon(Icons.Filled.Close, null, tint = MmColors.White) } }
-                        } else null,
+                        textStyle = MaterialTheme.typography.subtitle1.copy(color = MmColors.White),
+                        cursorBrush = SolidColor(MmColors.White),
                         modifier = Modifier.fillMaxWidth().focusRequester(focusRequester).testTag("etCombinationsSearch"),
+                        decorationBox = { innerTextField ->
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(Modifier.weight(1f)) {
+                                    if (filter.isEmpty()) {
+                                        Text(stringResource(Res.string.combination_name), color = MmColors.WhiteTransparent, maxLines = 1)
+                                    }
+                                    innerTextField()
+                                }
+                                if (filter.isNotEmpty()) {
+                                    IconButton(onClick = { filter = "" }) { Icon(Icons.Filled.Close, null, tint = MmColors.White) }
+                                }
+                            }
+                        },
                     )
                     LaunchedEffect(Unit) { runCatching { focusRequester.requestFocus() } }
                 } else {

@@ -7,6 +7,8 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.hasScrollToNodeAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.foundation.layout.WindowInsets
@@ -49,12 +51,12 @@ class LandscapeLargeScreensTest : UiTestBase() {
         seatsArrangement: SeatsArrangement? = null,
         allowEllipsis: Boolean = false,
         onlyInside: String? = null,
-        block: ComposeUiTest.() -> Unit,
+        block: ComposeUiTest.(TestScreen) -> Unit,
     ) {
         val problems = mutableListOf<String>()
         LANDSCAPE_LARGE_SCREENS.forEach { screen ->
             appTest(*seed, seatsArrangement = seatsArrangement, screen = screen) {
-                block()
+                block(screen)
                 screenshot("land_${screen.name.lowercase()}_$name")
                 problems += layoutProblems(screen, allowEllipsis, onlyInside).map { "${screen.name}: $it" }
             }
@@ -65,6 +67,13 @@ class LandscapeLargeScreensTest : UiTestBase() {
     private fun ComposeUiTest.openSeat(seat: String) {
         click(seat)
         awaitView("btHandActionsDialogHu")
+    }
+
+    /** The hand actions dialog scrolls on short screens, like in MS2: its last buttons can be below the screen. */
+    private fun ComposeUiTest.clickScrolled(tag: String) {
+        awaitView(tag)
+        view(tag).performScrollTo().performClick()
+        waitForIdle()
     }
 
     private fun ComposeUiTest.openList() {
@@ -197,7 +206,11 @@ class LandscapeLargeScreensTest : UiTestBase() {
     fun listDeleteRoundMenu() = check("list_delete_round_menu", GameScenarios.selfPicks) {
         openGame(GameScenarios.selfPicks)
         openList()
-        view(hasTestTag("llGameListItemContainer") and hasAnyDescendant(hasTestTag("tvGameListItemRoundNumber") and hasText("1"))).performClick()
+        // Phones in landscape show only the last rounds: the list scrolls to the first one, like a user
+        val firstRound = hasTestTag("llGameListItemContainer") and hasAnyDescendant(hasTestTag("tvGameListItemRoundNumber") and hasText("1"))
+        onNode(hasScrollToNodeAction() and hasAnyDescendant(hasTestTag("llGameListItemContainer")) and !hasTestTag("viewPagerGame"), useUnmergedTree = true)
+            .performScrollToNode(firstRound)
+        view(firstRound).performClick()
         awaitView("action_delete_round")
     }
 
@@ -239,7 +252,7 @@ class LandscapeLargeScreensTest : UiTestBase() {
     fun penaltyDialog() = check("dialog_penalty", GameScenarios.penalties) {
         openGame(GameScenarios.penalties)
         openSeat("iGameTableSeatWest")
-        click("btHandActionsDialogPenalty")
+        clickScrolled("btHandActionsDialogPenalty")
         awaitView("cnpPenaltyDialog")
         typePoints("cnpPenaltyDialog", 30)
     }
@@ -248,13 +261,11 @@ class LandscapeLargeScreensTest : UiTestBase() {
     fun cancelPenaltiesConfirmation() = check("dialog_cancel_penalties", GameScenarios.newGame) {
         openGame(GameScenarios.newGame)
         openSeat("iGameTableSeatSouth")
-        click("btHandActionsDialogPenalty")
+        clickScrolled("btHandActionsDialogPenalty")
         typePoints("cnpPenaltyDialog", 30)
         click("btPenaltyDialogSave")
         openSeat("iGameTableSeatEast")
-        // The hand actions dialog scrolls on short screens, like in MS2: the fourth button is below the third one
-        awaitView("btHandActionsDialogPenaltiesCancel")
-        view("btHandActionsDialogPenaltiesCancel").performScrollTo().performClick()
+        clickScrolled("btHandActionsDialogPenaltiesCancel")
         awaitView("btAlertDialogPositive")
     }
 
@@ -294,14 +305,14 @@ class LandscapeLargeScreensTest : UiTestBase() {
         awaitView("combinationsFragment")
     }
 
-    /** The keyboard covers about half of a landscape tablet. */
+    /** The keyboard covers about half of a landscape screen. */
     @Test
-    fun combinationsSearchWithKeyboard() = check("combinations_search_keyboard") {
+    fun combinationsSearchWithKeyboard() = check("combinations_search_keyboard") { screen ->
         click("bottomNavigation_combinations")
         awaitView("action_search")
         click("action_search")
         view("etCombinationsSearch").performTextReplacement("dragon")
-        sendInsets(systemBars = WindowInsets(0, 0, 0, 0), ime = WindowInsets(bottom = 300.dp))
+        sendInsets(systemBars = WindowInsets(0, 0, 0, 0), ime = WindowInsets(bottom = (screen.heightDp * 0.45f).dp))
     }
 
     @Test

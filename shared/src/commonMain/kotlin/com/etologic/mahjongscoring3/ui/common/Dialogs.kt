@@ -1,5 +1,10 @@
 package com.etologic.mahjongscoring3.ui.common
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,36 +101,42 @@ fun SingleChoiceDialog(
     onSelected: (Int) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        backgroundColor = MmColors.GrayLight,
-        contentColor = MmColors.GrayMM,
-        title = { Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp) },
-        text = {
-            Column {
-                items.forEachIndexed { index, item ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelected(index); onDismiss() }
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = index == selectedIndex,
-                            onClick = { onSelected(index); onDismiss() },
-                            colors = RadioButtonDefaults.colors(selectedColor = MmColors.Accent),
-                        )
-                        Text(item, fontSize = 16.sp, modifier = Modifier.padding(start = 8.dp))
+    // The Material AlertDialog cuts its title when it is taller than the screen (phones in landscape): here the list
+    // takes the space left between the title and the button, and scrolls, like MS2 list dialogs
+    MmDialog(onDismissRequest = onDismiss) {
+        Surface(shape = RoundedCornerShape(4.dp), color = MmColors.GrayLight, contentColor = MmColors.GrayMM) {
+            Column(Modifier.padding(top = 24.dp, bottom = 8.dp)) {
+                Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(horizontal = 24.dp))
+                Column(
+                    Modifier
+                        .weight(1f, fill = false)
+                        .padding(top = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
+                ) {
+                    items.forEachIndexed { index, item ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelected(index); onDismiss() }
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            RadioButton(
+                                selected = index == selectedIndex,
+                                onClick = { onSelected(index); onDismiss() },
+                                colors = RadioButtonDefaults.colors(selectedColor = MmColors.Accent),
+                            )
+                            Text(item, fontSize = 16.sp, modifier = Modifier.padding(start = 8.dp))
+                        }
+                    }
+                }
+                Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.End) {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
                     }
                 }
             }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(Res.string.close).uppercase(), color = MmColors.Accent)
-            }
-        },
-    )
+        }
+    }
 }
